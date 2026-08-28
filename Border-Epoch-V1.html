@@ -108,7 +108,18 @@ body.fiscal-warning #right{box-shadow:inset 3px 0 0 #d99a37,0 0 22px #d99a3710}b
 #priorityHint,.notice,.theaterHint{display:none!important}
 #actionStatus{display:none;padding:5px 12px;border-bottom:1px solid #173044;color:#8fb2c4;font-size:11px;line-height:1.35;min-height:0}
 #actionStatus.show{display:block}
-#financeReport{width:100%;max-height:none;overflow:visible}</style></head><body><div id="app"><header><div><div class="brand">边界纪元 // 星域战争</div><div class="sub">SECTOR COMMAND · 20–40 分钟星际战略沙盒</div></div><div class="spacer"></div><div id="warDock"></div><button id="pauseBtn">暂停</button><select id="speedSel"><option value="1" selected>1×</option><option value="2">2×</option><option value="4">4×</option><option value="8">8×</option></select><button id="newBtn">新世界</button></header><main id="mapWrap"><canvas id="map"></canvas><div id="hud"><div class="pill">星历 <b id="year">1</b></div><div class="pill">指挥点 <b id="ap">3</b>/4</div><div class="pill">目标 <b id="goalShort">120 年内：前三并连续保持 10 年</b></div><div class="pill">排名 <b id="rank">—</b></div><div class="pill">前三连续 <b id="streak">0</b>/10</div><div class="pill">银河局势 <b id="tension">平静</b></div></div><div id="priorityHint"></div><div id="legend" style="display:none"></div><div id="start"><div class="startbox"><h1>边界纪元 // 星域战争</h1><p>你指挥的是一片正在扩张的星域势力。各方会根据威胁、资源、外交与战争收益改变战略。</p><div class="startgrid"><div class="card"><b>连续星域</b><br><small>势力范围沿恒星航道自然延展</small></div><div class="card"><b>有限指挥</b><br><small>每个星历周期只有有限指挥资源</small></div><div class="card"><b>会权衡的势力</b><br><small>会因边境、舰队与银河紧张度调整战略</small></div></div><button class="primary" id="startBtn">生成星域并开始</button></div></div></main><aside id="right"><div id="pendingEventBar"></div><div class="tabs"><div class="tab active" data-tab="country">星域</div><div class="tab" data-tab="dipl">星际外交</div><div class="tab" data-tab="events">战情日志</div></div><div id="actionStatus" aria-live="polite"></div><section class="panel active" id="countryPanel"></section><section class="panel" id="diplPanel"></section><section class="panel" id="eventsPanel"></section></aside></div>
+#financeReport{width:100%;max-height:none;overflow:visible}
+.tabs{display:grid;grid-template-columns:1fr 1fr}
+.tab.active{color:#dff6ff;background:#142433;box-shadow:inset 0 -2px 0 #71d6f4}
+#countryPanel .countryTitle{padding:5px 7px;border-left:2px solid #4e7d94;background:linear-gradient(90deg,#17304055,transparent)}
+#countryPanel .card{border-color:#2b4657}
+#countryPanel .card b{color:#d9edf6}
+#countryPanel .diplomacyHub{border-color:#41697e;background:linear-gradient(160deg,#142938,#101b26)}
+#countryPanel .diplomacyHub .statusLine{color:#a9c1cf}
+#countryPanel .diplomacyHub .treatyGrid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:8px}
+#countryPanel .diplomacyHub .treatyGrid button{text-align:left;min-height:54px}
+#countryPanel .diplomacyHub .treatyGrid small{display:block;color:#8fa7b7;margin-top:2px}
+</style></head><body><div id="app"><header><div><div class="brand">边界纪元 // 星域战争</div><div class="sub">SECTOR COMMAND · 20–40 分钟星际战略沙盒</div></div><div class="spacer"></div><div id="warDock"></div><button id="pauseBtn">暂停</button><select id="speedSel"><option value="1" selected>1×</option><option value="2">2×</option><option value="4">4×</option><option value="8">8×</option></select><button id="newBtn">新世界</button></header><main id="mapWrap"><canvas id="map"></canvas><div id="hud"><div class="pill">星历 <b id="year">1</b></div><div class="pill">指挥点 <b id="ap">3</b>/4</div><div class="pill">目标 <b id="goalShort">120 年内：前三并连续保持 10 年</b></div><div class="pill">排名 <b id="rank">—</b></div><div class="pill">前三连续 <b id="streak">0</b>/10</div><div class="pill">银河局势 <b id="tension">平静</b></div></div><div id="priorityHint"></div><div id="legend" style="display:none"></div><div id="start"><div class="startbox"><h1>边界纪元 // 星域战争</h1><p>你指挥的是一片正在扩张的星域势力。各方会根据威胁、资源、外交与战争收益改变战略。</p><div class="startgrid"><div class="card"><b>连续星域</b><br><small>势力范围沿恒星航道自然延展</small></div><div class="card"><b>有限指挥</b><br><small>每个星历周期只有有限指挥资源</small></div><div class="card"><b>会权衡的势力</b><br><small>会因边境、舰队与银河紧张度调整战略</small></div></div><button class="primary" id="startBtn">生成星域并开始</button></div></div></main><aside id="right"><div id="pendingEventBar"></div><div class="tabs"><div class="tab active" data-tab="country">星域</div><div class="tab" data-tab="events">战情日志</div></div><div id="actionStatus" aria-live="polite"></div><section class="panel active" id="countryPanel"></section><section class="panel" id="eventsPanel"></section></aside></div>
 <div id="battleMode">
   <div id="battleField">
     <canvas id="battleCanvas"></canvas>
@@ -135,7 +146,7 @@ let terrain=new Uint8Array(W*H), owner=new Int16Array(W*H);
 let countries=[], relations=[], wars=new Set(), events=[], player=0, selected=0, treaties={}, warEscalations={};
 let year=1, ap=3, paused=false, speed=1, tickAcc=0, last=performance.now(), nextEventYear=11, pendingEvent=null, resumeAfterEvent=true, worldTension=18, top3Streak=0, nextWorldEventYear=5, situations=[], mapSignals=[], threatMemory=Array(N).fill(0), playerArmyHistory=[], warPlans={}, austerity=false, lastFinance=null, localBattle=null, localBattleLastYear={}, theaterTarget=null, theaterWasPaused=false, warNoticeQueue=[], investmentQueue=[], peaceTalkLastYear={}, yearOneOffCash=0, lastYearOneOffCash=0, lastExpansionYear=-99, expansionCount=0;
 let cam={x:0,y:0,z:1},drag=null,gameStarted=false,mapDirty=true;
-const colors=["#48d7ff","#ff5d6c","#66f0a8","#ffb44d","#b07cff","#4fe0d0","#ff78c7","#a5d766","#dfc264","#758de0","#bd7956","#70a0a7","#cd6c8d","#7eb067"];
+const colors=["#68c8e8","#e77b82","#73cba2","#d7ad63","#9e8bd8","#66bfb8","#d787b3","#99ba6d","#cbb66b","#7d91c9","#b7876f","#78a5ad","#c47f9d","#89a96f"];
 const namesA=["青河","赤原","北岚","苍湾","白岭","曜川","临海","新穹","霜谷","金泽","云岬","长风","南陆","星浦"];
 const forms=["共和国","联邦","王国","联盟","公国","共同体"];
 const rand=(a=1,b=0)=>Math.random()*(a-b)+b, clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
@@ -386,6 +397,25 @@ ap--;t.trade=false;t.nonAggression=false;t.alliance=false;setRelation(player,tar
 logEvent("条约终止",`${countries[player].name} 终止了与 ${countries[target].name} 的正式条约关系。`,"warn");
 toast(`已解除与 ${countries[target].name} 的正式条约。`);renderPanels();
 }
+function endTreatyType(target,type){
+if(pendingEvent){toast("请先处理待处理事件。");return}
+if(ap<=0){toast("今年没有足够的外交行动点。");return}
+const t=treatyState(player,target),name=countries[target]?.name||"该国";
+if(type==="trade"&&!t.trade){toast("当前没有贸易协定。");return}
+if(type==="nonAggression"&&!t.nonAggression){toast("当前没有互不侵犯条约。");return}
+if(type==="alliance"&&!t.alliance){toast("当前没有星际同盟。");return}
+ap--;
+if(type==="trade"){t.trade=false;setRelation(player,target,-3);toast(`已终止与 ${name} 的贸易协定。`)}
+if(type==="nonAggression"){t.nonAggression=false;t.alliance=false;setRelation(player,target,-8);toast(`已终止与 ${name} 的互不侵犯条约；同盟关系也随之解除。`)}
+if(type==="alliance"){t.alliance=false;setRelation(player,target,-6);toast(`已解除与 ${name} 的星际同盟。`)}
+logEvent("条约调整",`${countries[player].name} 调整了与 ${name} 的正式条约关系。`,"warn");
+renderPanels();
+}
+function relationHumanLabel(a,b){
+const r=relations[a][b];
+return r>60?"高度互信":r>30?"友好":r>5?"温和":r>-20?"中立偏冷":r>-45?"紧张":"敌对";
+}
+
 function generateStarTheater(a,b){
 const seed=Math.floor(Math.random()*997000)+Math.min(a,b)*71+Math.max(a,b)*113;
 const pool=[
@@ -1450,48 +1480,219 @@ for(const s of [...situations]){
 const A=countries[s.a],B=countries[s.b];
 if(!A?.alive||!B?.alive){situations=situations.filter(x=>x!==s);continue}
 if(atWar(s.a,s.b)){s.type="战争";s.level=4;continue}
-const rel=relations[s.a][s.b];
+const rel=relations[s.a][s.b],t=treatyState(s.a,s.b);
+if(t.alliance){
+situations=situations.filter(x=>x!==s);
+logEvent("安全局势解除",`${A.name} 与 ${B.name} 已建立同盟，原有敌对局势不再继续升级。`,"good");
+continue;
+}
+if(t.nonAggression&&["摩擦","对峙","军备竞赛"].includes(s.type)){
+if(s.type==="对峙"){s.type="摩擦";s.level=1}
+if(Math.random()<.28){situations=situations.filter(x=>x!==s);logEvent("条约约束生效",`${A.name} 与 ${B.name} 的互不侵犯条约压低了军事摩擦，局势逐步退出。`,"good")}
+continue;
+}
+if(!visualContact(s.a,s.b)&&["摩擦","对峙"].includes(s.type)){
+situations=situations.filter(x=>x!==s);continue;
+}
 if(s.type==="摩擦"){
-A.army+=1.2;B.army+=1.2;A.treasury-=1;B.treasury-=1;
-if(rel<-38&&Math.random()<.22+worldTension*.002){s.type="对峙";s.level=2;logEvent("边境对峙",`${A.name} 与 ${B.name} 将边境摩擦升级为持续军事对峙。`,"bad");addSignal(s.a,s.b,"对峙","bad",9);playerSpillover(s.a,s.b,"tension")}
-else if(Math.random()<.12){setRelation(s.a,s.b,10);situations=situations.filter(x=>x!==s);logEvent("摩擦缓和",`${A.name} 与 ${B.name} 的边境摩擦暂时平息。`,"good")}
+A.army+=1.0;B.army+=1.0;A.treasury-=.8;B.treasury-=.8;
+const escalate=rel<-38&&Math.random()<clamp(.06+(-rel-38)*.006+worldTension*.0015,.06,.42);
+if(escalate){s.type="对峙";s.level=2;logEvent("边境对峙",`${A.name} 与 ${B.name} 因持续低关系与真实边境摩擦升级为军事对峙。`,"bad");addSignal(s.a,s.b,"对峙","bad",9);playerSpillover(s.a,s.b,"tension")}
+else if(rel>5||Math.random()<.10){setRelation(s.a,s.b,8);situations=situations.filter(x=>x!==s);logEvent("摩擦缓和",`${A.name} 与 ${B.name} 的边境摩擦暂时平息。`,"good")}
 }else if(s.type==="对峙"){
-A.army+=2;B.army+=2;A.treasury-=2.2;B.treasury-=2.2;A.stability-=.25;B.stability-=.25;
+A.army+=1.6;B.army+=1.6;A.treasury-=1.8;B.treasury-=1.8;A.stability-=.2;B.stability-=.2;
 const ratio=power(A)/Math.max(1,power(B));
-if(rel<-52&&Math.random()<.18+worldTension*.0025){
-const attacker=ratio>1.08?s.a:ratio<.92?s.b:(Math.random()<.5?s.a:s.b);
-declareWar(attacker,attacker===s.a?s.b:s.a);s.type="战争";s.level=4;addSignal(s.a,s.b,"星际战争爆发","war",12);playerSpillover(s.a,s.b,"war")
-}else if(Math.random()<.08){setRelation(s.a,s.b,16);s.type="摩擦";s.level=1;logEvent("紧张降级",`${A.name} 与 ${B.name} 从军事对峙退回低强度摩擦。`,"good")}
+const canPrepareWar=rel<-52&&!t.nonAggression&&!t.alliance&&visualContact(s.a,s.b);
+if(canPrepareWar&&Math.random()<clamp(.06+(-rel-52)*.005+worldTension*.0018,.06,.34)){
+const attacker=ratio>1.08?s.a:ratio<.92?s.b:(A.aggression>=B.aggression?s.a:s.b);
+aiEscalateConflict(attacker,attacker===s.a?s.b:s.a);
+s.level=3;addSignal(s.a,s.b,"战争升级","bad",10);
+}else if(rel>-12||Math.random()<.07){setRelation(s.a,s.b,12);s.type="摩擦";s.level=1;logEvent("紧张降级",`${A.name} 与 ${B.name} 从军事对峙退回低强度摩擦。`,"good")}
 }else if(s.type==="军备竞赛"){
-A.army+=1.8;B.army+=1.8;A.treasury-=1.8;B.treasury-=1.8;
-if(rel<-42&&Math.random()<.16){s.type="对峙";s.level=2;logEvent("军备竞赛升级",`${A.name} 与 ${B.name} 的军备竞赛演变为边境对峙。`,"bad");addSignal(s.a,s.b,"军备→对峙","bad",8)}
-else if(year-s.start>10&&Math.random()<.15){situations=situations.filter(x=>x!==s)}
+A.army+=1.4;B.army+=1.4;A.treasury-=1.5;B.treasury-=1.5;
+if(rel<-42&&visualContact(s.a,s.b)&&Math.random()<clamp(.05+(-rel-42)*.004,.05,.26)){s.type="对峙";s.level=2;logEvent("军备竞赛升级",`${A.name} 与 ${B.name} 的长期军备竞争因关系恶化而演变为边境对峙。`,"bad");addSignal(s.a,s.b,"军备→对峙","bad",8)}
+else if(rel>10||year-s.start>10&&Math.random()<.18) situations=situations.filter(x=>x!==s);
 }
 }
 mapSignals=mapSignals.filter(x=>x.until>=year);
 }
+function weightedEventPick(list){
+const valid=list.filter(x=>x&&x.weight>0);
+if(!valid.length)return null;
+let total=valid.reduce((s,x)=>s+x.weight,0),r=Math.random()*total;
+for(const x of valid){r-=x.weight;if(r<=0)return x}
+return valid[valid.length-1];
+}
+function pairSituation(a,b){
+const lo=Math.min(a,b),hi=Math.max(a,b);
+return situations.find(s=>s.a===lo&&s.b===hi)||null;
+}
+function pairCanHaveHostileBorderEvent(a,b){
+if(!countries[a]?.alive||!countries[b]?.alive||atWar(a,b))return false;
+if(!visualContact(a,b))return false;
+const t=treatyState(a,b);
+if(t.alliance||t.nonAggression)return false;
+return true;
+}
+function hostilePairWeight(a,b,base=1){
+const A=countries[a],B=countries[b],rel=relations[a][b],s=pairSituation(a,b);
+let w=base;
+w*=clamp((18-rel)/38,.15,2.5);
+w*=1+worldTension/120;
+w*=1+(A.aggression+B.aggression)*.24;
+if(s&&["摩擦","军备竞赛","对峙"].includes(s.type))w*=1.35+s.level*.12;
+return w;
+}
+function peacefulPairWeight(a,b,base=1){
+const rel=relations[a][b],t=treatyState(a,b),s=pairSituation(a,b);
+if(atWar(a,b)||t.alliance||s?.type==="对峙"||s?.type==="战争")return 0;
+let w=base*clamp((rel+35)/70,.08,2.3);
+if(t.trade)w*=.45;
+if(t.nonAggression)w*=1.18;
+return w;
+}
+function playerNeighborSecurityCandidates(){
+return neighbors(player).filter(id=>{
+if(!countries[id]?.alive||atWar(player,id))return false;
+const t=treatyState(player,id);
+return !t.alliance;
+});
+}
+function makePlayerBorderProvocation(){
+const candidates=playerNeighborSecurityCandidates().filter(id=>{
+const t=treatyState(player,id),rel=relations[player][id];
+return visualContact(player,id)&&!t.nonAggression&&rel<5;
+});
+const scored=candidates.map(id=>({id,weight:hostilePairWeight(player,id,1)}));
+const pick=weightedEventPick(scored);if(!pick)return null;
+const n=pick.id,N=countries[n],p=countries[player],rel=relations[player][n];
+return {t:`${N.name} 在边境集结舰队`,
+x:`情报显示，${N.name} 正在与 ${p.name} 接触的边境星域增加舰队部署。双方当前关系为 ${rel> -15?"偏冷":rel>-40?"紧张":"敌对"}。`,
+actor:n,target:player,kind:"borderProvocation",
+choices:[
+["军事威慑",`针对 ${N.name}：-12 国库，+7 舰队；双边关系进一步恶化`,()=>{p.treasury-=12;p.army+=7;setRelation(player,n,-18);threatMemory[n]=clamp((threatMemory[n]||0)+10,0,100);worldTension+=5}],
+["紧急谈判",`只与 ${N.name} 交涉：-5 国库；若仍有外交空间则缓和关系`,()=>{p.treasury-=5;setRelation(player,n,10);worldTension=Math.max(0,worldTension-3)}],
+["暂不回应",`不立即消耗资源；若 ${N.name} 判断你软弱，国内稳定可能下降`,()=>{if(rel<-25||power(N)>power(p)*1.08)p.stability-=7}]
+]};
+}
+function makeNeighborArmsExpansion(){
+const candidates=playerNeighborSecurityCandidates().filter(id=>{
+const t=treatyState(player,id),rel=relations[player][id];
+return !t.nonAggression&&rel<30&&countries[id].army>countries[id].industry*.65;
+});
+const pick=weightedEventPick(candidates.map(id=>({
+id,weight:hostilePairWeight(player,id,.75)*(1+countries[id].army/Math.max(20,countries[player].army)*.18)
+})));
+if(!pick)return null;
+const n=pick.id,N=countries[n],p=countries[player];
+return {t:`${N.name} 扩大军备`,
+x:`${N.name} 正在明显提高舰队投入。由于它与你直接接触且双方并无同盟或互不侵犯约束，这一变化被你的安全部门视为值得关注。`,
+actor:n,target:player,kind:"armsExpansion",
+choices:[
+["跟进扩军",`针对 ${N.name} 的军备增长：-16 国库，+12 舰队`,()=>{p.treasury-=16;p.army+=12;threatMemory[n]=clamp((threatMemory[n]||0)+6,0,100)}],
+["投资技术","-13 国库，+8 科研；以长期效率而不是数量回应",()=>{p.treasury-=13;p.tech+=8}],
+["外交缓和",`仅改善与 ${N.name} 的关系：-5 国库，关系 +10`,()=>{p.treasury-=5;setRelation(player,n,10)}]
+]};
+}
+function makeBorderRefugees(){
+const candidates=neighbors(player).filter(id=>{
+const n=countries[id];if(!n?.alive)return false;
+const fighting=[...wars].some(k=>k.split("-").map(Number).includes(id));
+return fighting||n.stability<38;
+});
+const pick=weightedEventPick(candidates.map(id=>({id,weight:1+(countries[id].stability<38?.8:0)+([...wars].some(k=>k.split("-").map(Number).includes(id))?1.2:0)})));
+if(!pick)return null;
+const n=pick.id,N=countries[n],p=countries[player];
+return {t:`来自 ${N.name} 的边境难民`,
+x:`${N.name} 的${[...wars].some(k=>k.split("-").map(Number).includes(n))?"战争":"内部失稳"}正在把人口推向与你接触的边境星域。`,
+actor:n,target:player,kind:"refugees",
+choices:[
+["开放安置",`接收来自 ${N.name} 的难民：-11 国库，+6 人口，+3 稳定`,()=>{p.treasury-=11;p.pop+=6;p.stability+=3;setRelation(player,n,4)}],
+["有限接收","-5 国库，+2 人口",()=>{p.treasury-=5;p.pop+=2}],
+["关闭边境",`+2 稳定，但与 ${N.name} 关系恶化`,()=>{p.stability+=2;setRelation(player,n,-6)}]
+]};
+}
+function makeGreatPowerPressure(){
+const disputes=situations.filter(s=>s.type!=="战争"&&s.level>=1&&countries[s.a]?.alive&&countries[s.b]?.alive);
+const viable=disputes.filter(s=>{
+if(s.a===player||s.b===player)return false;
+const A=countries[s.a],B=countries[s.b];
+const strong=Math.max(power(A),power(B)),pp=power(countries[player]);
+return strong>pp*.9&&(relations[player][s.a]>-60||relations[player][s.b]>-60);
+});
+const pick=weightedEventPick(viable.map(s=>({s,weight:1+s.level*.5+Math.max(0,-relations[s.a][s.b])/55})));
+if(!pick)return null;
+const s=pick.s,A=countries[s.a],B=countries[s.b],p=countries[player];
+const sponsor=power(A)>=power(B)?A:B,other=sponsor===A?B:A;
+return {t:`${sponsor.name} 要求你在争端中表态`,
+x:`${sponsor.name} 正与 ${other.name} 处于“${s.type}”局势，并要求 ${p.name} 公开表态。该要求来自一场已经存在的国家间争端，而不是随机外交事件。`,
+actor:sponsor.id,target:player,third:other.id,kind:"alignmentPressure",
+choices:[
+[`支持 ${sponsor.name}`,`${sponsor.name} 更信任你，但 ${other.name} 将明显不满`,()=>{setRelation(player,sponsor.id,18);setRelation(player,other.id,-22);worldTension+=3}],
+[`支持 ${other.name}`,`${other.name} 更信任你，但 ${sponsor.name} 将明显不满`,()=>{setRelation(player,other.id,18);setRelation(player,sponsor.id,-22);worldTension+=3}],
+["保持中立","两边都会略有不满，但暂时避免卷入",()=>{setRelation(player,sponsor.id,-5);setRelation(player,other.id,-5);p.stability-=2}],
+["加强防务","不站队：-15 国库，+7 舰队",()=>{p.treasury-=15;p.army+=7;worldTension+=2}]
+]};
+}
+function buildPlayerCrisisPool(){
+const p=countries[player],pool=[];
+if(p.food<85)pool.push({weight:clamp((95-p.food)/35,.3,2.2),event:{t:"连续歉收",x:"农业与补给系统连续受挫，粮食储备开始明显下降。",kind:"harvest",choices:[
+["紧急进口粮食","-22 国库，+28 补给",()=>{p.treasury-=22;p.food+=28}],
+["实行配给","-8 稳定，+12 补给",()=>{p.stability-=8;p.food+=12}],
+["维持市场自由","不花国库，但短缺严重时可能损害稳定",()=>{if(p.food<55||Math.random()<.35)p.stability-=10;else p.treasury+=5}]
+]}});
+if(p.industry>32&&p.stability>45)pool.push({weight:.55+Math.min(1,p.industry/90),event:{t:"工业繁荣",x:"国内新企业与船坞订单快速增长，但基础设施开始吃紧。",kind:"industryBoom",choices:[
+["扩建工业区","-18 国库，+11 工业",()=>{p.treasury-=18;p.industry+=11}],
+["优先民生","-10 国库，+7 稳定",()=>{p.treasury-=10;p.stability+=7}],
+["征收暴利税","+18 国库，-5 稳定",()=>{p.treasury+=18;p.stability-=5}]
+]}});
+if(p.treasury>45&&p.industry>28)pool.push({weight:.45+Math.min(1,p.treasury/160),event:{t:"财政腐败案",x:"审计部门在大型公共项目中发现系统性利益输送。",kind:"corruption",choices:[
+["彻查到底","-9 国库，+8 稳定",()=>{p.treasury-=9;p.stability+=8}],
+["内部处理","-3 国库，+2 稳定",()=>{p.treasury-=3;p.stability+=2}],
+["压下事件","+5 国库；若治理能力不足，后续可能重创稳定",()=>{p.treasury+=5;if(p.stability<60||Math.random()<.3)p.stability-=13}]
+]}});
+const military=makeNeighborArmsExpansion();if(military)pool.push({weight:.8,event:military});
+const provocation=makePlayerBorderProvocation();if(provocation)pool.push({weight:1.05,event:provocation});
+const refugees=makeBorderRefugees();if(refugees)pool.push({weight:.7,event:refugees});
+const pressure=makeGreatPowerPressure();if(pressure)pool.push({weight:.55,event:pressure});
+return pool;
+}
+
 function worldEvent(){
-const alive=countries.filter(c=>c.alive),borderPairs=[];
-for(const a of alive)for(const b of neighbors(a.id))if(a.id<b&&countries[b]?.alive)borderPairs.push([a.id,b]);
-if(!borderPairs.length)return;
-const [a,b]=borderPairs[Math.floor(rand(borderPairs.length))],A=countries[a],B=countries[b],r=Math.random();
-if(r<.40){
-const hit=Math.floor(rand(24,12));setRelation(a,b,-hit);worldTension=clamp(worldTension+6,0,100);
+const alive=countries.filter(c=>c.alive),pairs=[];
+for(let i=0;i<alive.length;i++)for(let j=i+1;j<alive.length;j++){
+const a=alive[i].id,b=alive[j].id;
+if(atWar(a,b))continue;
+const rel=relations[a][b],t=treatyState(a,b),contact=visualContact(a,b),s=pairSituation(a,b);
+if(contact&&!t.alliance&&!t.nonAggression){
+if(rel<12)pairs.push({kind:"friction",a,b,weight:hostilePairWeight(a,b,1.0)});
+if(rel<2)pairs.push({kind:"arms",a,b,weight:hostilePairWeight(a,b,.68)});
+if(rel<-24&&(Math.max(power(countries[a]),power(countries[b]))>Math.min(power(countries[a]),power(countries[b]))*1.08||countries[a].aggression>.62||countries[b].aggression>.62))
+pairs.push({kind:"dispute",a,b,weight:hostilePairWeight(a,b,.72)});
+}
+if(rel>20&&!s&&!t.alliance)pairs.push({kind:"trade",a,b,weight:peacefulPairWeight(a,b,.62)});
+}
+const e=weightedEventPick(pairs);if(!e)return;
+const {a,b}=e,A=countries[a],B=countries[b],rel=relations[a][b];
+if(e.kind==="friction"){
+const hit=Math.floor(clamp(8+Math.max(0,-rel)*.12+worldTension*.04,8,20));
+setRelation(a,b,-hit);worldTension=clamp(worldTension+4,0,100);
 addSituation(a,b,"摩擦");addSignal(a,b,"边境摩擦","warn",7);playerSpillover(a,b,"tension");
-logEvent("边境摩擦",`${A.name} 与 ${B.name} 发生边境冲突；若继续恶化，可能升级为军事对峙。`,"warn");
-}else if(r<.67){
-A.army+=5;B.army+=5;A.treasury-=5;B.treasury-=5;worldTension=clamp(worldTension+5,0,100);
+logEvent("边境摩擦",`${A.name} 与 ${B.name} 在双方接触星域发生摩擦。该事件只会在真实接触、无同盟/互不侵犯约束且关系偏冷时进入候选。`,"warn");
+}else if(e.kind==="arms"){
+A.army+=4;B.army+=4;A.treasury-=4;B.treasury-=4;worldTension=clamp(worldTension+4,0,100);
 addSituation(a,b,"军备竞赛");addSignal(a,b,"军备竞赛","warn",8);playerSpillover(a,b,"tension");
-logEvent("地区军备竞赛",`${A.name} 与 ${B.name} 开始持续军备竞赛，未来数年都会消耗财政并提高军力。`,"warn");
-}else if(r<.84){
-setRelation(a,b,16);A.treasury+=6;B.treasury+=6;worldTension=clamp(worldTension-4,0,100);
-situations=situations.filter(s=>!(s.a===Math.min(a,b)&&s.b===Math.max(a,b)));addSignal(a,b,"贸易协定","good",6);playerSpillover(a,b,"trade");
-logEvent("贸易协定",`${A.name} 与 ${B.name} 签署贸易协定，并缓和双方紧张。`,"good");
-}else{
+logEvent("地区军备竞赛",`${A.name} 与 ${B.name} 因关系恶化与安全竞争开始持续扩军。双方没有互不侵犯或同盟关系。`,"warn");
+}else if(e.kind==="trade"){
+setRelation(a,b,10);A.treasury+=4;B.treasury+=4;worldTension=clamp(worldTension-2,0,100);
+const ts=treatyState(a,b);if(rel>38&&!ts.trade)ts.trade=true;
+addSignal(a,b,"贸易改善","good",6);playerSpillover(a,b,"trade");
+logEvent("贸易关系改善",`${A.name} 与 ${B.name} 因关系良好而扩大贸易往来${ts.trade?"，并建立正式贸易协定":""}。`,"good");
+}else if(e.kind==="dispute"){
 const stronger=power(A)>power(B)?A:B,weaker=stronger===A?B:A;
-setRelation(stronger.id,weaker.id,-22);stronger.army+=4;worldTension=clamp(worldTension+8,0,100);
+setRelation(stronger.id,weaker.id,-14);stronger.army+=3;worldTension=clamp(worldTension+6,0,100);
 addSituation(stronger.id,weaker.id,"对峙",2);addSignal(stronger.id,weaker.id,"领土争端","bad",10);playerSpillover(stronger.id,weaker.id,"tension");
-logEvent("领土争端",`${stronger.name} 对 ${weaker.name} 提出边境要求。双方进入持续对峙，可能进一步爆发战争。`,"bad");
+logEvent("领土争端",`${stronger.name} 针对 ${weaker.name} 的接触星域提出战略要求。双方关系已明显恶化，且不存在同盟或互不侵犯条约。`,"bad");
 }
 }
 
@@ -1846,62 +2047,13 @@ return false
 function showEnd(title,text){paused=true;document.getElementById("modalTitle").textContent=title;document.getElementById("modalText").textContent=text;const box=document.getElementById("modalChoices");box.innerHTML="";const b=document.createElement("button");b.innerHTML="<b>生成新世界</b><small>重新开始一局</small>";b.onclick=()=>{document.getElementById("modal").classList.remove("show");startGame(true)};box.appendChild(b);document.getElementById("modal").classList.add("show")}
 function randomCrisis(){
 const p=countries[player];if(!p.alive)return;
-const pool=[
-{t:"连续歉收",x:"两季降水异常，粮食储备迅速下降。",choices:[
-["紧急进口粮食","-22 国库，+28 粮食",()=>{p.treasury-=22;p.food+=28}],
-["实行配给","-8 稳定，+12 粮食",()=>{p.stability-=8;p.food+=12}],
-["维持市场自由","不花国库，但存在风险",()=>{if(Math.random()<.5)p.stability-=10; else p.treasury+=5}]
-]},
-{t:"邻国军备扩张",x:"情报部门发现邻国正在明显提高军费。",choices:[
-["跟进扩军","-16 国库，+12 军力",()=>{p.treasury-=16;p.army+=12}],
-["投资技术","-13 国库，+8 科技",()=>{p.treasury-=13;p.tech+=8}],
-["外交缓和","+周边关系，-5 国库",()=>{p.treasury-=5;neighbors(player).forEach(n=>setRelation(player,n,10))}]
-]},
-{t:"工业繁荣",x:"新企业集群正在形成，但基础设施已经吃紧。",choices:[
-["扩建工业区","-18 国库，+11 工业",()=>{p.treasury-=18;p.industry+=11}],
-["优先民生","-10 国库，+7 稳定",()=>{p.treasury-=10;p.stability+=7}],
-["征收暴利税","+18 国库，-5 稳定",()=>{p.treasury+=18;p.stability-=5}]
-]},
-{t:"边境难民",x:"邻国冲突导致大量难民涌向边境。",choices:[
-["开放安置","-11 国库，+6 人口，+3 稳定",()=>{p.treasury-=11;p.pop+=6;p.stability+=3}],
-["有限接收","-5 国库，+2 人口",()=>{p.treasury-=5;p.pop+=2}],
-["关闭边境","+2 稳定，但邻国关系恶化",()=>{p.stability+=2;neighbors(player).forEach(n=>setRelation(player,n,-6))}]
-]},
-{t:"财政腐败案",x:"审计发现大型公共项目存在系统性贪腐。",choices:[
-["彻查到底","-9 国库，+8 稳定",()=>{p.treasury-=9;p.stability+=8}],
-["内部处理","-3 国库，+2 稳定",()=>{p.treasury-=3;p.stability+=2}],
-["压下事件","+5 国库；若曝光将重创稳定",()=>{p.treasury+=5;if(Math.random()<.45)p.stability-=13}]
-]},
-{t:"边境挑衅",x:"邻国部队在争议地区集结，国内要求政府作出回应。",choices:[
-["军事威慑","-12 国库，+7 军力；邻国关系恶化",()=>{p.treasury-=12;p.army+=7;const n=neighbors(player);if(n.length)setRelation(player,n[Math.floor(rand(n.length))],-18);worldTension+=5}],
-["紧急谈判","-5 国库；周边关系改善",()=>{p.treasury-=5;neighbors(player).forEach(n=>setRelation(player,n,8));worldTension=Math.max(0,worldTension-3)}],
-["暂不回应","保留资源，但稳定可能下降",()=>{if(Math.random()<.6)p.stability-=7}]
-]},
-{t:"大国施压",x:"一个强国要求你在地区争端中明确站队。",choices:[
-["公开支持","改善一方关系，同时得罪另一方",()=>{const ns=neighbors(player);if(ns[0]!==undefined)setRelation(player,ns[0],18);if(ns[1]!==undefined)setRelation(player,ns[1],-18);worldTension+=3}],
-["保持中立","-4 稳定，避免立即卷入",()=>{p.stability-=4}],
-["扩充防务","-15 国库，+9 军力",()=>{p.treasury-=15;p.army+=9}]
-]}
-];
-showCrisis(pool[Math.floor(rand(pool.length))]);
+const pool=buildPlayerCrisisPool();
+const chosen=weightedEventPick(pool);
+if(!chosen)return;
+showCrisis(chosen.event);
 }
 function showCrisis(e){
-if(e.t==="大国施压"){
-const ns=neighbors(player).filter(i=>countries[i]?.alive);
-const pool=ns.length>=2?ns:countries.filter(c=>c.alive&&c.id!==player).map(c=>c.id);
-const a=pool[0],b=pool.find(x=>x!==a);
-if(a!==undefined&&b!==undefined){
-const A=countries[a],B=countries[b],p=countries[player];
-e={t:`${A.name} 要求你站队`,
-x:`${A.name} 正在与 ${B.name} 因地区利益发生争执，并要求 ${p.name} 公开表态。`,
-choices:[
-[`支持 ${A.name}`,`${A.name} 会更信任你，但 ${B.name} 将明显不满`,()=>{setRelation(player,a,18);setRelation(player,b,-22);worldTension+=3}],
-[`支持 ${B.name}`,`${B.name} 会更信任你，但 ${A.name} 将明显不满`,()=>{setRelation(player,b,18);setRelation(player,a,-22);worldTension+=3}],
-["保持中立","两边都会略有不满，但你暂时避免卷入",()=>{setRelation(player,a,-5);setRelation(player,b,-5);p.stability-=2}],
-["加强防务","不站队，但为可能扩大的危机做准备",()=>{p.treasury-=15;p.army+=7;worldTension+=2}]
-]};
-}
-}
+if(!e)return;
 pendingEvent=e;
 resumeAfterEvent=!paused;
 paused=true;
@@ -1917,6 +2069,7 @@ bar.classList.add("show");
 bar.innerHTML=`<div class="pending-card">
 <div class="pending-head"><b>${pendingEvent.t}</b><span class="pending-tag">待处理事件</span></div>
 <p>${pendingEvent.x}</p>
+${pendingEvent.actor!==undefined?`<small style="display:block;color:#8fb2c4;margin:-4px 0 8px">涉及国家：${countries[pendingEvent.actor]?.name||"—"}${pendingEvent.target!==undefined?` → ${countries[pendingEvent.target]?.name||"—"}`:""}${pendingEvent.third!==undefined?` · 第三方：${countries[pendingEvent.third]?.name||"—"}`:""}</small>`:""}
 <div class="pending-choices"></div>
 <div class="lock-note">事件未处理前：时间暂停，星域指令与外交决策锁定；仍可查看地图和各国信息。</div>
 </div>`;
@@ -2196,19 +2349,26 @@ cp.innerHTML+=`${(()=>{const h=financeHumanSummary(c),w=playerWarStrain();return
 cp.querySelectorAll("[data-a]").forEach(b=>b.onclick=()=>action(b.dataset.a));document.getElementById("expandFrontierBtn")?.addEventListener("click",openExpansionPlanner);
 
 if(c.id!==player){
-const rel=relations[player][c.id],adj=neighbors(player).includes(c.id),war=atWar(player,c.id),proj=projectionProfile(player,c.id);
-const quick=document.createElement("div");quick.className="card";quick.style.marginTop="12px";
-quick.innerHTML=`<h3>与 ${c.name} 的互动</h3>
-<small style="display:block;color:#9db0c4;margin-bottom:5px">${war?"正在交战":rel>35?"关系亲近":rel<-35?"关系紧张":"关系一般"} · ${treatyLabel(player,c.id)} · ${adj?"双方星域接触或紧邻":"当前没有直接星域接触"}${war?` · ${proj.band}投送${proj.band!=="近程"?` · 远征立足 ${Math.round(getWarPlan(player,c.id).expeditionProgress||0)}%`:""}`:""}</small>
-${!war?`<small style="display:block;color:#c8d8e6;margin-bottom:8px"><b>冲突阶段：</b>${conflictStageText(player,c.id)} · ${proj.band}投送</small>`:""}
-${c.id!==player?`<div class="card" style="margin:7px 0"><b>这个国家为什么这样行动？</b><small style="display:block;color:#9db0c4;margin-top:4px">${aiStrategicReason(c)}</small></div>`:""}
-<div class="actions">
-${war?`<button data-q="warcmd"><b>舰队指挥</b><small>聚焦战区并进入舰队战</small></button>
-<button data-q="peace"><b>停火谈判</b><small>查看当前和平条件</small></button>`:
-`<button data-q="interact"><b>交往</b><small>改善关系与贸易</small></button>
-<button data-q="aid"><b>援助</b><small>花费财政改善关系</small></button>
-<button data-q="declare"><b>开战</b><small>${proj.band}投送 · ${proj.desc}</small></button>`}
-</div>`;
+const rel=relations[player][c.id],adj=neighbors(player).includes(c.id),war=atWar(player,c.id),proj=projectionProfile(player,c.id),ts=treatyState(player,c.id);
+const quick=document.createElement("div");quick.className="card diplomacyHub";quick.style.marginTop="12px";
+quick.innerHTML=`<h3>与 ${c.name} 的关系与外交</h3>
+<div class="statusLine"><b>${relationHumanLabel(player,c.id)}</b> · ${treatyLabel(player,c.id)} · ${adj?"星域直接接触":"没有直接星域接触"} · ${proj.band}投送</div>
+<small style="display:block;color:#8fa7b7;margin-top:5px">对方当前判断：${aiStrategicReason(c)}</small>
+${!war?`<small style="display:block;color:#bfd7e4;margin-top:5px"><b>冲突阶段：</b>${conflictStageText(player,c.id)}</small>`:`<small style="display:block;color:#efb1b1;margin-top:5px"><b>当前正在交战</b>${proj.band!=="近程"?` · 远征立足 ${Math.round(getWarPlan(player,c.id).expeditionProgress||0)}%`:""}</small>`}
+${war?`<div class="treatyGrid">
+<button data-q="warcmd"><b>舰队指挥</b><small>进入对 ${c.name} 的战区</small></button>
+<button data-q="peace"><b>停火谈判</b><small>白和平、赔款、割地等条件</small></button>
+</div>`:
+`<h3 style="margin-top:12px">日常外交</h3><div class="treatyGrid">
+<button data-q="interact"><b>进行商业交往</b><small>一次性改善关系，不等于正式贸易协定</small></button>
+<button data-q="aid"><b>提供援助</b><small>花费财政，明显改善双边关系</small></button>
+</div>
+<h3 style="margin-top:12px">正式条约</h3><div class="treatyGrid">
+${ts.trade?`<button data-end-treaty="trade"><b>✓ 贸易协定已生效</b><small>点击可终止；当前贸易收入已计入财政</small></button>`:`<button data-sign-treaty="trade"><b>缔结贸易协定</b><small>对方态度：${treatyAcceptance(c.id,"trade")} · 建立持续贸易收入与补给韧性</small></button>`}
+${ts.nonAggression?`<button data-end-treaty="nonAggression"><b>✓ 互不侵犯已生效</b><small>点击可终止；终止会损害关系与信誉</small></button>`:`<button data-sign-treaty="nonAggression"><b>缔结互不侵犯条约</b><small>对方态度：${treatyAcceptance(c.id,"nonAggression")} · 限制敌对事件与突然开战</small></button>`}
+${ts.alliance?`<button data-end-treaty="alliance"><b>✓ 星际同盟已生效</b><small>点击可解除；同盟不等于自动参战</small></button>`:`<button data-sign-treaty="alliance"><b>缔结星际同盟</b><small>对方态度：${treatyAcceptance(c.id,"alliance")} · 战争时可请求有限支援</small></button>`}
+<button data-q="declare"><b>${conflictState(player,c.id).stage>=3&&year>=(conflictState(player,c.id).readyYear||0)?"战争评估":"升级冲突"}</b><small>${conflictStageText(player,c.id)} · ${proj.band}投送</small></button>
+</div>`}`;
 cp.appendChild(quick);
 quick.querySelector('[data-q="interact"]')?.addEventListener("click",()=>diplomacyAction(c.id,"trade"));
 quick.querySelector('[data-q="aid"]')?.addEventListener("click",()=>{
@@ -2218,8 +2378,10 @@ countries[player].treasury-=10;c.treasury+=7;setRelation(player,c.id,12);ap--;
 logEvent("对外援助",`${countries[player].name} 向 ${c.name} 提供援助，双边关系改善。`,"good");
 toast(`已向 ${c.name} 提供援助。`);renderPanels();
 });
-quick.querySelector('[data-q="declare"]')?.addEventListener("click",()=>{diplomacyAction(c.id,"war");});
-quick.querySelector('[data-q="warcmd"]')?.addEventListener("click",()=>{openTheater(c.id);});
+quick.querySelectorAll("[data-sign-treaty]").forEach(b=>b.onclick=()=>signTreaty(c.id,b.dataset.signTreaty));
+quick.querySelectorAll("[data-end-treaty]").forEach(b=>b.onclick=()=>endTreatyType(c.id,b.dataset.endTreaty));
+quick.querySelector('[data-q="declare"]')?.addEventListener("click",()=>diplomacyAction(c.id,"war"));
+quick.querySelector('[data-q="warcmd"]')?.addEventListener("click",()=>openTheater(c.id));
 quick.querySelector('[data-q="peace"]')?.addEventListener("click",()=>{
 const cards=[...document.querySelectorAll("#countryPanel .card")];
 const wc=cards.find(x=>x.textContent.includes("停战谈判"));if(wc)wc.scrollIntoView({behavior:"smooth",block:"center"});
@@ -2269,23 +2431,6 @@ note.innerHTML=`<b>周边政治反应</b><small style="display:block;color:#9db0
 cp.appendChild(note);
 }
 
-let dp=document.getElementById("diplPanel");dp.innerHTML="<h2>外交</h2>";
-countries.filter(x=>x.alive&&x.id!==player).sort((a,b)=>relations[player][b.id]-relations[player][a.id]).forEach(t=>{
-let rel=relations[player][t.id],war=atWar(player,t.id),adj=neighbors(player).includes(t.id);
-let row=document.createElement("div");row.className="dipl-row";
-const ratio=(power(pc)/Math.max(1,power(t))).toFixed(1);
-row.innerHTML=`<span>${t.name}<small style="display:block;color:#8fa3b8">${adj?"接壤":"非接壤"} · ${war?"战争中":rel>30?"友好":rel<-30?"敌对":"中立"} · ${treatyLabel(player,t.id)} · ${war?projectionProfile(player,t.id).band+"投送":conflictStageText(player,t.id)} · 我方实力 ${ratio}×</small></span><b>${rel>50?"亲近":rel>15?"友好":rel<-50?"敌视":rel<-15?"紧张":"中立"}</b><button>${war?"议和":"交往"}</button>`;
-row.querySelector("button").onclick=()=>{if(war){selected=t.id;document.querySelector('[data-tab="country"]').click();renderPanels();toast("已打开战争谈判与指挥面板。")}else diplomacyAction(t.id,"trade")};dp.appendChild(row);
-if(!war){let w=document.createElement("button");w.textContent=conflictState(player,t.id).stage>=3&&year>=(conflictState(player,t.id).readyYear||0)?"战争评估":"升级冲突";w.style.margin="4px 0 9px";w.onclick=()=>diplomacyAction(t.id,"war");dp.appendChild(w)}
-if(!war&&rel>-10){let a=document.createElement("button");a.textContent="援助";a.style.margin="4px 0 9px 6px";a.onclick=()=>diplomacyAction(t.id,"aid");dp.appendChild(a)}
-if(!war){
-const ts=treatyState(player,t.id);
-if(!ts.trade&&rel>=10){let b=document.createElement("button");b.textContent=`贸易协定 · ${treatyAcceptance(t.id,"trade")} · 增加双方年度收入与补给`;b.style.margin="4px 0 9px 6px";b.onclick=()=>signTreaty(t.id,"trade");dp.appendChild(b)}
-if(!ts.nonAggression&&rel>=24){let b=document.createElement("button");b.textContent=`互不侵犯 · ${treatyAcceptance(t.id,"nonAggression")}`;b.style.margin="4px 0 9px 6px";b.onclick=()=>signTreaty(t.id,"nonAggression");dp.appendChild(b)}
-if(!ts.alliance&&rel>=42){let b=document.createElement("button");b.textContent=`缔结同盟 · ${treatyAcceptance(t.id,"alliance")}`;b.style.margin="4px 0 9px 6px";b.onclick=()=>signTreaty(t.id,"alliance");dp.appendChild(b)}
-if(ts.trade||ts.nonAggression||ts.alliance){let b=document.createElement("button");b.textContent="解除正式条约";b.style.margin="4px 0 9px 6px";b.onclick=()=>endTreaties(t.id);dp.appendChild(b)}
-}
-});
 const activeHtml=situations.length?`<h2>正在发展的局势</h2>`+situations.map(s=>{const A=countries[s.a],B=countries[s.b];return `<div class="card"><b>${s.type} · ${A.name} ↔ ${B.name}</b><small style="display:block;color:#9db0c4">始于 ${s.start} 年 · 当前：${relations[s.a][s.b]<-40?"彼此敌视":relations[s.a][s.b]<-10?"关系紧张":relations[s.a][s.b]>35?"关系亲近":"关系一般"}${atWar(s.a,s.b)?" · 战争中":""}</small></div>`}).join(""):"";
 document.getElementById("eventsPanel").innerHTML=activeHtml+"<h2>世界事件</h2>"+events.map(e=>`<div class="event ${e.sev}"><time>${e.year} 年</time><b>${e.title}</b><span>${e.text}</span></div>`).join("");
 }
@@ -2295,17 +2440,24 @@ if(!countries.length)return;
 const img=ox.createImageData(W,H),data=img.data;
 for(let y=0;y<H;y++)for(let x=0;x<W;x++){
 const k=idx(x,y),p=k*4,o=owner[k],hash=(x*73856093^y*19349663)>>>0;
-if(!terrain[k]){
-let star=(hash%173===0)?120+(hash%110):0;
-data[p]=star?star*.58:2;data[p+1]=star?star*.78:5;data[p+2]=star?star:11;data[p+3]=255;continue;
+const bandY=H*.50+Math.sin(x*.028)*H*.095+Math.sin(x*.071+.8)*H*.035;
+const dist=Math.abs(y-bandY),fog=Math.exp(-(dist*dist)/(2*Math.pow(H*.17,2)));
+const fine=.5+.5*Math.sin(x*.12+y*.075+Math.sin(x*.04)*2);
+let br=2+fog*(3.8+fine*2.0),bg=5+fog*(5.5+fine*2.2),bb=12+fog*(10.5+fine*3.5);
+if(o<0){
+const star=(hash%487===0),bright=(hash%3581===0);
+if(star||bright){
+const s=bright?150+(hash%80):68+(hash%72);
+br+=s*.48;bg+=s*.68;bb+=s;
+}
+data[p]=clamp(br,0,255);data[p+1]=clamp(bg,0,255);data[p+2]=clamp(bb,0,255);data[p+3]=255;continue;
 }
 const hex=countries[o]?.color||"#557788",rgb=hex.match(/\w\w/g).map(v=>parseInt(v,16)),n=noise2(x,y);
-// A: territory tint is deliberately faint, preserving the star-map feel.
-const tint=0.12+n*.018;
-data[p]=clamp(3+rgb[0]*tint,0,255);data[p+1]=clamp(7+rgb[1]*tint,0,255);data[p+2]=clamp(13+rgb[2]*tint,0,255);data[p+3]=255;
-if(hash%113===0){data[p]=Math.min(255,data[p]+88);data[p+1]=Math.min(255,data[p+1]+108);data[p+2]=Math.min(255,data[p+2]+126)}
+const tint=.070+n*.010;
+data[p]=clamp(br+rgb[0]*tint,0,255);data[p+1]=clamp(bg+rgb[1]*tint,0,255);data[p+2]=clamp(bb+rgb[2]*tint,0,255);data[p+3]=255;
+if(hash%1301===0){data[p]=Math.min(255,data[p]+46);data[p+1]=Math.min(255,data[p+1]+66);data[p+2]=Math.min(255,data[p+2]+84)}
 }
-ox.putImageData(img,0,0);mapDirty=false
+ox.putImageData(img,0,0);mapDirty=false;
 }
 
 function ownedLandmarkPoint(c,angle,dist){
@@ -2343,7 +2495,7 @@ ctx.drawImage(off,x0,y0,dw,dh);
 ctx.save();ctx.translate(x0,y0);ctx.scale(scale,scale);
 
 // B: draw boundaries more clearly than interiors.
-ctx.lineWidth=.68/Math.max(.65,cam.z);ctx.strokeStyle="rgba(130,166,184,.56)";ctx.beginPath();
+ctx.lineWidth=.76/Math.max(.65,cam.z);ctx.strokeStyle="rgba(145,178,195,.68)";ctx.beginPath();
 for(let y=1;y<H-1;y++)for(let x=1;x<W-1;x++){
 const o=owner[idx(x,y)];if(o<0)continue;
 if(owner[idx(x+1,y)]!==o){ctx.moveTo(x+1,y);ctx.lineTo(x+1,y+1)}
@@ -2376,7 +2528,7 @@ ctx.stroke();ctx.restore();
 }
 
 if(selected>=0&&countries[selected]?.alive){
-ctx.save();ctx.lineWidth=1.12/Math.max(.7,cam.z);ctx.strokeStyle="rgba(235,250,255,.92)";ctx.beginPath();
+ctx.save();ctx.lineWidth=1.35/Math.max(.7,cam.z);ctx.strokeStyle="rgba(157,229,255,.96)";ctx.shadowColor="rgba(93,202,255,.72)";ctx.shadowBlur=3.2/Math.max(.7,cam.z);ctx.beginPath();
 for(let y=1;y<H-1;y++)for(let x=1;x<W-1;x++){
 if(owner[idx(x,y)]!==selected)continue;
 if(owner[idx(x+1,y)]!==selected){ctx.moveTo(x+1,y);ctx.lineTo(x+1,y+1)}
