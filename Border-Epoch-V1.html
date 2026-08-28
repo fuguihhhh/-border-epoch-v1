@@ -1,0 +1,347 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>边界纪元 · 国家策略沙盒</title><style>:root{--bg:#0b1018;--panel:#121a25;--panel2:#182333;--text:#eaf1f8;--muted:#9db0c4;--line:#2a3a4e;--good:#66d19e;--warn:#e8c166;--bad:#ef7b7b;}*{box-sizing:border-box}html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font:14px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif}body{overflow:hidden}#app{display:grid;grid-template-columns:minmax(0,1fr) 330px;grid-template-rows:56px minmax(0,1fr);height:100vh}header{grid-column:1/3;display:flex;align-items:center;gap:12px;padding:0 16px;background:#0f1722;border-bottom:1px solid var(--line)}.brand{font-weight:800;letter-spacing:.05em}.sub{color:var(--muted);font-size:12px}.spacer{flex:1}button,select{background:#182333;color:var(--text);border:1px solid #31445c;border-radius:9px;padding:8px 10px}button{cursor:pointer}button:hover{background:#213046}button.primary{background:#27624e;border-color:#337d64}#mapWrap{position:relative;overflow:hidden;background:#0a1520}canvas{width:100%;height:100%;display:block}#hud{position:absolute;left:14px;top:14px;display:flex;gap:8px;pointer-events:none}.pill{background:#0d1520dd;border:1px solid #33445a;border-radius:10px;padding:7px 10px;backdrop-filter:blur(8px)}#legend{position:absolute;left:14px;bottom:14px;background:#0d1520dd;border:1px solid #33445a;border-radius:12px;padding:10px 12px;color:var(--muted);font-size:12px}#right{background:var(--panel);border-left:1px solid var(--line);display:flex;flex-direction:column;min-height:0}.tabs{display:flex;border-bottom:1px solid var(--line)}.tab{flex:1;text-align:center;padding:12px 5px;color:var(--muted);cursor:pointer}.tab.active{color:var(--text);background:#172131}.panel{display:none;padding:14px;overflow:auto;min-height:0}.panel.active{display:block}.countryTitle{display:flex;align-items:center;gap:9px;margin-bottom:12px}.swatch{width:14px;height:14px;border-radius:50%}h2,h3{margin:4px 0 10px}h2{font-size:18px}h3{font-size:14px;color:#c9d8e8}.stats{display:grid;grid-template-columns:1fr 1fr;gap:8px}.stat{padding:9px;background:#182333;border:1px solid #26374a;border-radius:10px}.stat b{display:block;font-size:16px}.stat span{color:var(--muted);font-size:12px}.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.action{min-height:58px;text-align:left}.action small{display:block;color:var(--muted)}.event{padding:9px 0;border-bottom:1px solid #223144}.event time{color:var(--muted);font-size:11px}.event b{display:block;margin-top:2px}.card{background:#182333;border:1px solid #293b50;border-radius:12px;padding:11px;margin-bottom:10px}.bar{height:7px;background:#0d1520;border-radius:99px;overflow:hidden;margin-top:6px}.bar>i{display:block;height:100%;background:currentColor}.good{color:var(--good)}.warn{color:var(--warn)}.bad{color:var(--bad)}.dipl-row{display:grid;grid-template-columns:1fr 62px 70px;gap:7px;align-items:center;padding:7px 0;border-bottom:1px solid #223144}#modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:#03070db8;z-index:20}#modal.show{display:flex}.modalBox{width:min(560px,92vw);background:#141e2b;border:1px solid #38506a;border-radius:16px;padding:18px;box-shadow:0 20px 80px #0009}.choices{display:grid;gap:9px;margin-top:12px}.choices button{text-align:left;padding:12px}.choices button small{display:block;color:var(--muted);margin-top:3px}.notice{position:absolute;right:14px;top:14px;width:min(380px,40vw);pointer-events:none}.toast{background:#101925ed;border:1px solid #3d5169;border-radius:11px;padding:10px 12px;margin-bottom:8px;animation:fade 4s forwards}@keyframes fade{0%,70%{opacity:1;transform:none}100%{opacity:0;transform:translateY(-8px)}}#start{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 40%,#193248,#09111b 65%)}.startbox{width:min(660px,90%);padding:28px;background:#0e1722e6;border:1px solid #3a536e;border-radius:20px;text-align:center}.startbox h1{margin:0 0 8px;font-size:32px}.startbox p{color:#aabbd0}.startgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:18px 0}.startgrid .card{margin:0}@media(max-width:850px){#app{grid-template-columns:1fr;grid-template-rows:56px 58vh minmax(0,1fr)}header{grid-column:1}#right{border-left:0;border-top:1px solid var(--line)}}</style></head><body><div id="app"><header><div><div class="brand">边界纪元</div><div class="sub">20–40 分钟国家策略沙盒</div></div><div class="spacer"></div><button id="pauseBtn">暂停</button><select id="speedSel"><option value="1">1×</option><option value="2">2×</option><option value="4" selected>4×</option><option value="8">8×</option></select><button id="newBtn">新世界</button></header><main id="mapWrap"><canvas id="map"></canvas><div id="hud"><div class="pill">年份 <b id="year">1</b></div><div class="pill">行动点 <b id="ap">3</b>/5</div><div class="pill">目标 <b id="goalShort">80 年内综合国力前三</b></div><div class="pill">排名 <b id="rank">—</b></div></div><div class="notice" id="notice"></div><div id="legend">滚轮缩放 · 拖动地图 · 点击国家查看<br>地图没有可见格子；底层区域仅用于模拟。</div><div id="start"><div class="startbox"><h1>边界纪元</h1><p>你不是在玩一张会换颜色的格子图。国家会判断威胁、粮食、财政、外交和战争收益，并根据局势改变策略。</p><div class="startgrid"><div class="card"><b>连续疆界</b><br><small>平滑大陆与国家边界</small></div><div class="card"><b>有限行动</b><br><small>每年只做少数关键决策</small></div><div class="card"><b>会权衡的 AI</b><br><small>不再见人就宣战</small></div></div><button class="primary" id="startBtn">生成世界并开始</button></div></div></main><aside id="right"><div class="tabs"><div class="tab active" data-tab="country">国家</div><div class="tab" data-tab="dipl">外交</div><div class="tab" data-tab="events">事件</div></div><section class="panel active" id="countryPanel"></section><section class="panel" id="diplPanel"></section><section class="panel" id="eventsPanel"></section></aside></div><div id="modal"><div class="modalBox"><h2 id="modalTitle"></h2><div id="modalText"></div><div class="choices" id="modalChoices"></div></div></div><script>(()=>{
+"use strict";
+const W=260,H=150,N=14;
+const canvas=document.getElementById("map"),ctx=canvas.getContext("2d");
+const off=document.createElement("canvas");off.width=W;off.height=H;const ox=off.getContext("2d");
+let terrain=new Uint8Array(W*H), owner=new Int16Array(W*H);
+let countries=[], relations=[], wars=new Set(), events=[], player=0, selected=0;
+let year=1, ap=3, paused=false, speed=4, tickAcc=0, last=performance.now(), nextEventYear=4;
+let cam={x:0,y:0,z:1},drag=null,gameStarted=false,mapDirty=true;
+const colors=["#56a9e6","#e87070","#75c48a","#d69c58","#a684e8","#59c6ba","#e17cab","#9fc766","#dfc264","#758de0","#bd7956","#70a0a7","#cd6c8d","#7eb067"];
+const namesA=["青河","赤原","北岚","苍湾","白岭","曜川","临海","新穹","霜谷","金泽","云岬","长风","南陆","星浦"];
+const forms=["共和国","联邦","王国","联盟","公国","共同体"];
+const rand=(a=1,b=0)=>Math.random()*(a-b)+b, clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const idx=(x,y)=>y*W+x;
+function noise2(x,y){
+return Math.sin(x*.073+Math.sin(y*.11)*1.7)+Math.cos(y*.061-x*.027)+.55*Math.sin((x+y)*.13);
+}
+function generateTerrain(){
+terrain.fill(0); owner.fill(-1);
+const seeds=Array.from({length:6},()=>({x:rand(W*.9,W*.1),y:rand(H*.82,H*.18),r:rand(46,28)}));
+for(let y=0;y<H;y++)for(let x=0;x<W;x++){
+let f=-2.3;
+for(const s of seeds){
+let dx=(x-s.x),dy=(y-s.y)*1.15,d=Math.sqrt(dx*dx+dy*dy);
+f=Math.max(f,1-d/s.r);
+}
+f += noise2(x,y)*.16 - Math.pow((y-H/2)/(H/2),4)*.6;
+terrain[idx(x,y)]=f>.12?1:0;
+}
+for(let k=0;k<3;k++){
+const n=terrain.slice();
+for(let y=1;y<H-1;y++)for(let x=1;x<W-1;x++){
+let c=0;for(let yy=-1;yy<=1;yy++)for(let xx=-1;xx<=1;xx++) c+=n[idx(x+xx,y+yy)];
+terrain[idx(x,y)]=c>=5?1:0;
+}
+}
+}
+function landPoint(){
+for(let tries=0;tries<5000;tries++){
+let x=Math.floor(rand(W)),y=Math.floor(rand(H));
+if(terrain[idx(x,y)]) return {x,y};
+}
+return {x:W/2,y:H/2};
+}
+function generateCountries(){
+countries=[];relations=Array.from({length:N},()=>Array(N).fill(0));wars.clear();
+const caps=[];
+for(let i=0;i<N;i++){
+let p=landPoint();
+for(let t=0;t<100;t++){
+p=landPoint();
+if(caps.every(q=>Math.hypot(p.x-q.x,p.y-q.y)>18))break;
+}
+caps.push(p);
+countries.push({
+id:i,name:namesA[i]+" "+forms[Math.floor(rand(forms.length))],color:colors[i%colors.length],cap:p,
+pop:Math.round(rand(240,70)), treasury:Math.round(rand(150,70)), food:Math.round(rand(115,65)),
+industry:Math.round(rand(60,22)), tech:Math.round(rand(52,18)), army:Math.round(rand(62,22)),
+stability:Math.round(rand(88,58)), aggression:rand(.82,.25), caution:rand(.9,.35), trade:rand(.9,.3),
+strategy:"平衡发展", alive:true, territory:0
+});
+}
+for(let y=0;y<H;y++)for(let x=0;x<W;x++) if(terrain[idx(x,y)]){
+let best=-1,bd=1e9;
+for(const c of countries){
+let d=Math.hypot(x-c.cap.x,y-c.cap.y);
+d += Math.sin(x*.18+c.id)*2.3+Math.cos(y*.15-c.id)*2.0;
+if(d<bd){bd=d;best=c.id}
+}
+owner[idx(x,y)]=best;
+}
+recount();
+for(let i=0;i<N;i++)for(let j=i+1;j<N;j++){
+relations[i][j]=relations[j][i]=Math.round(rand(45,-25));
+}
+}
+function recount(){mapDirty=true;
+countries.forEach(c=>c.territory=0);
+for(let i=0;i<owner.length;i++) if(owner[i]>=0) countries[owner[i]].territory++;
+countries.forEach(c=>{if(c.territory<8)c.alive=false});
+}
+function borders(a,b){
+let n=0;
+for(let y=1;y<H-1;y++)for(let x=1;x<W-1;x++){
+let o=owner[idx(x,y)];if(o!==a)continue;
+if(owner[idx(x+1,y)]===b||owner[idx(x-1,y)]===b||owner[idx(x,y+1)]===b||owner[idx(x,y-1)]===b)n++;
+}
+return n;
+}
+function neighbors(a){
+let s=new Set();
+for(let y=1;y<H-1;y++)for(let x=1;x<W-1;x++) if(owner[idx(x,y)]===a){
+const ns=[owner[idx(x+1,y)],owner[idx(x-1,y)],owner[idx(x,y+1)],owner[idx(x,y-1)]];
+ns.forEach(v=>{if(v>=0&&v!==a)s.add(v)});
+}
+return [...s];
+}
+function power(c){return c.army*1.2+c.industry*.55+c.tech*.7+c.pop*.08+c.treasury*.05}
+function economy(c){return c.industry*1.3+c.pop*.25+c.tech*.45}
+function logEvent(title,text,sev=""){
+events.unshift({year,title,text,sev}); if(events.length>120)events.pop(); renderPanels();
+}
+function toast(msg){let d=document.createElement("div");d.className="toast";d.textContent=msg;document.getElementById("notice").appendChild(d);setTimeout(()=>d.remove(),4100)}
+function setRelation(a,b,delta){relations[a][b]=relations[b][a]=clamp(relations[a][b]+delta,-100,100)}
+function warKey(a,b){return a<b?a+"-"+b:b+"-"+a}
+function atWar(a,b){return wars.has(warKey(a,b))}
+function declareWar(a,b){
+if(atWar(a,b)||!countries[a].alive||!countries[b].alive)return;
+wars.add(warKey(a,b));setRelation(a,b,-55);
+logEvent("战争爆发",`${countries[a].name} 向 ${countries[b].name} 宣战。`,"bad");
+}
+function peace(a,b){
+wars.delete(warKey(a,b));setRelation(a,b,18);
+logEvent("停战",`${countries[a].name} 与 ${countries[b].name} 签署停火协议。`);
+}
+function aiThink(c){
+if(!c.alive||c.id===player)return;
+const ns=neighbors(c.id).filter(i=>countries[i].alive);
+const enemies=ns.filter(i=>atWar(c.id,i));
+const threat=ns.reduce((m,i)=>Math.max(m,power(countries[i])/Math.max(1,power(c))),0);
+if(c.food<45){c.strategy="粮食安全";c.food+=9;c.treasury-=4;c.stability+=1;return}
+if(c.treasury<35){c.strategy="财政修复";c.treasury+=9;c.army-=1;return}
+if(enemies.length){
+c.strategy="战时动员";
+c.army+=4;c.treasury-=5;c.stability-=.5;
+const e=countries[enemies.sort((a,b)=>power(countries[a])-power(countries[b]))[0]];
+if(power(c)<power(e)*.55 && Math.random()<.45) peace(c.id,e.id);
+return;
+}
+if(threat>1.55){c.strategy="防御扩军";c.army+=3;c.treasury-=3;return}
+let target=ns.filter(i=>!atWar(c.id,i)&&relations[c.id][i]<-28&&c.treasury>55&&c.stability>52)
+.sort((a,b)=>power(countries[a])-power(countries[b]))[0];
+if(target!==undefined){
+let ratio=power(c)/Math.max(1,power(countries[target]));
+let desire=c.aggression*ratio*(1-relations[c.id][target]/180);
+if(ratio>1.25 && desire>1.05 && Math.random()<.18){declareWar(c.id,target);c.strategy="机会主义扩张";return}
+}
+const r=Math.random();
+if(r<.30){c.strategy="工业投资";c.industry+=2.2;c.treasury-=3}
+else if(r<.52){c.strategy="科研优先";c.tech+=1.8;c.treasury-=3}
+else if(r<.70){c.strategy="稳健扩军";c.army+=1.5;c.treasury-=2}
+else {c.strategy="民生稳定";c.food+=4;c.stability+=1}
+}
+function simulateWar(a,b){
+const A=countries[a],B=countries[b]; if(!A.alive||!B.alive){wars.delete(warKey(a,b));return}
+let border=borders(a,b);if(!border){peace(a,b);return}
+let pa=power(A)*(rand(1.15,.86))*(.75+A.food/400), pb=power(B)*(rand(1.15,.86))*(.75+B.food/400);
+A.treasury-=2.4;B.treasury-=2.4;A.food-=1.3;B.food-=1.3;A.stability-=.42;B.stability-=.42;
+A.army=Math.max(2,A.army-rand(1.4,.3));B.army=Math.max(2,B.army-rand(1.4,.3));
+let winner=pa>pb?a:b, loser=winner===a?b:a, take=0;
+const candidates=[];
+for(let y=1;y<H-1;y++)for(let x=1;x<W-1;x++) if(owner[idx(x,y)]===loser){
+if(owner[idx(x+1,y)]===winner||owner[idx(x-1,y)]===winner||owner[idx(x,y+1)]===winner||owner[idx(x,y-1)]===winner) candidates.push(idx(x,y));
+}
+candidates.sort(()=>Math.random()-.5);
+let quota=Math.min(candidates.length,Math.max(1,Math.floor(border*.08*clamp(Math.abs(pa-pb)/Math.max(pa,pb)+.18,.08,.42))));
+for(let i=0;i<quota;i++){owner[candidates[i]]=winner;take++}
+if(take>0 && Math.random()<.25) logEvent("前线推进",`${countries[winner].name} 在对 ${countries[loser].name} 的战线上取得推进。`);
+recount();
+if(!countries[loser].alive){
+logEvent("国家灭亡",`${countries[loser].name} 失去了最后的有效领土。`,"bad");
+[...wars].forEach(k=>{if(k.split("-").map(Number).includes(loser))wars.delete(k)});
+}
+}
+function yearly(){
+year++;
+ap=Math.min(5,ap+1);
+for(const c of countries) if(c.alive){
+const terr=Math.max(1,c.territory/70);
+c.pop=Math.max(8,c.pop*(1+clamp((c.food-50)/4500,-.018,.028)));
+c.food+=terr*2.2+c.industry*.035-c.pop*.018;
+c.treasury+=c.industry*.23+c.pop*.035-c.army*.07;
+c.stability+=clamp((c.food-45)/45,-2,1)-Math.max(0,-c.treasury)/35;
+c.food=clamp(c.food,0,180);c.treasury=clamp(c.treasury,-50,350);c.stability=clamp(c.stability,5,100);
+if(c.stability<18&&Math.random()<.18){c.army*=.9;c.treasury-=8;logEvent("国内危机",`${c.name} 因长期失稳发生大规模骚乱。`,"bad")}
+aiThink(c);
+}
+[...wars].forEach(k=>{let[a,b]=k.split("-").map(Number);simulateWar(a,b)});
+if(year>=nextEventYear){randomCrisis();nextEventYear=year+Math.floor(rand(7,4))}
+if(year%8===0) normalizeRelations();
+renderPanels();checkEnd();
+}
+function normalizeRelations(){
+for(let i=0;i<N;i++)for(let j=i+1;j<N;j++) if(!atWar(i,j)){
+let tradeAffinity=(countries[i].trade+countries[j].trade)*.35;
+relations[i][j]=relations[j][i]=clamp(relations[i][j]+rand(5,-3)+tradeAffinity,-100,100);
+}
+}
+function checkEnd(){
+const p=countries[player];
+if(!p.alive){showEnd("国家覆灭",`你的国家在 ${year} 年失去了有效领土。`);return true}
+if(year>=80){const rank=countries.filter(x=>x.alive).sort((a,b)=>power(b)-power(a)).findIndex(x=>x.id===player)+1;showEnd(rank>0&&rank<=3?"目标达成":"时代结束",`80 年结束时，你的综合国力排名为第 ${rank}。`);return true}
+return false
+}
+function showEnd(title,text){paused=true;document.getElementById("modalTitle").textContent=title;document.getElementById("modalText").textContent=text;const box=document.getElementById("modalChoices");box.innerHTML="";const b=document.createElement("button");b.innerHTML="<b>生成新世界</b><small>重新开始一局</small>";b.onclick=()=>{document.getElementById("modal").classList.remove("show");startGame(true)};box.appendChild(b);document.getElementById("modal").classList.add("show")}
+function randomCrisis(){
+const p=countries[player];if(!p.alive)return;
+const pool=[
+{t:"连续歉收",x:"两季降水异常，粮食储备迅速下降。",choices:[
+["紧急进口粮食","-22 国库，+28 粮食",()=>{p.treasury-=22;p.food+=28}],
+["实行配给","-8 稳定，+12 粮食",()=>{p.stability-=8;p.food+=12}],
+["维持市场自由","不花国库，但存在风险",()=>{if(Math.random()<.5)p.stability-=10; else p.treasury+=5}]
+]},
+{t:"邻国军备扩张",x:"情报部门发现邻国正在明显提高军费。",choices:[
+["跟进扩军","-16 国库，+12 军力",()=>{p.treasury-=16;p.army+=12}],
+["投资技术","-13 国库，+8 科技",()=>{p.treasury-=13;p.tech+=8}],
+["外交缓和","+周边关系，-5 国库",()=>{p.treasury-=5;neighbors(player).forEach(n=>setRelation(player,n,10))}]
+]},
+{t:"工业繁荣",x:"新企业集群正在形成，但基础设施已经吃紧。",choices:[
+["扩建工业区","-18 国库，+11 工业",()=>{p.treasury-=18;p.industry+=11}],
+["优先民生","-10 国库，+7 稳定",()=>{p.treasury-=10;p.stability+=7}],
+["征收暴利税","+18 国库，-5 稳定",()=>{p.treasury+=18;p.stability-=5}]
+]},
+{t:"边境难民",x:"邻国冲突导致大量难民涌向边境。",choices:[
+["开放安置","-11 国库，+6 人口，+3 稳定",()=>{p.treasury-=11;p.pop+=6;p.stability+=3}],
+["有限接收","-5 国库，+2 人口",()=>{p.treasury-=5;p.pop+=2}],
+["关闭边境","+2 稳定，但邻国关系恶化",()=>{p.stability+=2;neighbors(player).forEach(n=>setRelation(player,n,-6))}]
+]},
+{t:"财政腐败案",x:"审计发现大型公共项目存在系统性贪腐。",choices:[
+["彻查到底","-9 国库，+8 稳定",()=>{p.treasury-=9;p.stability+=8}],
+["内部处理","-3 国库，+2 稳定",()=>{p.treasury-=3;p.stability+=2}],
+["压下事件","+5 国库；若曝光将重创稳定",()=>{p.treasury+=5;if(Math.random()<.45)p.stability-=13}]
+]}
+];
+showCrisis(pool[Math.floor(rand(pool.length))]);
+}
+function showCrisis(e){
+paused=true;document.getElementById("pauseBtn").textContent="继续";
+document.getElementById("modalTitle").textContent=e.t;document.getElementById("modalText").textContent=e.x;
+let box=document.getElementById("modalChoices");box.innerHTML="";
+e.choices.forEach(([a,b,fn])=>{let bt=document.createElement("button");bt.innerHTML=`<b>${a}</b><small>${b}</small>`;bt.onclick=()=>{fn();logEvent(e.t,a);document.getElementById("modal").classList.remove("show");paused=false;document.getElementById("pauseBtn").textContent="暂停";renderPanels()};box.appendChild(bt)});
+document.getElementById("modal").classList.add("show");
+}
+function action(type){
+const p=countries[player];if(ap<=0){toast("今年没有行动点了。");return}
+if(!p.alive)return; ap--;
+if(type==="farm"){p.food+=14;p.treasury-=8;toast("农业与储备能力提高")}
+if(type==="industry"){p.industry+=7;p.treasury-=12;toast("工业投资完成")}
+if(type==="research"){p.tech+=6;p.treasury-=11;toast("科研投入增加")}
+if(type==="army"){p.army+=9;p.treasury-=13;p.stability-=1;toast("军队完成扩编")}
+if(type==="stability"){p.stability+=7;p.treasury-=9;toast("民生项目改善稳定")}
+renderPanels();
+}
+function diplomacyAction(target,kind){
+if(ap<=0){toast("今年没有行动点了。");return}
+const p=countries[player],t=countries[target];if(!t.alive)return;
+if(kind==="trade"){ap--;p.treasury-=4;setRelation(player,target,13);p.treasury+=7;t.treasury+=5;toast("贸易协议改善了双边关系")}
+if(kind==="war"){
+if(!neighbors(player).includes(target)){toast("只能向接壤国家宣战。");return}
+ap--;declareWar(player,target);
+}
+if(kind==="peace"){ap--;peace(player,target)}
+if(kind==="aid"){if(p.treasury<12){toast("国库不足 12。");return}ap--;p.treasury-=12;t.treasury+=9;setRelation(player,target,18);toast("援助改善了双边关系")}
+renderPanels();
+}
+function renderPanels(){
+if(!countries.length)return;
+const c=countries[selected]||countries[player], pc=countries[player];
+document.getElementById("year").textContent=year;document.getElementById("ap").textContent=ap;const liveRank=countries.filter(x=>x.alive).sort((a,b)=>power(b)-power(a)).findIndex(x=>x.id===player)+1;document.getElementById("rank").textContent=liveRank>0?liveRank+" / "+countries.filter(x=>x.alive).length:"—";
+let cp=document.getElementById("countryPanel");
+cp.innerHTML=`<div class="countryTitle"><i class="swatch" style="background:${c.color}"></i><div><h2>${c.name}</h2><div class="sub">${c.id===player?"你的国家 · ":""}战略：${c.strategy}</div></div></div><div class="stats">
+${stat("人口",Math.round(c.pop)+" 万")}
+${stat("国库",Math.round(c.treasury))}
+${stat("粮食",Math.round(c.food))}
+${stat("工业",Math.round(c.industry))}
+${stat("科技",Math.round(c.tech))}
+${stat("军力",Math.round(c.army))}
+${stat("稳定",Math.round(c.stability)+"%")}
+${stat("领土",Math.round(c.territory/12))}
+</div>`;
+if(c.id===player) cp.innerHTML+=`<h3 style="margin-top:14px">国家行动</h3><div class="actions"><button class="action" data-a="farm"><b>粮食计划</b><small>-8 国库 / +14 粮食</small></button><button class="action" data-a="industry"><b>工业投资</b><small>-12 / +7 工业</small></button><button class="action" data-a="research"><b>科研计划</b><small>-11 / +6 科技</small></button><button class="action" data-a="army"><b>扩充军备</b><small>-13 / +9 军力</small></button><button class="action" data-a="stability"><b>民生项目</b><small>-9 / +7 稳定</small></button></div>`;
+cp.querySelectorAll("[data-a]").forEach(b=>b.onclick=()=>action(b.dataset.a));
+let dp=document.getElementById("diplPanel");dp.innerHTML="<h2>外交</h2>";
+countries.filter(x=>x.alive&&x.id!==player).sort((a,b)=>relations[player][b.id]-relations[player][a.id]).forEach(t=>{
+let rel=relations[player][t.id],war=atWar(player,t.id),adj=neighbors(player).includes(t.id);
+let row=document.createElement("div");row.className="dipl-row";
+const ratio=(power(pc)/Math.max(1,power(t))).toFixed(1);
+row.innerHTML=`<span>${t.name}<small style="display:block;color:#8fa3b8">${adj?"接壤":"非接壤"} · ${war?"战争中":rel>30?"友好":rel<-30?"敌对":"中立"} · 我方实力 ${ratio}×</small></span><b>${Math.round(rel)}</b><button>${war?"议和":"交往"}</button>`;
+row.querySelector("button").onclick=()=>diplomacyAction(t.id,war?"peace":"trade");dp.appendChild(row);
+if(!war&&adj&&rel<-15){let w=document.createElement("button");w.textContent="宣战";w.style.margin="4px 0 9px";w.onclick=()=>diplomacyAction(t.id,"war");dp.appendChild(w)}
+if(!war&&rel>-10){let a=document.createElement("button");a.textContent="援助";a.style.margin="4px 0 9px 6px";a.onclick=()=>diplomacyAction(t.id,"aid");dp.appendChild(a)}
+});
+document.getElementById("eventsPanel").innerHTML="<h2>世界事件</h2>"+events.map(e=>`<div class="event ${e.sev}"><time>${e.year} 年</time><b>${e.title}</b><span>${e.text}</span></div>`).join("");
+}
+function stat(a,b){return `<div class="stat"><span>${a}</span><b>${b}</b></div>`}
+function rebuildTexture(){
+if(!countries.length)return;
+const img=ox.createImageData(W,H),data=img.data;
+for(let y=0;y<H;y++)for(let x=0;x<W;x++){
+const k=idx(x,y),p=k*4,o=owner[k];
+if(!terrain[k]){data[p]=8;data[p+1]=24;data[p+2]=37;data[p+3]=255;continue}
+const hex=countries[o]?.color||"#667788",rgb=hex.match(/\w\w/g).map(v=>parseInt(v,16)),shade=(noise2(x,y)+2)*3;
+data[p]=clamp(rgb[0]+shade,0,255);data[p+1]=clamp(rgb[1]+shade,0,255);data[p+2]=clamp(rgb[2]+shade,0,255);data[p+3]=255;
+}
+ox.putImageData(img,0,0);mapDirty=false
+}
+function draw(){
+const rect=canvas.getBoundingClientRect(),dpr=devicePixelRatio||1;
+if(canvas.width!==Math.floor(rect.width*dpr)||canvas.height!==Math.floor(rect.height*dpr)){canvas.width=Math.floor(rect.width*dpr);canvas.height=Math.floor(rect.height*dpr)}
+ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,rect.width,rect.height);
+if(mapDirty)rebuildTexture();
+const scale=Math.min(rect.width/W,rect.height/H)*cam.z, dw=W*scale,dh=H*scale;
+const x0=(rect.width-dw)/2+cam.x,y0=(rect.height-dh)/2+cam.y;
+ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality="high";
+ctx.drawImage(off,x0,y0,dw,dh);
+ctx.save();ctx.translate(x0,y0);ctx.scale(scale,scale);
+ctx.lineWidth=0.42/Math.max(.6,cam.z);ctx.strokeStyle="rgba(5,12,18,.58)";ctx.beginPath();
+for(let y=1;y<H-1;y+=1)for(let x=1;x<W-1;x+=1){
+let o=owner[idx(x,y)];if(o<0)continue;
+if(owner[idx(x+1,y)]!==o){ctx.moveTo(x+1,y);ctx.lineTo(x+1,y+1)}
+if(owner[idx(x,y+1)]!==o){ctx.moveTo(x,y+1);ctx.lineTo(x+1,y+1)}
+}
+ctx.stroke();
+for(const c of countries)if(c.alive){
+ctx.beginPath();ctx.arc(c.cap.x,c.cap.y,c.id===selected?2.2:1.4,0,Math.PI*2);ctx.fillStyle="#f7f5e8";ctx.fill();
+if(cam.z>1.15||c.id===selected){ctx.font="3.6px system-ui";ctx.fillStyle="#fff";ctx.textAlign="center";ctx.fillText(c.name.split(" ")[0],c.cap.x,c.cap.y-3)}
+}
+ctx.restore();
+}
+function screenToMap(sx,sy){
+const r=canvas.getBoundingClientRect(),scale=Math.min(r.width/W,r.height/H)*cam.z,dw=W*scale,dh=H*scale;
+const x0=(r.width-dw)/2+cam.x,y0=(r.height-dh)/2+cam.y;
+return {x:Math.floor((sx-x0)/scale),y:Math.floor((sy-y0)/scale)}
+}
+canvas.addEventListener("click",e=>{if(drag&&drag.moved)return;let p=screenToMap(e.offsetX,e.offsetY);if(p.x>=0&&p.x<W&&p.y>=0&&p.y<H){let o=owner[idx(p.x,p.y)];if(o>=0){selected=o;document.querySelector('[data-tab="country"]').click();renderPanels()}}});
+canvas.addEventListener("pointerdown",e=>{drag={x:e.clientX,y:e.clientY,cx:cam.x,cy:cam.y,moved:false};canvas.setPointerCapture(e.pointerId)});
+canvas.addEventListener("pointermove",e=>{if(!drag)return;let dx=e.clientX-drag.x,dy=e.clientY-drag.y;if(Math.hypot(dx,dy)>3)drag.moved=true;cam.x=drag.cx+dx;cam.y=drag.cy+dy});
+canvas.addEventListener("pointerup",()=>drag=null);
+canvas.addEventListener("wheel",e=>{e.preventDefault();cam.z=clamp(cam.z*(e.deltaY<0?1.12:.89),.7,3)}, {passive:false});
+document.querySelectorAll(".tab").forEach(t=>t.onclick=()=>{document.querySelectorAll(".tab,.panel").forEach(x=>x.classList.remove("active"));t.classList.add("active");document.getElementById(t.dataset.tab+"Panel").classList.add("active")});
+document.getElementById("pauseBtn").onclick=()=>{paused=!paused;document.getElementById("pauseBtn").textContent=paused?"继续":"暂停"};
+document.getElementById("speedSel").onchange=e=>speed=+e.target.value;
+document.getElementById("newBtn").onclick=()=>startGame(true);
+document.getElementById("startBtn").onclick=()=>{document.getElementById("start").style.display="none";startGame(false)};
+function startGame(reset){
+generateTerrain();generateCountries();mapDirty=true;year=1;ap=3;events=[];paused=false;selected=player=0;nextEventYear=4;cam={x:0,y:0,z:1};gameStarted=true;
+logEvent("新纪元",`${countries[player].name} 开始了新的时代。你的目标是在 80 年内进入综合国力前三。`);
+renderPanels();
+}
+function loop(t){
+let dt=Math.min(.05,(t-last)/1000);last=t;
+if(gameStarted&&!paused){tickAcc+=dt*speed;if(tickAcc>=2.2){tickAcc=0;yearly()}}
+draw();requestAnimationFrame(loop);
+}
+if(location.hash==="#autostart"){document.getElementById("start").style.display="none";startGame(false);for(let i=0;i<3;i++)yearly();document.body.dataset.selftest=(countries.length===N&&terrain.length===W*H&&owner.length===W*H&&Number.isFinite(power(countries[0])))?"ok":"fail"}
+requestAnimationFrame(loop);
+})();</script></body></html>
