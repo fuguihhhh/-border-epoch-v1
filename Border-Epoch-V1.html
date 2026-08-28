@@ -108,7 +108,7 @@ body.fiscal-warning #right{box-shadow:inset 3px 0 0 #d99a37,0 0 22px #d99a3710}b
 #priorityHint,.notice,.theaterHint{display:none!important}
 #actionStatus{display:none;padding:5px 12px;border-bottom:1px solid #173044;color:#8fb2c4;font-size:11px;line-height:1.35;min-height:0}
 #actionStatus.show{display:block}
-#financeReport{width:100%;max-height:none;overflow:visible}</style></head><body><div id="app"><header><div><div class="brand">边界纪元 // 星域战争</div><div class="sub">SECTOR COMMAND · 20–40 分钟星际战略沙盒</div></div><div class="spacer"></div><div id="warDock"></div><button id="pauseBtn">暂停</button><select id="speedSel"><option value="1" selected>1×</option><option value="2">2×</option><option value="4">4×</option><option value="8">8×</option></select><button id="newBtn">新世界</button></header><main id="mapWrap"><canvas id="map"></canvas><div id="hud"><div class="pill">星历 <b id="year">1</b></div><div class="pill">指挥点 <b id="ap">3</b>/4</div><div class="pill">目标 <b id="goalShort">120 年内：前三并连续保持 10 年</b></div><div class="pill">排名 <b id="rank">—</b></div><div class="pill">前三连续 <b id="streak">0</b>/10</div><div class="pill">银河局势 <b id="tension">平静</b></div></div><div id="priorityHint"></div><div class="notice" id="notice"></div><div id="legend" style="display:none"></div><div id="start"><div class="startbox"><h1>边界纪元 // 星域战争</h1><p>你指挥的是一片正在扩张的星域势力。各方会根据威胁、资源、外交与战争收益改变战略。</p><div class="startgrid"><div class="card"><b>连续星域</b><br><small>势力范围沿恒星航道自然延展</small></div><div class="card"><b>有限指挥</b><br><small>每个星历周期只有有限指挥资源</small></div><div class="card"><b>会权衡的势力</b><br><small>会因边境、舰队与银河紧张度调整战略</small></div></div><button class="primary" id="startBtn">生成星域并开始</button></div></div></main><aside id="right"><div id="pendingEventBar"></div><div class="tabs"><div class="tab active" data-tab="country">星域</div><div class="tab" data-tab="dipl">星际外交</div><div class="tab" data-tab="events">战情日志</div></div><div id="actionStatus" aria-live="polite"></div><section class="panel active" id="countryPanel"></section><section class="panel" id="diplPanel"></section><section class="panel" id="eventsPanel"></section></aside></div>
+#financeReport{width:100%;max-height:none;overflow:visible}</style></head><body><div id="app"><header><div><div class="brand">边界纪元 // 星域战争</div><div class="sub">SECTOR COMMAND · 20–40 分钟星际战略沙盒</div></div><div class="spacer"></div><div id="warDock"></div><button id="pauseBtn">暂停</button><select id="speedSel"><option value="1" selected>1×</option><option value="2">2×</option><option value="4">4×</option><option value="8">8×</option></select><button id="newBtn">新世界</button></header><main id="mapWrap"><canvas id="map"></canvas><div id="hud"><div class="pill">星历 <b id="year">1</b></div><div class="pill">指挥点 <b id="ap">3</b>/4</div><div class="pill">目标 <b id="goalShort">120 年内：前三并连续保持 10 年</b></div><div class="pill">排名 <b id="rank">—</b></div><div class="pill">前三连续 <b id="streak">0</b>/10</div><div class="pill">银河局势 <b id="tension">平静</b></div></div><div id="priorityHint"></div><div id="legend" style="display:none"></div><div id="start"><div class="startbox"><h1>边界纪元 // 星域战争</h1><p>你指挥的是一片正在扩张的星域势力。各方会根据威胁、资源、外交与战争收益改变战略。</p><div class="startgrid"><div class="card"><b>连续星域</b><br><small>势力范围沿恒星航道自然延展</small></div><div class="card"><b>有限指挥</b><br><small>每个星历周期只有有限指挥资源</small></div><div class="card"><b>会权衡的势力</b><br><small>会因边境、舰队与银河紧张度调整战略</small></div></div><button class="primary" id="startBtn">生成星域并开始</button></div></div></main><aside id="right"><div id="pendingEventBar"></div><div class="tabs"><div class="tab active" data-tab="country">星域</div><div class="tab" data-tab="dipl">星际外交</div><div class="tab" data-tab="events">战情日志</div></div><div id="actionStatus" aria-live="polite"></div><section class="panel active" id="countryPanel"></section><section class="panel" id="diplPanel"></section><section class="panel" id="eventsPanel"></section></aside></div>
 <div id="battleMode">
   <div id="battleField">
     <canvas id="battleCanvas"></canvas>
@@ -476,7 +476,15 @@ const dock=document.getElementById("warDock");
 const ts=playerWarTargets();
 if(!gameStarted||!ts.length){dock.classList.remove("show");dock.innerHTML="";return}
 dock.classList.add("show");
-dock.innerHTML=`<div class="warDockCard"><b>⚔ ${ts.length===1?countries[ts[0]].name:`${ts.length} 场战争`}</b><button id="openTheaterBtn">星域战区</button></div>`;
+let brief="";
+if(ts.length===1){
+const t=ts[0],proj=projectionProfile(player,t),plan=getWarPlan(player,t);
+brief=proj.band==="近程"?"近程战线":`${proj.band}远征 · 立足 ${Math.round(plan.expeditionProgress||0)}%`;
+}else{
+const remotes=ts.filter(t=>projectionProfile(player,t).band!=="近程").length;
+brief=remotes?`${remotes} 个远征战区`:"均为近程战线";
+}
+dock.innerHTML=`<div class="warDockCard"><b>⚔ ${ts.length===1?countries[ts[0]].name:`${ts.length} 场战争`} · ${brief}</b><button id="openTheaterBtn">星域战区</button></div>`;
 document.getElementById("openTheaterBtn").onclick=()=>openTheater(ts[0]);
 }
 function showWarNotice(a,b){
@@ -539,6 +547,7 @@ side.innerHTML=`<h2>${countries[player].name}—${t.name} 战区</h2>
 <div class="card"><b>本战区星际地形</b><small style="display:block;color:#9db0c4;margin-top:4px">${plan.theater.features.map(f=>`${f.type}：${f.desc}`).join("<br>")}</small><small style="display:block;color:#7896aa;margin-top:5px">这组地形在本场战争中固定，不会每年重新随机。</small></div><div class="card"><b>战争投送：${projectionProfile(player,theaterTarget).band}</b><small style="display:block;color:#9db0c4">${projectionProfile(player,theaterTarget).desc}${projectionProfile(player,theaterTarget).band!=="近程"?` · 远征立足进度 ${Math.round(plan.expeditionProgress||0)}%`:""}</small></div><div class="card"><b>当前前线：${s.label}</b><small style="display:block;color:#9db0c4">补给 ${s.supply} · 疲劳 ${s.fatigue} · ${s.allies?`${s.allies} 个实际支援盟友`:"暂无盟友实际参战"}${s.third?` · ${s.third} 个第三方牵制`:""}</small><small style="display:block;color:#9db0c4;margin-top:5px">最近战况：${plan.lastBattleNote||"尚无决定性舰队战"}</small></div>
 ${ts.length>1?`<h3>选择战区</h3>${ts.map(x=>`<div class="theaterWar ${x===theaterTarget?"active":""}" data-twar="${x}">${countries[x].name}</div>`).join("")}`:""}
 ${plan.enemyDemand&&!plan.enemyDemand.resolved?`<div class="focusCard"><b>敌方停战要求</b><small style="display:block;color:#c7d3de;margin-top:4px">${enemyDemandText(plan.enemyDemand,theaterTarget)}</small><div class="actions" style="margin-top:7px"><button id="acceptEnemyDemand">接受并停战</button><button id="rejectEnemyDemand">拒绝，继续战争</button></div></div>`:""}
+${(()=>{const cs=coalitionSupport(player,theaterTarget);return `<div class="card"><b>盟友支援</b><small style="display:block;color:#9db0c4;margin-top:4px">${cs.allies.length?`${cs.allies.length} 个盟友已实际支援。`:"目前没有盟友实际支援。"} ${cs.availableAllies.length?`还有 ${cs.availableAllies.length} 个正式盟友可以请求。`:"没有新的盟友可请求。"}</small>${cs.availableAllies.length?`<button id="requestWarAllySupportBtn" style="margin-top:8px">请求一个盟友支援</button>`:""}</div>`})()}
 <div class="card"><b>你在这里主要做两件事</b><small style="display:block;color:#9db0c4">① 指挥关键舰队战改变前线；② 判断是否已经达到战争目标并谈判。敌方在占优时也会主动提出条件。</small></div>
 <button class="primary" id="startBattleFromTheater">指挥关键舰队战</button>
 <div class="card" style="margin-top:10px"><b>直接提出停战条件</b><small style="display:block;color:#9db0c4;margin-top:4px">你可以主动付钱求和，不需要等敌方先开价。正式提案消耗 1 个行动点，同一战区每年最多一次。</small>
@@ -553,6 +562,7 @@ ${plan.enemyDemand&&!plan.enemyDemand.resolved?`<div class="focusCard"><b>敌方
 side.querySelectorAll("[data-twar]").forEach(el=>el.onclick=()=>{theaterTarget=+el.dataset.twar;renderTheater();drawTheater()});
 document.getElementById("acceptEnemyDemand")?.addEventListener("click",()=>answerEnemyPeaceDemand(theaterTarget,true));
 document.getElementById("rejectEnemyDemand")?.addEventListener("click",()=>answerEnemyPeaceDemand(theaterTarget,false));
+document.getElementById("requestWarAllySupportBtn")?.addEventListener("click",()=>requestWarAllySupport(theaterTarget));
 side.querySelectorAll("[data-theater-peace]").forEach(b=>b.onclick=()=>{
 const target=theaterTarget,term=b.dataset.theaterPeace;
 proposePeace(target,term);
@@ -668,6 +678,19 @@ return true;
 return false;
 }
 
+function aiStrategicReason(c){
+if(c.lastDecisionReason)return c.lastDecisionReason;
+if(c.food<40)return "补给不足，当前首先考虑供应安全";
+if(c.treasury<18)return "财政偏紧，正在限制军备与扩张";
+const rel=relations[c.id][player],ratio=power(c)/Math.max(1,power(countries[player]));
+if(atWar(c.id,player))return "正在与你交战，主要判断来自战力、补给与战争疲劳";
+if(rel<-35&&ratio>1.05)return "与你关系紧张，而且认为自身力量足以施压";
+if(rel<-20)return "与你关系较差，安全疑虑正在上升";
+if(rel>45&&c.trade>.6)return "重视贸易，而且与你关系较好，合作收益更重要";
+if(c.aggression>.68)return "国家本身更偏进取，会更关注力量差与扩张机会";
+if(c.caution>.7)return "国家决策偏谨慎，会优先避免高风险战争";
+return "当前没有单一因素压倒其他因素，仍在权衡发展与安全";
+}
 function aiThink(c){
 if(!c.alive||c.id===player)return;
 if(preventiveWarAttempt(c))return;
@@ -675,17 +698,17 @@ const ns=neighbors(c.id).filter(i=>countries[i].alive);
 const enemies=ns.filter(i=>atWar(c.id,i));
 const threat=ns.reduce((m,i)=>Math.max(m,power(countries[i])/Math.max(1,power(c))),0);
 
-if(c.food<40){c.strategy="保障供应";c.food+=10;c.treasury-=6;c.stability+=1;return}
-if(c.treasury<18){c.strategy="财政紧缩";c.treasury+=9;c.army=Math.max(3,c.army-1.5);c.stability-=.4;return}
+if(c.food<40){c.lastDecisionReason="补给不足，因此优先保障供应";c.strategy="保障供应";c.food+=10;c.treasury-=6;c.stability+=1;return}
+if(c.treasury<18){c.lastDecisionReason="财政储备过低，因此主动收缩军费";c.strategy="财政紧缩";c.treasury+=9;c.army=Math.max(3,c.army-1.5);c.stability-=.4;return}
 
 if(enemies.length){
-c.strategy="战争状态";c.army+=2.8;c.treasury-=5;c.stability-=.8;
+c.lastDecisionReason="正在战争中，因此优先补充舰队并承受战时财政压力";c.strategy="战争状态";c.army+=2.8;c.treasury-=5;c.stability-=.8;
 const e=countries[enemies.sort((a,b)=>power(countries[a])-power(countries[b]))[0]];
 if((power(c)<power(e)*.58||c.stability<24||c.treasury<-15)&&Math.random()<.38)peace(c.id,e.id);
 return;
 }
 
-if(threat>1.45){c.strategy="防御动员";c.army+=2.8;c.treasury-=4;return}
+if(threat>1.45){c.lastDecisionReason="判断潜在对手力量明显高于自己，因此进行防御动员";c.strategy="防御动员";c.army+=2.8;c.treasury-=4;return}
 
 const candidates=ns.filter(i=>!atWar(c.id,i)&&countries[i].alive);
 candidates.sort((a,b)=>{
@@ -705,17 +728,17 @@ if(rel<-45)trigger+=.08;
 if(ratio>1.12)trigger+=.05;
 if(situations.some(s=>s.a===Math.min(c.id,target)&&s.b===Math.max(c.id,target)&&["对峙","战争"].includes(s.type)))trigger+=.12;
 if(c.treasury>(proj.band==="近程"?35:proj.band==="中程"?50:70)&&c.stability>38&&Math.random()<Math.max(.003,trigger)){
-declareWar(c.id,target);c.strategy=ratio>1.25?"趁势进攻":"冒险开战";
+c.lastDecisionReason=`与 ${t.name} 关系偏紧张，且当前力量与银河局势让其认为战争有机会`;declareWar(c.id,target);c.strategy=ratio>1.25?"趁势进攻":"冒险开战";
 addSituation(c.id,target,"战争",4);addSignal(c.id,target,"星际战争爆发","war",12);return;
 }
 }
 
 const r=Math.random();
-if(r<.27){c.strategy="发展工业";c.industry+=2.4;c.treasury-=4}
-else if(r<.49){c.strategy="科研优先";c.tech+=2.1;c.treasury-=4}
-else if(r<.67){c.strategy="增加军备";c.army+=2.2;c.treasury-=3.8;worldTension=clamp(worldTension+.35,0,100)}
-else if(r<.84){c.strategy="稳定民生";c.food+=4;c.stability+=1.2;c.treasury-=2}
-else{c.strategy="平衡发展";c.industry+=1.1;c.tech+=1;c.army+=.7;c.treasury-=3.5}
+if(r<.27){c.lastDecisionReason="当前没有迫切安全危机，因此把资源投入工业";c.strategy="发展工业";c.industry+=2.4;c.treasury-=4}
+else if(r<.49){c.lastDecisionReason="当前安全压力可控，因此优先积累科研优势";c.strategy="科研优先";c.tech+=2.1;c.treasury-=4}
+else if(r<.67){c.lastDecisionReason="正在提高军事准备，以应对未来的不确定性";c.strategy="增加军备";c.army+=2.2;c.treasury-=3.8;worldTension=clamp(worldTension+.35,0,100)}
+else if(r<.84){c.lastDecisionReason="当前更重视内部稳定与补给恢复";c.strategy="稳定民生";c.food+=4;c.stability+=1.2;c.treasury-=2}
+else{c.lastDecisionReason="没有迫切危机，维持工业、科研与军备的平衡";c.strategy="平衡发展";c.industry+=1.1;c.tech+=1;c.army+=.7;c.treasury-=3.5}
 }
 
 
@@ -849,6 +872,13 @@ logEvent("谈判破裂",`${e.name} 拒绝了 ${p.name} 提出的停战方案。�
 renderPanels();renderWarDock();
 }
 
+function logFrontlineAdvance(winner,loser){
+const key=`${winner}-${loser}-${year}`;
+const existing=events.find(e=>e.frontKey===key);
+if(existing){existing.count=(existing.count||1)+1;existing.text=`${countries[winner].name} 本年已在对 ${countries[loser].name} 的战线上推进 ${existing.count} 次；地图边界已同步变化。`;return}
+events.unshift({year,title:"前线推进",text:`${countries[winner].name} 在对 ${countries[loser].name} 的战线上取得推进；地图边界已同步变化。`,sev:"",frontKey:key,count:1});
+if(events.length>120)events.pop();
+}
 function battleWhy(a,b,winner){
 const f=warForecast(a,b);
 const reasons=f.factors.map(x=>x.text).slice(0,3).join("；");
@@ -1030,6 +1060,25 @@ if(localBattle?.allyResponse==="接受：加强主攻")support*=1.14;
 else if(localBattle?.allyResponse==="接受：牵制敌军")support*=1.08;
 else if(localBattle?.allyResponse==="接受：暂缓进攻")support*=.65;
 return {value:support,count:allies.allies.length};
+}
+function requestWarAllySupport(target){
+if(!atWar(player,target)){toast("当前没有与该国交战。");return}
+if(ap<=0){toast("今年没有行动点用于盟友协调。");return}
+const support=coalitionSupport(player,target),plan=getWarPlan(player,target);
+if(!support.availableAllies.length){toast(support.allies.length?"所有可用盟友都已经承诺支援。":"当前没有可请求支援的正式盟友。");return}
+const cand=support.availableAllies.sort((a,b)=>b.coord-a.coord)[0],rel=relations[player][cand.id];
+let chance=.42+Math.max(0,rel-40)*.006;
+if(playerWarFatigue(target)>55)chance+=.06;
+ap--;
+if(Math.random()<clamp(chance,.25,.84)){
+plan.allyCommitments[cand.id]={kind:"战区支援",year};
+logEvent("盟友承诺支援",`${cand.name} 接受请求，将在对 ${countries[target].name} 的战争中提供有限舰队支援。`,"good");
+toast(`${cand.name} 已承诺支援这个战区。`);
+}else{
+logEvent("盟友拒绝参战支援",`${cand.name} 维持同盟，但拒绝直接投入对 ${countries[target].name} 的战争。`,"warn");
+toast(`${cand.name} 拒绝直接支援这场战争。`);
+}
+renderPanels();if(document.getElementById("theaterPanel").classList.contains("show"))renderTheater();
 }
 function requestAllyBattleHelp(kind,target){
 const support=coalitionSupport(player,target),plan=getWarPlan(player,target);
@@ -1354,9 +1403,9 @@ const wp=getWarPlan(player,winner===player?loser:winner),delta=winner===player?M
 wp.frontShift=clamp((wp.frontShift||0)+delta,-10,10);wp.lastBattleNote=`${year} 年：${countries[winner].name} 在常规前线取得推进`;
 }
 addSignal(winner,loser,`${countries[winner].name.split(" ")[0]}推进`,"war",5);
-if(winner===player||loser===player||neighbors(player).includes(winner)||neighbors(player).includes(loser))toast(`${countries[winner].name} 的前线发生推进，国境已改变。`);
+/* 普通前线推进只更新地图与日志，不再弹出即时消息。 */
 }
-if(take>0 && Math.random()<.25) logEvent("前线推进",`${countries[winner].name} 在对 ${countries[loser].name} 的战线上取得推进。${battleWhy(a,b,winner)}`);
+if(take>0)logFrontlineAdvance(winner,loser);
 if(take>0&&(winner===player||loser===player)){
 const wp=getWarPlan(player,winner===player?loser:winner);
 if(winner===player&&wp.objective==="切断补给"){
@@ -1525,7 +1574,25 @@ if(c.id===player)toast(`国家长期结构已经形成：${next}`);
 function evolutionSummary(c){
 const e=ensureEvolution(c);
 return `${e.type} · 趋势：${e.trend}`;
+}function evolutionReasons(c){
+const e=ensureEvolution(c),tradePacts=Object.entries(treaties).filter(([k,t])=>{if(!t.trade)return false;const [a,b]=k.split("-").map(Number);return a===c.id||b===c.id}).length;
+const warCount=[...wars].filter(k=>k.split("-").map(Number).includes(c.id)).length;
+const reasons=[];
+if(tradePacts)reasons.push(`有 ${tradePacts} 项贸易协定，持续推动商业化`);
+if(c.treasury>95)reasons.push("长期财政储备较高，商业体系更容易扩张");
+if(warCount)reasons.push(`当前卷入 ${warCount} 场战争，军事化倾向上升`);
+if(c.army>c.industry*.9)reasons.push("舰队规模相对工业较大，军事体系影响增强");
+if(c.tech>45)reasons.push("科研水平长期较高，技术官僚化倾向明显");
+else if(c.tech>30)reasons.push("科研基础正在推动技术化");
+if(c.territory>(e.initialTerritory||c.territory)*1.12)reasons.push("版图相对初期明显扩大，殖民化倾向上升");
+if(!reasons.length)reasons.push("目前各项长期行为较均衡，尚没有单一路线占明显优势");
+return reasons.slice(0,3);
 }
+function evolutionDetailsHtml(c){
+const r=evolutionReasons(c);
+return `<details class="card" style="margin-top:8px"><summary><b>为什么形成这个国家趋势？</b></summary><small style="display:block;color:#9db0c4;margin-top:7px">${r.map(x=>`• ${x}`).join("<br>")}</small><small style="display:block;color:#7896aa;margin-top:6px">这里只解释主要原因，不显示后台演化积分。</small></details>`;
+}
+
 
 
 
@@ -2114,7 +2181,7 @@ ${stat("舰队",Math.round(c.army))}
 ${stat("秩序",Math.round(c.stability)+"%")}
 ${stat("星域",Math.round(c.territory/12))}
 </div>
-${c.id===player?`<small style="display:block;color:#9db0c4;margin-top:7px">财政趋势：${financeTrendLabel((lastFinance||financeSnapshot(c)).net)} · ${evolutionTypeDesc(ensureEvolution(c).type)}</small>`:""}`;
+${c.id===player?`<small style="display:block;color:#9db0c4;margin-top:7px">财政趋势：${financeTrendLabel((lastFinance||financeSnapshot(c)).net)} · ${evolutionTypeDesc(ensureEvolution(c).type)}</small>`:""}` + evolutionDetailsHtml(c);
 if(c.id===player){
 const pressure=c.stability>85?"社会总体安定":c.stability>65?"社会尚算稳定":c.stability>45?"社会出现压力":"社会明显不稳";
 const finance=c.treasury>140?"财政宽裕":c.treasury>70?"财政可控":c.treasury>25?"财政偏紧":"财政危险";
@@ -2132,7 +2199,9 @@ if(c.id!==player){
 const rel=relations[player][c.id],adj=neighbors(player).includes(c.id),war=atWar(player,c.id),proj=projectionProfile(player,c.id);
 const quick=document.createElement("div");quick.className="card";quick.style.marginTop="12px";
 quick.innerHTML=`<h3>与 ${c.name} 的互动</h3>
-<small style="display:block;color:#9db0c4;margin-bottom:8px">${war?"正在交战":rel>35?"关系亲近":rel<-35?"关系紧张":"关系一般"} · ${treatyLabel(player,c.id)} · ${adj?"双方星域接触或紧邻":"当前没有直接星域接触"}</small>
+<small style="display:block;color:#9db0c4;margin-bottom:5px">${war?"正在交战":rel>35?"关系亲近":rel<-35?"关系紧张":"关系一般"} · ${treatyLabel(player,c.id)} · ${adj?"双方星域接触或紧邻":"当前没有直接星域接触"}${war?` · ${proj.band}投送${proj.band!=="近程"?` · 远征立足 ${Math.round(getWarPlan(player,c.id).expeditionProgress||0)}%`:""}`:""}</small>
+${!war?`<small style="display:block;color:#c8d8e6;margin-bottom:8px"><b>冲突阶段：</b>${conflictStageText(player,c.id)} · ${proj.band}投送</small>`:""}
+${c.id!==player?`<div class="card" style="margin:7px 0"><b>这个国家为什么这样行动？</b><small style="display:block;color:#9db0c4;margin-top:4px">${aiStrategicReason(c)}</small></div>`:""}
 <div class="actions">
 ${war?`<button data-q="warcmd"><b>舰队指挥</b><small>聚焦战区并进入舰队战</small></button>
 <button data-q="peace"><b>停火谈判</b><small>查看当前和平条件</small></button>`:
@@ -2176,7 +2245,7 @@ card.innerHTML=`<h3>战争指挥 · 对 ${c.name}</h3>
 </div>
 <div class="focusCard"><b>战争目的：${plan.warGoal}</b><small style="display:block;color:#9db0c4">${warGoalStatus(c.id).label}</small></div><small style="display:block;margin-top:8px;color:#c9d8e8">当前战役命令：${plan.direction} · ${plan.posture} · ${plan.objective}</small>
 <small style="display:block;margin-top:5px;color:#9db0c4">我方补给：${(player===Math.min(player,c.id)?plan.supplyA:plan.supplyB)>72?"充足":(player===Math.min(player,c.id)?plan.supplyA:plan.supplyB)>48?"吃紧":"危险"} · 战争疲劳：${(player===Math.min(player,c.id)?plan.fatigueA:plan.fatigueB)<25?"低":(player===Math.min(player,c.id)?plan.fatigueA:plan.fatigueB)<55?"上升":"严重"}</small>
-<small style="display:block;margin-top:4px;color:#9db0c4">${coalitionSupport(player,c.id).names.length?`有 ${coalitionSupport(player,c.id).names.length} 个友军共同施压；联合作战存在协调损耗。`:"目前没有友军共同施压。"}</small>
+<small style="display:block;margin-top:4px;color:#9db0c4">${(()=>{const cs=coalitionSupport(player,c.id);return `${cs.allies.length?`有 ${cs.allies.length} 个盟友正在支援。`:"目前没有盟友实际支援。"}${cs.availableAllies.length?` 还有 ${cs.availableAllies.length} 个正式盟友可请求支援。`:""}`})()}</small>
 <button class="primary" data-local-battle style="margin-top:10px;width:100%">${localBattleLastYear[warKey(player,c.id)]===year?"今年已指挥过关键舰队战":"指挥一次舰队战"}</button>
 <small style="display:block;color:#9db0c4;margin-top:5px">亲自指挥会消耗 1 个行动点；同一战区每年最多一次。</small><h3 style="margin-top:12px">停火谈判</h3>${peaceTalkLastYear[warKey(player,c.id)]===year?`<div class="card"><b>本年度正式谈判机会已使用</b><small style="display:block;color:#9db0c4">下一年度才能再次提出正式和平条件。</small></div>`:""}
 ${(()=>{const pa=peaceAssessment(c.id);return `<div class="card"><b>对方态度：${pa.label}</b><small style="display:block;color:#9db0c4">是否接受主要取决于战争疲劳、财政、补给和当前战场优势。正式提案消耗 1 个行动点，同一战区每年最多一次。</small><small style="display:block;color:#9db0c4">${pa.reasons.length?pa.reasons.join("；"):"双方暂时没有形成明显的谈判压力。"}</small></div>
@@ -2205,9 +2274,9 @@ countries.filter(x=>x.alive&&x.id!==player).sort((a,b)=>relations[player][b.id]-
 let rel=relations[player][t.id],war=atWar(player,t.id),adj=neighbors(player).includes(t.id);
 let row=document.createElement("div");row.className="dipl-row";
 const ratio=(power(pc)/Math.max(1,power(t))).toFixed(1);
-row.innerHTML=`<span>${t.name}<small style="display:block;color:#8fa3b8">${adj?"接壤":"非接壤"} · ${war?"战争中":rel>30?"友好":rel<-30?"敌对":"中立"} · ${treatyLabel(player,t.id)} · 我方实力 ${ratio}×</small></span><b>${rel>50?"亲近":rel>15?"友好":rel<-50?"敌视":rel<-15?"紧张":"中立"}</b><button>${war?"议和":"交往"}</button>`;
+row.innerHTML=`<span>${t.name}<small style="display:block;color:#8fa3b8">${adj?"接壤":"非接壤"} · ${war?"战争中":rel>30?"友好":rel<-30?"敌对":"中立"} · ${treatyLabel(player,t.id)} · ${war?projectionProfile(player,t.id).band+"投送":conflictStageText(player,t.id)} · 我方实力 ${ratio}×</small></span><b>${rel>50?"亲近":rel>15?"友好":rel<-50?"敌视":rel<-15?"紧张":"中立"}</b><button>${war?"议和":"交往"}</button>`;
 row.querySelector("button").onclick=()=>{if(war){selected=t.id;document.querySelector('[data-tab="country"]').click();renderPanels();toast("已打开战争谈判与指挥面板。")}else diplomacyAction(t.id,"trade")};dp.appendChild(row);
-if(!war&&adj){let w=document.createElement("button");w.textContent=conflictState(player,t.id).stage>=3&&year>=(conflictState(player,t.id).readyYear||0)?"战争评估":"升级冲突";w.style.margin="4px 0 9px";w.onclick=()=>diplomacyAction(t.id,"war");dp.appendChild(w)}
+if(!war){let w=document.createElement("button");w.textContent=conflictState(player,t.id).stage>=3&&year>=(conflictState(player,t.id).readyYear||0)?"战争评估":"升级冲突";w.style.margin="4px 0 9px";w.onclick=()=>diplomacyAction(t.id,"war");dp.appendChild(w)}
 if(!war&&rel>-10){let a=document.createElement("button");a.textContent="援助";a.style.margin="4px 0 9px 6px";a.onclick=()=>diplomacyAction(t.id,"aid");dp.appendChild(a)}
 if(!war){
 const ts=treatyState(player,t.id);
