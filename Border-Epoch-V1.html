@@ -20,14 +20,52 @@
   .startgrid{grid-template-columns:1fr}
   .startbox h1{font-size:28px}
 }
-</style></head><body><div id="app"><header><div><div class="brand">边界纪元</div><div class="sub">20–40 分钟国家策略沙盒</div></div><div class="spacer"></div><button id="pauseBtn">暂停</button><select id="speedSel"><option value="1" selected>1×</option><option value="2">2×</option><option value="4">4×</option><option value="8">8×</option></select><button id="newBtn">新世界</button></header><main id="mapWrap"><canvas id="map"></canvas><div id="hud"><div class="pill">年份 <b id="year">1</b></div><div class="pill">行动点 <b id="ap">3</b>/4</div><div class="pill">目标 <b id="goalShort">120 年内：前三并连续保持 10 年</b></div><div class="pill">排名 <b id="rank">—</b></div><div class="pill">前三连续 <b id="streak">0</b>/10</div><div class="pill">世界局势 <b id="tension">平静</b></div></div><div class="notice" id="notice"></div><div id="legend">滚轮缩放 · 拖动地图 · 点击国家查看<br>地图没有可见格子；底层区域仅用于模拟。</div><div id="start"><div class="startbox"><h1>边界纪元</h1><p>你不是在玩一张会换颜色的格子图。各国会根据威胁、财政、外交和战争收益改变策略。</p><div class="startgrid"><div class="card"><b>连续疆界</b><br><small>平滑大陆与国家边界</small></div><div class="card"><b>有限行动</b><br><small>行动收益会递减，不能无脑连点</small></div><div class="card"><b>会权衡的国家</b><br><small>会因边境、实力与国际紧张度改变战略</small></div></div><button class="primary" id="startBtn">生成世界并开始</button></div></div></main><aside id="right"><div id="pendingEventBar"></div><div class="tabs"><div class="tab active" data-tab="country">国家</div><div class="tab" data-tab="dipl">外交</div><div class="tab" data-tab="events">事件</div></div><section class="panel active" id="countryPanel"></section><section class="panel" id="diplPanel"></section><section class="panel" id="eventsPanel"></section></aside></div><div id="modal"><div class="modalBox"><h2 id="modalTitle"></h2><div id="modalText"></div><div class="choices" id="modalChoices"></div></div></div><script>(()=>{
+
+#battleMode{position:fixed;inset:56px 0 0 0;z-index:70;display:none;background:#09111bdd}
+#battleMode.show{display:grid;grid-template-columns:minmax(0,1fr) 360px}
+#battleField{position:relative;overflow:hidden;background:radial-gradient(circle at 48% 48%,#162738,#08121c 70%)}
+#battleField canvas{position:absolute;inset:0;width:100%;height:100%}
+#battleSide{background:#121a25;border-left:1px solid var(--line);padding:14px;overflow:auto}
+#battleTop{position:absolute;left:14px;top:14px;right:14px;display:flex;gap:8px;z-index:2;pointer-events:none}
+.battleStep{background:#0d1520dd;border:1px solid #33445a;border-radius:9px;padding:6px 9px;color:#9db0c4}
+.battleStep.active{color:#fff;border-color:#6782a0}
+.routeCard{padding:10px;border:1px solid #2d4056;border-radius:10px;margin-bottom:8px;background:#182333}
+.routeCard.selected{border-color:#7f9fc1;background:#1e2d40}
+.routeLine{display:grid;grid-template-columns:1fr 72px 42px;gap:8px;align-items:center}
+.routeLine input[type=range]{width:100%}
+.battleAction{width:100%;text-align:left;margin-bottom:7px}
+.battleAction.active{border-color:#8aa9c7;background:#23364b}
+#battleResult{display:none}
+@media(max-width:850px){
+  #battleMode.show{grid-template-columns:1fr;grid-template-rows:58vh minmax(0,1fr)}
+  #battleSide{border-left:0;border-top:1px solid var(--line)}
+}
+
+@media (min-width:851px) and (max-width:1180px){
+  #battleMode.show{grid-template-columns:minmax(0,1fr) 330px}
+  #battleSide{padding-right:max(14px,env(safe-area-inset-right))}
+}
+</style></head><body><div id="app"><header><div><div class="brand">边界纪元</div><div class="sub">20–40 分钟国家策略沙盒</div></div><div class="spacer"></div><button id="pauseBtn">暂停</button><select id="speedSel"><option value="1" selected>1×</option><option value="2">2×</option><option value="4">4×</option><option value="8">8×</option></select><button id="newBtn">新世界</button></header><main id="mapWrap"><canvas id="map"></canvas><div id="hud"><div class="pill">年份 <b id="year">1</b></div><div class="pill">行动点 <b id="ap">3</b>/4</div><div class="pill">目标 <b id="goalShort">120 年内：前三并连续保持 10 年</b></div><div class="pill">排名 <b id="rank">—</b></div><div class="pill">前三连续 <b id="streak">0</b>/10</div><div class="pill">世界局势 <b id="tension">平静</b></div></div><div class="notice" id="notice"></div><div id="legend">滚轮缩放 · 拖动地图 · 点击国家查看<br>地图没有可见格子；底层区域仅用于模拟。</div><div id="start"><div class="startbox"><h1>边界纪元</h1><p>你不是在玩一张会换颜色的格子图。各国会根据威胁、财政、外交和战争收益改变策略。</p><div class="startgrid"><div class="card"><b>连续疆界</b><br><small>平滑大陆与国家边界</small></div><div class="card"><b>有限行动</b><br><small>行动收益会递减，不能无脑连点</small></div><div class="card"><b>会权衡的国家</b><br><small>会因边境、实力与国际紧张度改变战略</small></div></div><button class="primary" id="startBtn">生成世界并开始</button></div></div></main><aside id="right"><div id="pendingEventBar"></div><div class="tabs"><div class="tab active" data-tab="country">国家</div><div class="tab" data-tab="dipl">外交</div><div class="tab" data-tab="events">事件</div></div><section class="panel active" id="countryPanel"></section><section class="panel" id="diplPanel"></section><section class="panel" id="eventsPanel"></section></aside></div>
+<div id="battleMode">
+  <div id="battleField">
+    <canvas id="battleCanvas"></canvas>
+    <div id="battleTop">
+      <div class="battleStep" data-bstep="1">1 侦察</div>
+      <div class="battleStep" data-bstep="2">2 部署</div>
+      <div class="battleStep" data-bstep="3">3 决断</div>
+      <div class="battleStep" data-bstep="4">4 结果</div>
+    </div>
+  </div>
+  <aside id="battleSide"></aside>
+</div>
+<div id="modal"><div class="modalBox"><h2 id="modalTitle"></h2><div id="modalText"></div><div class="choices" id="modalChoices"></div></div></div><script>(()=>{
 "use strict";
 const W=260,H=150,N=14;
 const canvas=document.getElementById("map"),ctx=canvas.getContext("2d");
 const off=document.createElement("canvas");off.width=W;off.height=H;const ox=off.getContext("2d");
 let terrain=new Uint8Array(W*H), owner=new Int16Array(W*H);
 let countries=[], relations=[], wars=new Set(), events=[], player=0, selected=0;
-let year=1, ap=3, paused=false, speed=1, tickAcc=0, last=performance.now(), nextEventYear=11, pendingEvent=null, resumeAfterEvent=true, worldTension=18, top3Streak=0, nextWorldEventYear=5, situations=[], mapSignals=[], threatMemory=Array(N).fill(0), playerArmyHistory=[], warPlans={}, austerity=false, lastFinance=null;
+let year=1, ap=3, paused=false, speed=1, tickAcc=0, last=performance.now(), nextEventYear=11, pendingEvent=null, resumeAfterEvent=true, worldTension=18, top3Streak=0, nextWorldEventYear=5, situations=[], mapSignals=[], threatMemory=Array(N).fill(0), playerArmyHistory=[], warPlans={}, austerity=false, lastFinance=null, localBattle=null, localBattleLastYear={};
 let cam={x:0,y:0,z:1},drag=null,gameStarted=false,mapDirty=true;
 const colors=["#56a9e6","#e87070","#75c48a","#d69c58","#a684e8","#59c6ba","#e17cab","#9fc766","#dfc264","#758de0","#bd7956","#70a0a7","#cd6c8d","#7eb067"];
 const namesA=["青河","赤原","北岚","苍湾","白岭","曜川","临海","新穹","霜谷","金泽","云岬","长风","南陆","星浦"];
@@ -426,6 +464,235 @@ ap--;declareWar(player,target);renderPanels();
 };
 const cancel=document.createElement("button");cancel.innerHTML="<b>取消</b><small>返回外交界面</small>";cancel.onclick=()=>modal.classList.remove("show");
 box.append(go,cancel);modal.classList.add("show");
+}
+
+
+function canStartLocalBattle(target){
+if(!atWar(player,target)||!countries[player].alive||!countries[target].alive||pendingEvent)return false;
+if(ap<=0)return false;
+if(localBattleLastYear[warKey(player,target)]===year)return false;
+return true;
+}
+function makeBattleRoutes(target){
+const t=countries[target],p=countries[player];
+const seed=(player*31+target*17+year*7)%97;
+return [
+{name:"北侧高地",terrain:"山地",intel:"守军较少，但地形不利",base:.88,enemy:.78+((seed%5)*.03),alloc:30},
+{name:"中央平原",terrain:"平原",intel:"敌军主力集中，适合正面决战",base:1.05,enemy:.95+((seed%7)*.025),alloc:45},
+{name:"南侧河谷",terrain:"河谷",intel:"补给较差，但更适合迂回和切补给",base:.96,enemy:.82+((seed%3)*.04),alloc:25}
+];
+}
+function startLocalBattle(target){
+if(!canStartLocalBattle(target)){
+if(ap<=0)toast("今年没有足够的行动空间再亲自指挥一场战役。");
+else if(localBattleLastYear[warKey(player,target)]===year)toast("这一战区今年已经进行过一次关键战役。");
+else toast("当前无法发起局部战役。");
+return;
+}
+const beforeBattlePaused=paused;paused=true;document.getElementById("pauseBtn").textContent="局部战役中";
+localBattle={
+wasPaused:beforeBattlePaused,target,step:1,routes:makeBattleRoutes(target),selectedRoute:1,action:"集中突破",
+reserve:20,allyRequest:"无",allyResponse:"尚未请求",intelKnown:false,result:null
+};
+document.getElementById("battleMode").classList.add("show");
+renderLocalBattle();
+drawLocalBattle();
+}
+function closeLocalBattle(){
+document.getElementById("battleMode").classList.remove("show");
+const wasPaused=localBattle?.wasPaused||false;localBattle=null;
+paused=wasPaused;document.getElementById("pauseBtn").textContent=paused?"继续":"暂停";
+renderPanels();
+}
+function setBattleStep(n){
+if(!localBattle)return;
+localBattle.step=n;renderLocalBattle();drawLocalBattle();
+}
+function normalizeAlloc(){
+const r=localBattle.routes,targetTotal=100-localBattle.reserve;
+let total=r.reduce((s,x)=>s+x.alloc,0);
+if(total<=0){r[0].alloc=Math.round(targetTotal*.3);r[1].alloc=Math.round(targetTotal*.45);r[2].alloc=targetTotal-r[0].alloc-r[1].alloc;return}
+let vals=r.map(x=>Math.max(5,Math.round(x.alloc/total*targetTotal)));
+let sum=vals.reduce((a,b)=>a+b,0);
+vals[localBattle.selectedRoute]=clamp(vals[localBattle.selectedRoute]+(targetTotal-sum),5,80);
+for(let i=0;i<3;i++)r[i].alloc=vals[i];
+}
+function routeActionModifier(route,action){
+if(action==="集中突破")return route.terrain==="平原"?1.22:1.10;
+if(action==="牵制进攻")return 1.00;
+if(action==="渗透迂回")return route.terrain==="河谷"?1.20:route.terrain==="山地"?1.10:.92;
+if(action==="切断补给")return route.terrain==="河谷"?1.18:1.02;
+if(action==="坚守消耗")return .84;
+return 1;
+}
+function allyBattleSupport(target){
+const allies=coalitionSupport(player,target);
+let support=0;
+for(const a of allies.names){
+const c=countries.find(x=>x.name===a.name);
+if(c)support+=power(c)*a.coord;
+}
+if(localBattle?.allyResponse==="接受：加强主攻")support*=1.14;
+else if(localBattle?.allyResponse==="接受：牵制敌军")support*=1.08;
+else if(localBattle?.allyResponse==="接受：暂缓进攻")support*=.65;
+return {value:support,count:allies.names.length};
+}
+function requestAllyBattleHelp(kind,target){
+const allies=coalitionSupport(player,target);
+localBattle.allyRequest=kind;
+if(!allies.names.length){localBattle.allyResponse="没有可协调的友军";toast("当前没有共同参战的友军。");renderLocalBattle();return}
+const avg=allies.names.reduce((s,a)=>s+a.coord,0)/allies.names.length;
+let chance=.46+avg*.32;
+if(kind==="请求暂缓进攻")chance+=.10;
+if(Math.random()<chance){
+localBattle.allyResponse=kind==="请求加强主攻方向"?"接受：加强主攻":kind==="请求牵制敌军"?"接受：牵制敌军":"接受：暂缓进攻";
+toast("盟友接受了你的战役协调请求。");
+}else{
+localBattle.allyResponse="盟友拒绝请求";
+toast("盟友没有接受这次请求。");
+}
+renderLocalBattle();
+}
+function localBattlePreview(){
+const t=countries[localBattle.target],p=countries[player],allies=allyBattleSupport(t.id);
+let atk=0,def=0;
+for(let i=0;i<localBattle.routes.length;i++){
+const r=localBattle.routes[i],share=r.alloc/100,chosen=i===localBattle.selectedRoute;
+const act=chosen?localBattle.action:"牵制进攻";
+let a=(power(p)*share+allies.value*share*.72)*r.base*routeActionModifier(r,act);
+let d=power(t)*(share*.82+.11)*r.enemy;
+if(chosen)a*=1+Math.min(.22,localBattle.reserve/100*.48);
+atk+=a;def+=d;
+}
+const ratio=atk/Math.max(1,def);
+return ratio>1.35?"突破希望较大":ratio>1.08?"我方略占优势":ratio>.90?"胜负接近":ratio>.72?"风险偏高":"明显不利";
+}
+
+function resolveLocalBattle(){
+if(!localBattle)return;
+if(ap<=0){toast("今年没有足够的行动空间下达这次战役命令。");return}
+ap--;localBattleLastYear[warKey(player,localBattle.target)]=year;
+normalizeAlloc();
+const t=countries[localBattle.target],p=countries[player],plan=getWarPlan(player,t.id);
+const allies=allyBattleSupport(t.id);
+let totalScore=0, enemyScore=0, details=[];
+for(let i=0;i<localBattle.routes.length;i++){
+const r=localBattle.routes[i],share=r.alloc/100;
+const chosen=i===localBattle.selectedRoute;
+const act=chosen?localBattle.action:"牵制进攻";
+const atk=(power(p)*share + allies.value*share*.72)*r.base*routeActionModifier(r,act);
+const def=power(t)*(share*.82+.11)*r.enemy;
+let atkAdj=atk,defAdj=def;
+if(localBattle.reserve>0&&chosen){atkAdj*=1+Math.min(.22,localBattle.reserve/100*.48);}
+if(plan.posture==="闪击")atkAdj*=1.08;
+if(plan.posture==="坚守")atkAdj*=.92;
+atkAdj*=clamp(1-playerWarFatigue(t.id)*.003,.74,1);
+defAdj*=clamp(1-enemyWarFatigue(t.id)*.003,.74,1);
+const noisy=rand(1.08,.93);
+atkAdj*=noisy;
+totalScore+=atkAdj;enemyScore+=defAdj;
+details.push({name:r.name,atk:atkAdj,def:defAdj,success:atkAdj>defAdj});
+}
+const ratio=totalScore/Math.max(1,enemyScore);
+let outcome=ratio>1.35?"突破成功":ratio>1.08?"局部优势":ratio>.90?"僵持":ratio>.72?"进攻受阻":"明显失利";
+let land=0;
+if(ratio>1.08){
+  land=Math.max(1,Math.min(6,Math.round((ratio-1)*8)));
+  transferBorderLand(t.id,player,land);
+  t.stability-=ratio>1.35?4:2;
+  p.stability+=1;
+}
+if(localBattle.action==="切断补给"&&ratio>.95){t.food=Math.max(0,t.food-8);t.treasury-=4}
+if(localBattle.action==="坚守消耗"){p.army=Math.max(2,p.army-.8);t.army=Math.max(2,t.army-1.5)}
+else{p.army=Math.max(2,p.army-rand(3.2,1.1));t.army=Math.max(2,t.army-rand(3.5,1.2))}
+const fatigueAdd=localBattle.action==="集中突破"?5:localBattle.action==="渗透迂回"?4:localBattle.action==="坚守消耗"?1.5:3;
+const key=warKey(player,t.id),[a,b]=key.split("-").map(Number);
+if(player===a)plan.fatigueA=clamp(plan.fatigueA+fatigueAdd,0,100);else plan.fatigueB=clamp(plan.fatigueB+fatigueAdd,0,100);
+p.treasury-=localBattle.action==="集中突破"?8:5;
+p.food-=localBattle.action==="切断补给"?2:3;
+localBattle.result={outcome,ratio,land,details,allies:allies.count};
+localBattle.step=4;
+logEvent("局部战役",`${p.name} 在对 ${t.name} 的局部战役中：${outcome}${land?`，夺取了部分前沿地区`:""}。` ,ratio>1.08?"good":ratio<.9?"warn":"");
+addSignal(player,t.id,outcome,ratio>1.08?"good":"warn",6);
+renderLocalBattle();drawLocalBattle();renderPanels();
+}
+function renderLocalBattle(){
+const side=document.getElementById("battleSide");
+if(!localBattle){side.innerHTML="";return}
+document.querySelectorAll("[data-bstep]").forEach(x=>x.classList.toggle("active",+x.dataset.bstep===localBattle.step));
+const t=countries[localBattle.target],p=countries[player];
+if(localBattle.step===1){
+side.innerHTML=`<h2>${p.name}—${t.name} 局部战役</h2>
+<div class="card"><b>侦察简报</b><small style="display:block;color:#9db0c4">你将亲自指挥这场战争中的一次关键战役。它不会直接决定整场战争，但会改变前线、疲劳、补给和后续局势。</small></div>
+${localBattle.routes.map((r,i)=>`<div class="routeCard"><b>${r.name}</b><small style="display:block;color:#9db0c4">${r.terrain} · ${r.intel}</small></div>`).join("")}
+<button class="primary" id="battleReconNext">进入部署</button>
+<button id="battleAbort">退出战役</button>`;
+document.getElementById("battleReconNext").onclick=()=>setBattleStep(2);
+document.getElementById("battleAbort").onclick=closeLocalBattle;
+}else if(localBattle.step===2){
+side.innerHTML=`<h2>兵力部署</h2>
+<div class="card"><small>前线兵力与预备队合计为 100%。保留更多预备队，会让三条前线的初始兵力更少。</small></div>
+${localBattle.routes.map((r,i)=>`<div class="routeCard ${i===localBattle.selectedRoute?"selected":""}">
+<div class="routeLine"><b>${r.name}</b><input type="range" min="5" max="80" value="${r.alloc}" data-route="${i}"><span>${r.alloc}%</span></div>
+<button data-select-route="${i}">${i===localBattle.selectedRoute?"主攻方向":"设为主攻"}</button>
+</div>`).join("")}
+<div class="card"><b>预备队</b><div class="routeLine"><span>保留兵力</span><input id="reserveRange" type="range" min="0" max="35" value="${localBattle.reserve}"><span>${localBattle.reserve}%</span></div></div>
+<button class="primary" id="battleDeployNext">进入决断</button><button id="battleBack1">返回侦察</button><button id="battleAbort2">暂不发动战役</button>`;
+side.querySelectorAll("[data-route]").forEach(inp=>inp.oninput=()=>{localBattle.routes[+inp.dataset.route].alloc=+inp.value;renderLocalBattle()});
+side.querySelectorAll("[data-select-route]").forEach(b=>b.onclick=()=>{localBattle.selectedRoute=+b.dataset.selectRoute;renderLocalBattle();drawLocalBattle()});
+document.getElementById("reserveRange").oninput=e=>{localBattle.reserve=+e.target.value;renderLocalBattle()};
+document.getElementById("battleDeployNext").onclick=()=>{normalizeAlloc();setBattleStep(3)};
+document.getElementById("battleBack1").onclick=()=>setBattleStep(1);document.getElementById("battleAbort2").onclick=closeLocalBattle;
+}else if(localBattle.step===3){
+const actions=[
+["集中突破","在主攻方向集中兵力，推进潜力最高，但疲劳和财政消耗更大"],
+["牵制进攻","保持压力，降低风险，主要用于吸住敌军"],
+["渗透迂回","利用侧翼和地形寻找突破口，成功收益高但不稳定"],
+["切断补给","不以占地为第一目标，削弱敌方后续作战能力"],
+["坚守消耗","主动推进很少，但损失更低，适合恢复局势"]
+];
+side.innerHTML=`<h2>战役决断</h2>
+<div class="card"><b>主攻：${localBattle.routes[localBattle.selectedRoute].name}</b><small style="display:block;color:#9db0c4">预备队 ${localBattle.reserve}% · 其余战线自动执行牵制。</small></div>
+${actions.map(a=>`<button class="battleAction ${localBattle.action===a[0]?"active":""}" data-bact="${a[0]}"><b>${a[0]}</b><small style="display:block;color:#9db0c4">${a[1]}</small></button>`).join("")}
+<div class="card"><b>盟友请求</b><div class="actions">
+<button data-ally="请求加强主攻方向">加强主攻</button>
+<button data-ally="请求牵制敌军">牵制敌军</button>
+<button data-ally="请求暂缓进攻">暂缓进攻</button>
+</div><small style="display:block;color:#9db0c4;margin-top:6px">${coalitionSupport(player,t.id).names.length?`当前有 ${coalitionSupport(player,t.id).names.length} 个友军共同施压。`:"当前没有友军共同参战。"}<br>协调结果：${localBattle.allyResponse}</small></div>
+<div class="card"><b>战前判断：${localBattlePreview()}</b><small style="display:block;color:#9db0c4">这是根据兵力部署、路线、行动、预备队和盟友协调得到的判断；战场仍有小幅不确定性。</small></div><button class="primary" id="resolveBattleBtn">下达命令并结算战役</button>
+<button id="battleBack2">返回部署</button><button id="battleAbort3">暂不发动战役</button>`;
+side.querySelectorAll("[data-bact]").forEach(b=>b.onclick=()=>{localBattle.action=b.dataset.bact;renderLocalBattle()});
+side.querySelectorAll("[data-ally]").forEach(b=>b.onclick=()=>requestAllyBattleHelp(b.dataset.ally,t.id));
+document.getElementById("resolveBattleBtn").onclick=resolveLocalBattle;
+document.getElementById("battleBack2").onclick=()=>setBattleStep(2);document.getElementById("battleAbort3").onclick=closeLocalBattle;
+}else{
+const r=localBattle.result;
+side.innerHTML=`<h2>战役结果</h2>
+<div class="card"><b>${r.outcome}</b><small style="display:block;color:#9db0c4">${r.land?`本次战役推动了前线并改变了国境。`:"本次战役没有形成明显领土推进。"} 主攻方向为 ${localBattle.routes[localBattle.selectedRoute].name}，采用 ${localBattle.action}；预备队 ${localBattle.reserve}%。${r.allies?`另有 ${r.allies} 个友军参与施压。`:""}</small></div>
+${r.details.map((d,i)=>`<div class="routeCard"><b>${d.name}${i===localBattle.selectedRoute?" · 主攻":""}</b><small style="display:block;color:#9db0c4">${d.success?"我军在这一方向形成局部优势":"敌军在这一方向挡住了推进"}${i===localBattle.selectedRoute?`；这里投入了 ${localBattle.routes[i].alloc}% 前线兵力，并采用 ${localBattle.action}`:"；该方向主要承担牵制"}</small></div>`).join("")}
+<div class="card"><small>这次战役已经反馈到大战争：领土、军力、补给、疲劳和财政都会继续影响后续战局。</small></div>
+<button class="primary" id="returnWarBtn">返回大战争地图</button>`;
+document.getElementById("returnWarBtn").onclick=closeLocalBattle;
+}
+}
+function drawLocalBattle(){
+const cvs=document.getElementById("battleCanvas"),r=cvs.getBoundingClientRect(),dpr=devicePixelRatio||1;
+cvs.width=Math.floor(r.width*dpr);cvs.height=Math.floor(r.height*dpr);
+const c=cvs.getContext("2d");c.setTransform(dpr,0,0,dpr,0,0);c.clearRect(0,0,r.width,r.height);
+if(!localBattle)return;
+const routes=localBattle.routes;
+const left=r.width*.18,right=r.width*.82;
+for(let i=0;i<3;i++){
+const y=r.height*(.28+i*.23),rr=routes[i];
+c.lineWidth=i===localBattle.selectedRoute?14:8;
+c.strokeStyle=i===localBattle.selectedRoute?"rgba(116,177,230,.75)":"rgba(120,145,170,.38)";
+c.beginPath();c.moveTo(left,y);c.bezierCurveTo(r.width*.38,y-30,r.width*.62,y+25,right,y);c.stroke();
+c.fillStyle="#eaf1f8";c.font="15px system-ui";c.textAlign="center";c.fillText(rr.name,r.width*.5,y-18);
+c.fillStyle="#9db0c4";c.font="12px system-ui";c.fillText(`${rr.terrain} · ${rr.alloc}%`,r.width*.5,y+22);
+}
+c.fillStyle="#56a9e6";c.beginPath();c.arc(left,r.height*.5,24,0,Math.PI*2);c.fill();
+c.fillStyle="#e87070";c.beginPath();c.arc(right,r.height*.5,24,0,Math.PI*2);c.fill();
+c.fillStyle="#fff";c.font="14px system-ui";c.fillText("我方",left,r.height*.5+5);c.fillText("敌方",right,r.height*.5+5);
 }
 
 function simulateWar(a,b){
@@ -856,14 +1123,15 @@ card.innerHTML=`<h3>战争指挥 · 对 ${c.name}</h3>
 <small style="display:block;margin-top:8px;color:#c9d8e8">当前：${plan.direction} · ${plan.posture} · ${plan.objective}</small>
 <small style="display:block;margin-top:5px;color:#9db0c4">我方补给：${(player===Math.min(player,c.id)?plan.supplyA:plan.supplyB)>72?"充足":(player===Math.min(player,c.id)?plan.supplyA:plan.supplyB)>48?"吃紧":"危险"} · 战争疲劳：${(player===Math.min(player,c.id)?plan.fatigueA:plan.fatigueB)<25?"低":(player===Math.min(player,c.id)?plan.fatigueA:plan.fatigueB)<55?"上升":"严重"}</small>
 <small style="display:block;margin-top:4px;color:#9db0c4">${coalitionSupport(player,c.id).names.length?`有 ${coalitionSupport(player,c.id).names.length} 个友军共同施压；联合作战存在协调损耗。`:"目前没有友军共同施压。"}</small>
-<h3 style="margin-top:12px">停战谈判</h3>
+<button class="primary" data-local-battle style="margin-top:10px;width:100%">${localBattleLastYear[warKey(player,c.id)]===year?"今年已指挥过关键战役":"指挥一次局部战役"}</button>
+<small style="display:block;color:#9db0c4;margin-top:5px">亲自指挥会消耗 1 个行动点；同一战区每年最多一次。</small><h3 style="margin-top:12px">停战谈判</h3>
 <div class="actions">
 <button data-peace="白和平">白和平</button><button data-peace="赔款">要求赔款</button><button data-peace="边境让步">要求边境让步</button>
 </div>
 <small style="display:block;margin-top:6px;color:#9db0c4">条件越苛刻，对方越可能拒绝。战场优势和对方战争疲劳会提高成功率。</small>`;
 cp.appendChild(card);
 card.querySelectorAll("[data-dir]").forEach(b=>b.onclick=()=>setWarPlanField(c.id,"direction",b.dataset.dir));
-card.querySelectorAll("[data-post]").forEach(b=>b.onclick=()=>setWarPlanField(c.id,"posture",b.dataset.post));card.querySelectorAll("[data-obj]").forEach(b=>b.onclick=()=>setWarPlanField(c.id,"objective",b.dataset.obj));card.querySelectorAll("[data-peace]").forEach(b=>b.onclick=()=>proposePeace(c.id,b.dataset.peace));
+card.querySelectorAll("[data-post]").forEach(b=>b.onclick=()=>setWarPlanField(c.id,"posture",b.dataset.post));card.querySelectorAll("[data-obj]").forEach(b=>b.onclick=()=>setWarPlanField(c.id,"objective",b.dataset.obj));card.querySelectorAll("[data-peace]").forEach(b=>b.onclick=()=>proposePeace(c.id,b.dataset.peace));const lb=card.querySelector("[data-local-battle]");if(lb)lb.onclick=()=>startLocalBattle(c.id);
 }
 
 const alarmed=countries.filter(x=>x.alive&&x.id!==player&&threatMemory[x.id]>35).length;
@@ -954,7 +1222,7 @@ document.getElementById("speedSel").onchange=e=>speed=+e.target.value;
 document.getElementById("newBtn").onclick=()=>startGame(true);
 document.getElementById("startBtn").onclick=()=>{document.getElementById("start").style.display="none";startGame(false)};
 function startGame(reset){
-generateTerrain();generateCountries();mapDirty=true;year=1;ap=3;events=[];paused=false;selected=player=0;nextEventYear=Math.floor(rand(15,10));pendingEvent=null;resumeAfterEvent=true;worldTension=18;top3Streak=0;nextWorldEventYear=5;situations=[];mapSignals=[];threatMemory=Array(N).fill(0);playerArmyHistory=[];warPlans={};austerity=false;lastFinance=null;renderPendingEvent();tickAcc=0;cam={x:0,y:0,z:1};gameStarted=true;
+generateTerrain();generateCountries();mapDirty=true;year=1;ap=3;events=[];paused=false;selected=player=0;nextEventYear=Math.floor(rand(15,10));pendingEvent=null;resumeAfterEvent=true;worldTension=18;top3Streak=0;nextWorldEventYear=5;situations=[];mapSignals=[];threatMemory=Array(N).fill(0);playerArmyHistory=[];warPlans={};austerity=false;lastFinance=null;localBattle=null;localBattleLastYear={};document.getElementById("battleMode").classList.remove("show");renderPendingEvent();tickAcc=0;cam={x:0,y:0,z:1};gameStarted=true;
 logEvent("新纪元",`${countries[player].name} 开始了新的时代。你的目标是在 120 年内进入综合国力前三，并连续保持至少 10 年。`);
 renderPanels();
 }
