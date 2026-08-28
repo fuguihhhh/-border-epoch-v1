@@ -119,7 +119,47 @@ body.fiscal-warning #right{box-shadow:inset 3px 0 0 #d99a37,0 0 22px #d99a3710}b
 #countryPanel .diplomacyHub .treatyGrid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:8px}
 #countryPanel .diplomacyHub .treatyGrid button{text-align:left;min-height:54px}
 #countryPanel .diplomacyHub .treatyGrid small{display:block;color:#8fa7b7;margin-top:2px}
-</style></head><body><div id="app"><header><div><div class="brand">边界纪元 // 星域战争</div><div class="sub">SECTOR COMMAND · 20–40 分钟星际战略沙盒</div></div><div class="spacer"></div><div id="warDock"></div><button id="pauseBtn">暂停</button><select id="speedSel"><option value="1" selected>1×</option><option value="2">2×</option><option value="4">4×</option><option value="8">8×</option></select><button id="newBtn">新世界</button></header><main id="mapWrap"><canvas id="map"></canvas><div id="hud"><div class="pill">星历 <b id="year">1</b></div><div class="pill">指挥点 <b id="ap">3</b>/4</div><div class="pill">目标 <b id="goalShort">120 年内：前三并连续保持 10 年</b></div><div class="pill">排名 <b id="rank">—</b></div><div class="pill">前三连续 <b id="streak">0</b>/10</div><div class="pill">银河局势 <b id="tension">平静</b></div></div><div id="priorityHint"></div><div id="legend" style="display:none"></div><div id="start"><div class="startbox"><h1>边界纪元 // 星域战争</h1><p>你指挥的是一片正在扩张的星域势力。各方会根据威胁、资源、外交与战争收益改变战略。</p><div class="startgrid"><div class="card"><b>连续星域</b><br><small>势力范围沿恒星航道自然延展</small></div><div class="card"><b>有限指挥</b><br><small>每个星历周期只有有限指挥资源</small></div><div class="card"><b>会权衡的势力</b><br><small>会因边境、舰队与银河紧张度调整战略</small></div></div><button class="primary" id="startBtn">生成星域并开始</button></div></div></main><aside id="right"><div id="pendingEventBar"></div><div class="tabs"><div class="tab active" data-tab="country">星域</div><div class="tab" data-tab="events">战情日志</div></div><div id="actionStatus" aria-live="polite"></div><section class="panel active" id="countryPanel"></section><section class="panel" id="eventsPanel"></section></aside></div>
+#trialGuideBar{display:none;padding:9px 12px;border-bottom:1px solid #315064;background:linear-gradient(90deg,#102736,#0e1b26)}
+#trialGuideBar.show{display:block}
+#trialGuideBar .trialHead{display:flex;justify-content:space-between;gap:8px;align-items:center}
+#trialGuideBar .trialGoals{display:grid;grid-template-columns:1fr 1fr;gap:4px 8px;margin-top:6px;font-size:11px;color:#9fb6c5}
+#trialGuideBar .done{color:#78d7ad}
+#trialGuideBar .trialTip{margin-top:6px;color:#b9d3df;font-size:11px}
+.startbox button small{color:#91aabd}
+
+.rightHead{padding:11px 14px;border-bottom:1px solid var(--line);color:#cfe7f2;background:#12202c}
+#historyDrawer{position:fixed;top:56px;right:0;bottom:0;width:min(390px,88vw);z-index:95;background:#101b26;border-left:1px solid #365568;box-shadow:-16px 0 45px #0008;transform:translateX(105%);transition:transform .22s ease;display:flex;flex-direction:column}
+#historyDrawer.show{transform:translateX(0)}
+.historyDrawerHead{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px;border-bottom:1px solid #2d4657}
+.historyDrawerHead small{display:block;color:#829bab;margin-top:2px}
+#historyDrawerBody{overflow:auto;padding:12px;min-height:0}
+#historyShade{position:fixed;inset:56px 0 0 0;z-index:94;background:#02070b55;display:none}
+#historyShade.show{display:block}
+
+.goalCard{border-color:#365a70;background:linear-gradient(160deg,#142735,#101b25)}
+.goalCard .goalChecks{display:grid;gap:5px;margin-top:8px}
+.goalCard .goalChecks span{font-size:12px;color:#8fa8b8}
+.goalCard .goalChecks span.ok{color:#77d5a8}
+.goalCard .goalChecks span.no{color:#b7a1a1}
+.goalChoiceTitle{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.goalTag{font-size:10px;border:1px solid #4c6f82;border-radius:99px;padding:2px 6px;color:#9fc5d7}
+</style></head><body><div id="app"><header><div><div class="brand">边界纪元 // 星域战争</div><div class="sub">SECTOR COMMAND · 20–40 分钟星际战略沙盒</div></div><div class="spacer"></div><div id="warDock"></div><button id="pauseBtn">暂停</button><select id="speedSel"><option value="1" selected>1×</option><option value="2">2×</option><option value="4">4×</option><option value="8">8×</option></select><button id="historyBtn" aria-expanded="false">纪事</button><button id="newBtn">新世界</button></header><main id="mapWrap"><canvas id="map"></canvas><div id="hud"><div class="pill">星历 <b id="year">1</b></div><div class="pill">指挥点 <b id="ap">3</b>/4</div><div class="pill">目标 <b id="goalShort">120 年内：前三并连续保持 10 年</b></div><div class="pill">排名 <b id="rank">—</b></div><div class="pill">前三连续 <b id="streak">0</b>/10</div><div class="pill">银河局势 <b id="tension">平静</b></div></div><div id="priorityHint"></div><div id="legend" style="display:none"></div><div id="start"><div class="startbox">
+<h1>边界纪元 // 星域战争</h1>
+<p id="startIntro">第一次进入先进行一局约 5 分钟的核心试玩：发展、点击国家外交、真实事件、战争与停战都会在这局里出现。</p>
+<div class="startgrid">
+<div class="card"><b>5 分钟核心体验</b><br><small>7 个国家，节奏紧凑，不删底层系统</small></div>
+<div class="card"><b>完成任意 2 项</b><br><small>条约 / 财政 / 舰队战 / 停战 / 扩张</small></div>
+<div class="card"><b>试玩后再决定</b><br><small>可继续当前世界，或进入完整 14 国纪元</small></div>
+</div>
+<div id="startChoices" style="display:grid;gap:9px">
+<button class="primary" id="startTrialBtn"><b>开始 5 分钟试玩</b><small style="display:block;margin-top:3px">第一次进入推荐且默认走这里</small></button>
+<button id="startFullBtn" style="display:none"><b>直接进入完整纪元</b><small style="display:block;margin-top:3px">完成过试玩后开放</small></button>
+</div></div></div></main><aside id="right"><div id="pendingEventBar"></div><div class="rightHead"><b>当前国家</b></div><div id="actionStatus" aria-live="polite"></div><div id="trialGuideBar"></div><section class="panel active" id="countryPanel"></section></aside></div>
+<div id="historyDrawer" aria-hidden="true">
+  <div class="historyDrawerHead"><div><b>银河纪事</b><small>只记录值得回看的重大变化</small></div><button id="closeHistoryBtn">关闭</button></div>
+  <div id="historyDrawerBody"></div>
+</div>
+<div id="historyShade"></div>
 <div id="battleMode">
   <div id="battleField">
     <canvas id="battleCanvas"></canvas>
@@ -139,13 +179,16 @@ body.fiscal-warning #right{box-shadow:inset 3px 0 0 #d99a37,0 0 22px #d99a3710}b
 </div>
 <div id="modal"><div class="modalBox"><h2 id="modalTitle"></h2><div id="modalText"></div><div class="choices" id="modalChoices"></div></div></div><script>(()=>{
 "use strict";
-const W=260,H=150,N=14;
+const W=260,H=150,MAX_N=14;let N=14;
 const canvas=document.getElementById("map"),ctx=canvas.getContext("2d");
 const off=document.createElement("canvas");off.width=W;off.height=H;const ox=off.getContext("2d");
 let terrain=new Uint8Array(W*H), owner=new Int16Array(W*H);
 let countries=[], relations=[], wars=new Set(), events=[], player=0, selected=0, treaties={}, warEscalations={};
 let year=1, ap=3, paused=false, speed=1, tickAcc=0, last=performance.now(), nextEventYear=11, pendingEvent=null, resumeAfterEvent=true, worldTension=18, top3Streak=0, nextWorldEventYear=5, situations=[], mapSignals=[], threatMemory=Array(N).fill(0), playerArmyHistory=[], warPlans={}, austerity=false, lastFinance=null, localBattle=null, localBattleLastYear={}, theaterTarget=null, theaterWasPaused=false, warNoticeQueue=[], investmentQueue=[], peaceTalkLastYear={}, yearOneOffCash=0, lastYearOneOffCash=0, lastExpansionYear=-99, expansionCount=0;
 let cam={x:0,y:0,z:1},drag=null,gameStarted=false,mapDirty=true;
+let gameMode="full",trialMode=false,trialElapsed=0,trialEnded=false,trialRival=null,trialFriendly=null,trialNeutral=null,trialStrong=null;
+let playerGoal=null,goalStreak=0,goalSelectedYear=1;
+let trialGoals={treaty:false,finance:false,battle:false,peace:false,expansion:false},trialFinanceYears=0,trialFlags={crisis:false,warning:false,ultimatum:false,mobilization:false},trialStats=null;
 const colors=["#68c8e8","#e77b82","#73cba2","#d7ad63","#9e8bd8","#66bfb8","#d787b3","#99ba6d","#cbb66b","#7d91c9","#b7876f","#78a5ad","#c47f9d","#89a96f"];
 const namesA=["青河","赤原","北岚","苍湾","白岭","曜川","临海","新穹","霜谷","金泽","云岬","长风","南陆","星浦"];
 const forms=["共和国","联邦","王国","联盟","公国","共同体"];
@@ -174,6 +217,103 @@ terrain[idx(x,y)]=c>=5?1:0;
 }
 }
 }
+function trialCompletedBefore(){try{return localStorage.getItem("borderEpochTrialDone")==="1"}catch(e){return false}}
+function markTrialDone(){try{localStorage.setItem("borderEpochTrialDone","1")}catch(e){}}
+function trialGoalCount(){return Object.values(trialGoals).filter(Boolean).length}
+function trialTimeText(){
+const left=Math.max(0,300-trialElapsed),m=Math.floor(left/60),s=Math.floor(left%60);
+return `${m}:${String(s).padStart(2,"0")}`;
+}
+function trialGuideHtml(){
+const labels=[["treaty","签下一项重要条约"],["finance","连续保持健康财政"],["battle","赢下一场关键舰队战"],["peace","成功结束一场战争"],["expansion","完成一次定向扩张"]];
+const next=!trialGoals.treaty&&trialFriendly!==null?`试着点地图上的 ${countries[trialFriendly]?.name||"友好国家"}，直接缔结贸易协定。`
+:!trialGoals.expansion?"也可以在自己的国家页尝试一次“选择扩张方向”。"
+:playerWarTargets().length?"当前已有战争：进入战区，试一次舰队战或谈判。"
+:"观察右侧事件与国家关系，危机会根据真实关系继续发展。";
+return `<div class="trialHead"><b>5 分钟试玩 · 已完成 ${trialGoalCount()}/5 项</b><span>${trialTimeText()}</span></div>
+<div class="trialGoals">${labels.map(([k,v])=>`<span class="${trialGoals[k]?"done":""}">${trialGoals[k]?"✓":"○"} ${v}</span>`).join("")}</div>
+<div class="trialTip">${next}</div>`;
+}
+function renderTrialGuide(){
+const el=document.getElementById("trialGuideBar");if(!el)return;
+if(!trialMode||trialEnded){el.classList.remove("show");el.innerHTML="";return}
+el.classList.add("show");el.innerHTML=trialGuideHtml();
+}
+function configureTrialWorld(){
+const p=countries[player],ns=neighbors(player).filter(i=>countries[i]?.alive);
+const others=countries.filter(c=>c.alive&&c.id!==player).map(c=>c.id);
+trialFriendly=ns[0]??others[0]??null;
+trialRival=ns.find(x=>x!==trialFriendly)??others.find(x=>x!==trialFriendly)??null;
+trialNeutral=others.find(x=>x!==trialFriendly&&x!==trialRival)??null;
+trialStrong=others.filter(x=>![trialFriendly,trialRival,trialNeutral].includes(x)).sort((a,b)=>power(countries[b])-power(countries[a]))[0]??trialNeutral;
+if(trialFriendly!==null){
+relations[player][trialFriendly]=relations[trialFriendly][player]=48;
+countries[trialFriendly].trade=.86;countries[trialFriendly].aggression=.28;countries[trialFriendly].caution=.70;
+countries[trialFriendly].lastDecisionReason="与你关系较好，而且重视贸易，当前更愿意通过合作获益";
+}
+if(trialRival!==null){
+relations[player][trialRival]=relations[trialRival][player]=-32;
+countries[trialRival].aggression=.78;countries[trialRival].caution=.42;countries[trialRival].army=Math.max(countries[trialRival].army,p.army*.92);
+countries[trialRival].lastDecisionReason="与你存在安全竞争，关系紧张，因此持续关注边境与力量差";
+}
+if(trialNeutral!==null){
+relations[player][trialNeutral]=relations[trialNeutral][player]=6;
+countries[trialNeutral].lastDecisionReason="与你没有明显冲突，也没有足够利益推动深度合作";
+}
+if(trialStrong!==null){
+countries[trialStrong].army*=1.18;countries[trialStrong].industry*=1.12;countries[trialStrong].caution=.72;
+countries[trialStrong].lastDecisionReason="综合实力较强，当前更看重长期安全与区域影响力";
+}
+p.treasury=Math.max(p.treasury,78);p.stability=Math.max(p.stability,66);
+nextEventYear=4;nextWorldEventYear=3;
+}
+function trialScriptedCrisis(){
+if(!trialMode||trialFlags.crisis||trialRival===null||pendingEvent||atWar(player,trialRival))return;
+const r=trialRival,R=countries[r],p=countries[player],t=treatyState(player,r);
+if(t.alliance||t.nonAggression||relations[player][r]>20)return;
+trialFlags.crisis=true;
+showCrisis({t:`${R.name} 在接触星域增加舰队`,
+x:`${R.name} 因与你关系紧张且双方存在直接安全竞争，正在接触星域增加舰队部署。这个事件由当前关系、真实接触与军力判断触发。`,
+actor:r,target:player,kind:"trialCrisis",choices:[
+["紧急磋商",`只与 ${R.name} 交涉：关系改善，危机降温`,()=>{setRelation(player,r,16);worldTension=Math.max(0,worldTension-4)}],
+["对等威慑",`针对 ${R.name} 扩军：-10 国库，+6 舰队；关系继续下降`,()=>{p.treasury-=10;p.army+=6;setRelation(player,r,-10);worldTension+=4}],
+["暂不回应","保留资源，但对方会继续观察你的反应",()=>{setRelation(player,r,-2)}]
+]});
+}
+function advanceTrialStory(){
+if(!trialMode||trialEnded||trialRival===null)return;
+const r=trialRival,t=treatyState(player,r),rel=relations[player][r];
+if(year>=4&&!trialFlags.crisis)trialScriptedCrisis();
+if(t.alliance||t.nonAggression||rel>22)return;
+const s=conflictState(r,player);
+if(year>=8&&!trialFlags.warning&&!atWar(r,player)){trialFlags.warning=true;aiEscalateConflict(r,player);logEvent("试玩局势继续",`${countries[r].name} 因危机未完全缓和，向 ${countries[player].name} 发出公开警告。`,"warn")}
+else if(year>=11&&!trialFlags.ultimatum&&!atWar(r,player)){trialFlags.ultimatum=true;aiEscalateConflict(r,player)}
+else if(year>=14&&!trialFlags.mobilization&&!atWar(r,player)){trialFlags.mobilization=true;aiEscalateConflict(r,player)}
+else if(year>=16&&!atWar(r,player)&&conflictState(r,player).stage>=3&&year>=(conflictState(r,player).readyYear||0))declareWar(r,player);
+}
+function trialSummaryLines(){
+const lines=[];
+if(trialGoals.treaty)lines.push("你完成了正式外交条约，体验了国家点击后的直接外交。");
+if(trialGoals.expansion)lines.push("你完成了一次定向扩张，体验了版图发展的方向选择。");
+if(trialGoals.battle)lines.push("你亲自指挥并赢下一场关键舰队战。");
+if(trialGoals.peace)lines.push("你通过谈判结束了一场战争。");
+if(trialGoals.finance)lines.push("你的财政曾连续保持健康状态。");
+if(trialRival!==null)lines.push(`与 ${countries[trialRival]?.name||"主要对手"} 的关系最终为“${relationHumanLabel(player,trialRival)}”。`);
+if(!lines.length)lines.push("你完成了试玩时段，但还没有达成核心小目标；可以继续当前世界再熟悉一下。");
+return lines;
+}
+function endTrial(){
+if(!trialMode||trialEnded)return;
+trialEnded=true;paused=true;markTrialDone();renderTrialGuide();
+const won=trialGoalCount()>=2;
+document.getElementById("modalTitle").textContent=won?"5 分钟试玩完成":"5 分钟试玩结束";
+document.getElementById("modalText").innerHTML=`<b>${won?"你已经体验到至少两条核心循环。":"你已经完成试玩时段，可以继续熟悉。"} </b><div class="card" style="margin-top:9px">${trialSummaryLines().map(x=>`<small style="display:block;margin:4px 0;color:#b9cfdb">• ${x}</small>`).join("")}</div>`;
+const box=document.getElementById("modalChoices");box.innerHTML="";
+const cont=document.createElement("button");cont.className="primary";cont.innerHTML="<b>继续这一局</b><small>保留当前 7 国世界，解除试玩限制，按完整规则继续到 120 年</small>";cont.onclick=()=>{document.getElementById("modal").classList.remove("show");trialMode=false;gameMode="full-small";trialEnded=false;playerGoal=null;goalStreak=0;document.getElementById("speedSel").disabled=false;document.getElementById("goalShort").textContent="请选择国家理想";renderPanels();showGoalChooser()};box.appendChild(cont);
+const full=document.createElement("button");full.innerHTML="<b>开始完整 14 国纪元</b><small>重新生成完整银河，进入 20–40 分钟主模式</small>";full.onclick=()=>{document.getElementById("modal").classList.remove("show");startGame("full")};box.appendChild(full);
+document.getElementById("modal").classList.add("show");
+}
+
 function landPoint(){
 for(let tries=0;tries<5000;tries++){
 let x=Math.floor(rand(W)),y=Math.floor(rand(H));
@@ -276,7 +416,10 @@ return n;
 function power(c){return c.army*1.2+c.industry*.55+c.tech*.7+c.pop*.08+c.treasury*.05}
 function economy(c){return c.industry*1.3+c.pop*.25+c.tech*.45}
 function logEvent(title,text,sev=""){
-events.unshift({year,title,text,sev}); if(events.length>120)events.pop(); renderPanels();
+events.unshift({year,title,text,sev}); if(events.length>120)events.pop();
+const hb=document.getElementById("historyBtn");if(hb&&isMajorHistory({title,text}))hb.textContent="纪事 · 新";
+if(document.getElementById("historyDrawer")?.classList.contains("show"))renderHistoryDrawer();
+renderPanels();
 }
 function toast(msg){
 const el=document.getElementById("actionStatus");if(!el)return;
@@ -379,9 +522,9 @@ let threshold=type==="trade"?12:type==="nonAggression"?26:48;
 let chance=clamp(.26+(rel-threshold)*.012+(type==="trade"?.18:type==="alliance"?-.08:0),.08,.90);
 ap--;
 if(Math.random()<chance){
-if(type==="trade"){ts.trade=true;setRelation(player,target,7);recordEvolution(countries[player],"commercial",.48);toast(`与 ${countries[target].name} 签署贸易协定。`)}
-if(type==="nonAggression"){ts.nonAggression=true;setRelation(player,target,9);toast(`与 ${countries[target].name} 签署互不侵犯条约。`)}
-if(type==="alliance"){ts.alliance=true;ts.nonAggression=true;setRelation(player,target,14);toast(`与 ${countries[target].name} 缔结星际同盟；战争时仍需单独请求支援。`)}
+if(type==="trade"){ts.trade=true;setRelation(player,target,7);recordEvolution(countries[player],"commercial",.48);if(trialMode)trialGoals.treaty=true;toast(`与 ${countries[target].name} 签署贸易协定。`)}
+if(type==="nonAggression"){ts.nonAggression=true;setRelation(player,target,9);if(trialMode)trialGoals.treaty=true;toast(`与 ${countries[target].name} 签署互不侵犯条约。`)}
+if(type==="alliance"){ts.alliance=true;ts.nonAggression=true;setRelation(player,target,14);if(trialMode)trialGoals.treaty=true;toast(`与 ${countries[target].name} 缔结星际同盟；战争时仍需单独请求支援。`)}
 ts.signedYear=year;if(type==="nonAggression"||type==="alliance")warEscalations[warKey(player,target)]={stage:0,lastYear:year,readyYear:null,aggressor:null};logEvent("条约签署",`${countries[player].name} 与 ${countries[target].name} 缔结${type==="trade"?"贸易协定":type==="nonAggression"?"互不侵犯条约":"星际同盟"}。${type==="alliance"?"同盟不等于自动参战，战争支援需另行协调。":""}`,"good");
 }else{
 setRelation(player,target,-2);toast(`${countries[target].name} 暂时没有接受这项条约。`);
@@ -415,6 +558,116 @@ function relationHumanLabel(a,b){
 const r=relations[a][b];
 return r>60?"高度互信":r>30?"友好":r>5?"温和":r>-20?"中立偏冷":r>-45?"紧张":"敌对";
 }
+const MAIN_GOALS={
+hegemony:{name:"银河霸权",short:"成为银河最强国家",desc:"综合实力第 1，同时保持基本财政与社会稳定。",need:8},
+conquest:{name:"星海征服",short:"建立银河最大版图",desc:"领土规模第 1，并控制足够比例的银河星域。",need:5},
+welfare:{name:"人民乐土",short:"建立最幸福稳定的国家",desc:"长期维持高稳定、充足补给、健康财政与和平。",need:8},
+trade:{name:"银河商路",short:"成为银河贸易中心",desc:"建立广泛贸易网络，让贸易收益位居银河第 1。",need:7},
+tech:{name:"技术飞升",short:"建立最先进文明",desc:"科研位居银河第 1，并有足够工业与财政支撑。",need:7},
+order:{name:"银河秩序",short:"成为外交秩序核心",desc:"建立大型同盟网络，并让银河维持较低紧张度。",need:6}
+};
+function formalTreatyCount(id,type){
+let n=0;
+for(const [k,t] of Object.entries(treaties)){
+const [a,b]=k.split("-").map(Number);if(a!==id&&b!==id)continue;
+if(type==="trade"&&t.trade)n++;
+if(type==="alliance"&&t.alliance)n++;
+if(type==="peace"&&(t.nonAggression||t.alliance))n++;
+}
+return n;
+}
+function rankByValue(id,fn){
+const arr=countries.filter(c=>c.alive).sort((a,b)=>fn(b)-fn(a));
+const i=arr.findIndex(c=>c.id===id);return i<0?999:i+1;
+}
+function goalProgressData(){
+const p=countries[player];if(!p||!playerGoal)return null;
+const totalTerr=countries.filter(c=>c.alive).reduce((s,c)=>s+c.territory,0);
+const territoryShare=totalTerr? p.territory/totalTerr : 0;
+const powerRank=rankByValue(player,c=>power(c));
+const territoryRank=rankByValue(player,c=>c.territory);
+const techRank=rankByValue(player,c=>c.tech);
+const tradeRank=rankByValue(player,c=>treatyTradeIncome(c.id));
+const tradePacts=formalTreatyCount(player,"trade"),allies=formalTreatyCount(player,"alliance");
+const noWar=playerWarTargets().length===0;
+let checks=[];
+if(playerGoal==="hegemony")checks=[
+["综合实力银河第 1",powerRank===1,`当前第 ${powerRank}`],
+["国库至少 25",p.treasury>=25,`当前 ${Math.round(p.treasury)}`],
+["秩序至少 55%",p.stability>=55,`当前 ${Math.round(p.stability)}%`]
+];
+if(playerGoal==="conquest")checks=[
+["领土规模银河第 1",territoryRank===1,`当前第 ${territoryRank}`],
+["控制至少 25% 银河星域",territoryShare>=.25,`当前 ${Math.round(territoryShare*100)}%`],
+["秩序至少 45%",p.stability>=45,`当前 ${Math.round(p.stability)}%`]
+];
+if(playerGoal==="welfare")checks=[
+["秩序至少 82%",p.stability>=82,`当前 ${Math.round(p.stability)}%`],
+["补给至少 85",p.food>=85,`当前 ${Math.round(p.food)}`],
+["国库至少 45",p.treasury>=45,`当前 ${Math.round(p.treasury)}`],
+["当前没有战争",noWar,noWar?"和平":"仍在战争"]
+];
+if(playerGoal==="trade")checks=[
+["至少 5 个贸易伙伴",tradePacts>=5,`当前 ${tradePacts}`],
+["贸易收益银河第 1",tradeRank===1,`当前第 ${tradeRank}`],
+["国库至少 80",p.treasury>=80,`当前 ${Math.round(p.treasury)}`]
+];
+if(playerGoal==="tech")checks=[
+["科研水平银河第 1",techRank===1,`当前第 ${techRank}`],
+["科研至少 72",p.tech>=72,`当前 ${Math.round(p.tech)}`],
+["船坞产能至少 45",p.industry>=45,`当前 ${Math.round(p.industry)}`],
+["国库至少 25",p.treasury>=25,`当前 ${Math.round(p.treasury)}`]
+];
+if(playerGoal==="order")checks=[
+["至少 4 个正式盟友",allies>=4,`当前 ${allies}`],
+["当前没有战争",noWar,noWar?"和平":"仍在战争"],
+["银河局势低于 60",worldTension<60,`当前 ${Math.round(worldTension)}`],
+["秩序至少 55%",p.stability>=55,`当前 ${Math.round(p.stability)}%`]
+];
+const g=MAIN_GOALS[playerGoal],all=checks.every(x=>x[1]);
+return {goal:g,checks,all,need:g.need,streak:goalStreak,powerRank,territoryRank,techRank,tradeRank,territoryShare,tradePacts,allies};
+}
+function updateGoalStreak(){
+if(trialMode||!playerGoal)return;
+const d=goalProgressData();goalStreak=d?.all?goalStreak+1:0;
+}
+function goalHudText(){
+const d=goalProgressData();if(!d)return "尚未选择国家理想";
+return `${d.goal.name} · ${goalStreak}/${d.need} 年`;
+}
+function goalPanelHtml(){
+if(trialMode||!playerGoal)return "";
+const d=goalProgressData();
+return `<div class="card goalCard" style="margin-top:10px"><div class="goalChoiceTitle"><b>国家理想 · ${d.goal.name}</b><span class="goalTag">无直接数值 Buff</span></div>
+<small style="display:block;color:#9db5c4;margin-top:4px">${d.goal.desc}</small>
+<div class="goalChecks">${d.checks.map(([label,ok,now])=>`<span class="${ok?"ok":"no"}">${ok?"✓":"○"} ${label} · ${now}</span>`).join("")}</div>
+<small style="display:block;color:#7896a8;margin-top:7px">全部条件需连续维持 ${d.need} 年；当前 ${goalStreak}/${d.need} 年。六条主线只改变胜利判定，不提供巨大属性加成。</small></div>`;
+}
+function chooseMainGoal(id){
+if(!MAIN_GOALS[id])return;
+playerGoal=id;goalStreak=0;goalSelectedYear=year;
+document.getElementById("modal").classList.remove("show");
+const box=document.getElementById("modalChoices");box.style.gridTemplateColumns="";
+paused=false;document.getElementById("pauseBtn").textContent="暂停";
+logEvent("国家理想确立",`${countries[player].name} 将“${MAIN_GOALS[id].name}”确立为长期国家理想。该路线只改变胜利目标，不直接给予属性加成。`,"good");
+renderPanels();
+}
+function showGoalChooser(){
+if(trialMode)return;
+paused=true;document.getElementById("pauseBtn").textContent="选择理想";
+const modal=document.getElementById("modal"),box=document.getElementById("modalChoices");
+document.getElementById("modalTitle").textContent="选择国家理想";
+document.getElementById("modalText").innerHTML=`<small style="color:#9db0c4">六条主线按照接近的长期难度设计。选择只改变你如何获胜，不直接提高军力、科研、财政或外交成功率。</small>`;
+box.innerHTML="";box.style.gridTemplateColumns="1fr 1fr";
+const order=["hegemony","conquest","welfare","trade","tech","order"];
+for(const id of order){
+const g=MAIN_GOALS[id],b=document.createElement("button");
+b.innerHTML=`<div class="goalChoiceTitle"><b>${g.name}</b><span class="goalTag">标准路线</span></div><small>${g.short}</small><small style="margin-top:4px">${g.desc}</small><small style="margin-top:4px;color:#7896a8">达标后连续维持 ${g.need} 年</small>`;
+b.onclick=()=>chooseMainGoal(id);box.appendChild(b);
+}
+modal.classList.add("show");
+}
+
 
 function generateStarTheater(a,b){
 const seed=Math.floor(Math.random()*997000)+Math.min(a,b)*71+Math.max(a,b)*113;
@@ -633,6 +886,7 @@ c.fillStyle="#dff8ff";c.font="bold 15px system-ui";c.textAlign="center";c.fillTe
 
 function declareWar(a,b){
 if(atWar(a,b)||!countries[a].alive||!countries[b].alive)return;
+if(trialMode&&(a===player||b===player)&&playerWarTargets().length>=1)return;
 if(a!==player&&!aiEscalateConflict(a,b))return;
 if(a===player){const cs=conflictState(a,b);if(cs.stage<3||year<(cs.readyYear||0)){toast("战争升级流程尚未完成，不能直接宣战。");return}}
 const pact=treatyState(a,b);
@@ -640,7 +894,7 @@ wars.add(warKey(a,b));recordEvolution(countries[a],"military",.42);setRelation(a
 logEvent("星际战争爆发",`${countries[a].name} 向 ${countries[b].name} 宣战。`,"bad");addSignal(a,b,`⚔ ${countries[a].name.split(" ")[0]}—${countries[b].name.split(" ")[0]}`,"war",12);if(a===player||b===player){showWarNotice(a,b)}else if(neighbors(player).includes(a)||neighbors(player).includes(b))toast(`${countries[a].name} 与 ${countries[b].name} 开战，附近局势已经改变。`);
 }
 function peace(a,b){
-const k=warKey(a,b);wars.delete(k);setRelation(a,b,18);worldTension=clamp(worldTension-3,0,100);
+const k=warKey(a,b);if(trialMode&&(a===player||b===player))trialGoals.peace=true;wars.delete(k);setRelation(a,b,18);worldTension=clamp(worldTension-3,0,100);
 warEscalations[k]={stage:0,lastYear:year,readyYear:null,aggressor:null};
 const plan=warPlans[k];if(plan?.enemyDemand)plan.enemyDemand.resolved=true;
 logEvent("停战",`${countries[a].name} 与 ${countries[b].name} 签署停火协议。未来若再次开战，仍需重新经过外交升级。`);
@@ -1228,7 +1482,7 @@ ourLoss+=clamp((def/Math.max(1,atk))*1.05*intensity*terrainLoss,.25,2.6);
 enemyLoss+=clamp((atk/Math.max(1,def))*.95*intensity*terrainLoss,.25,2.8);
 details.push({name:r.name,objective:r.objective,atk,def,success,ratio,control:r.control});
 }
-const controlShare=capturedValue/Math.max(1,totalValue);
+const controlShare=capturedValue/Math.max(1,totalValue);if(trialMode&&controlShare>=.50)trialGoals.battle=true;
 let outcome=controlShare>=.74?"关键节点突破":controlShare>=.50?"取得局部控制":controlShare>=.26?"战线僵持":"攻势被压回",land=0;
 let shiftDelta=controlShare>=.74?2.8:controlShare>=.50?1.35:controlShare>=.26?0:-1.8;
 const main=localBattle.routes[localBattle.selectedRoute],mainWon=details[localBattle.selectedRoute].success;
@@ -2022,6 +2276,13 @@ if(year%5===0) balancingBloc();
 if(year%7===0) normalizeRelations();
 const rnk=countries.filter(x=>x.alive).sort((a,b)=>power(b)-power(a)).findIndex(x=>x.id===player)+1;
 top3Streak=(rnk>0&&rnk<=3)?top3Streak+1:0;
+if(!trialMode&&playerGoal)updateGoalStreak();
+if(trialMode){
+const tf=financeSnapshot(countries[player]);
+trialFinanceYears=(tf.net>=0&&countries[player].treasury>=25)?trialFinanceYears+1:0;
+if(trialFinanceYears>=3)trialGoals.finance=true;
+advanceTrialStory();
+}
 renderPanels();checkEnd();
 }
 function normalizeRelations(){
@@ -2035,16 +2296,23 @@ relations[i][j]=relations[j][i]=clamp(relations[i][j]+rand(4,-4)+personality-ten
 function checkEnd(){
 const p=countries[player];
 if(!p.alive){showEnd("国家覆灭",`你的国家在 ${year} 年失去了有效领土。`);return true}
-if(year>=120){
-const rank=countries.filter(x=>x.alive).sort((a,b)=>power(b)-power(a)).findIndex(x=>x.id===player)+1;
-const healthy=p.stability>=55&&p.treasury>=25;
-const won=rank>0&&rank<=3&&top3Streak>=10&&healthy;
-showEnd(won?"目标达成":"时代结束",
-`120 星历周期结束：综合实力第 ${rank}；连续保持前三 ${top3Streak} 年；稳定 ${Math.round(p.stability)}%；国库 ${Math.round(p.treasury)}。`);return true
+if(trialMode&&trialElapsed>=300){endTrial();return true}
+if(!trialMode&&playerGoal){
+const d=goalProgressData();
+if(d&&goalStreak>=d.need){
+showEnd(`${d.goal.name} · 目标达成`,`${countries[player].name} 已经完成“${d.goal.name}”路线，并连续 ${d.need} 年维持全部胜利条件。`);
+return true;
+}
+}
+if(!trialMode&&year>=120){
+const d=goalProgressData();
+const met=d?d.checks.filter(x=>x[1]).length:0,total=d?d.checks.length:0;
+showEnd("时代结束",playerGoal?`120 星历周期结束。你选择的是“${MAIN_GOALS[playerGoal].name}”，当前满足 ${met}/${total} 项核心条件，连续达标 ${goalStreak}/${MAIN_GOALS[playerGoal].need} 年。`:"120 星历周期结束。");
+return true;
 }
 return false
 }
-function showEnd(title,text){paused=true;document.getElementById("modalTitle").textContent=title;document.getElementById("modalText").textContent=text;const box=document.getElementById("modalChoices");box.innerHTML="";const b=document.createElement("button");b.innerHTML="<b>生成新世界</b><small>重新开始一局</small>";b.onclick=()=>{document.getElementById("modal").classList.remove("show");startGame(true)};box.appendChild(b);document.getElementById("modal").classList.add("show")}
+function showEnd(title,text){paused=true;document.getElementById("modalTitle").textContent=title;document.getElementById("modalText").textContent=text;const box=document.getElementById("modalChoices");box.innerHTML="";const b=document.createElement("button");b.innerHTML="<b>生成新世界</b><small>重新开始一局</small>";b.onclick=()=>{document.getElementById("modal").classList.remove("show");startGame("full")};box.appendChild(b);document.getElementById("modal").classList.add("show")}
 function randomCrisis(){
 const p=countries[player];if(!p.alive)return;
 const pool=buildPlayerCrisisPool();
@@ -2257,7 +2525,7 @@ if(owner[nk]===-1&&!terrain[nk]&&expansionDirectionOfCell(nk,p)===direction&&Mat
 }
 for(const k of chosen){terrain[k]=1;owner[k]=player}
 p.treasury-=cost;p.food=Math.max(0,p.food-2);p.industry+=.35;
-ap--;lastExpansionYear=year;expansionCount++;recount();recordEvolution(p,"colonial",.62);mapDirty=true;
+ap--;lastExpansionYear=year;expansionCount++;recount();recordEvolution(p,"colonial",.62);if(trialMode)trialGoals.expansion=true;mapDirty=true;
 logEvent("定向边疆拓展",`${p.name} 选择向${direction}扩张，在该方向建立一片连续的新前哨区。`,"good");
 toast(`已向${direction}扩展 ${chosen.length} 个星区，消耗 ${cost} 国库。`);
 renderPanels();
@@ -2320,9 +2588,9 @@ return `<div class="card" style="border-color:#704246">
 
 function renderPanels(){
 if(!countries.length)return;
-renderWarDock();applyHumanState();renderPriorityHint();
+renderWarDock();applyHumanState();renderPriorityHint();renderTrialGuide();
 const c=countries[selected]||countries[player], pc=countries[player];
-document.getElementById("year").textContent=year;document.getElementById("ap").textContent=ap;const liveRank=countries.filter(x=>x.alive).sort((a,b)=>power(b)-power(a)).findIndex(x=>x.id===player)+1;document.getElementById("rank").textContent=liveRank>0?liveRank+" / "+countries.filter(x=>x.alive).length:"—";document.getElementById("streak").textContent=top3Streak;document.getElementById("tension").textContent=worldTension<30?"平静":worldTension<55?"暗流涌动":worldTension<75?"紧张":worldTension<90?"危险":"濒临大战";
+document.getElementById("year").textContent=year;document.getElementById("ap").textContent=ap;if(!trialMode)document.getElementById("goalShort").textContent=goalHudText();const liveRank=countries.filter(x=>x.alive).sort((a,b)=>power(b)-power(a)).findIndex(x=>x.id===player)+1;document.getElementById("rank").textContent=liveRank>0?liveRank+" / "+countries.filter(x=>x.alive).length:"—";document.getElementById("streak").textContent=top3Streak;document.getElementById("tension").textContent=worldTension<30?"平静":worldTension<55?"暗流涌动":worldTension<75?"紧张":worldTension<90?"危险":"濒临大战";
 let cp=document.getElementById("countryPanel");
 cp.innerHTML=`<div class="countryTitle"><i class="swatch" style="background:${c.color}"></i><div><h2>${c.name}</h2><div class="sub">${c.id===player?"你的星域 · ":""}战略协议：${c.strategy}</div><div class="sub" style="margin-top:3px">国家结构：${evolutionSummary(c)}</div></div></div><div class="stats">
 ${stat("殖民人口",Math.round(c.pop)+" 亿")}
@@ -2334,11 +2602,12 @@ ${stat("舰队",Math.round(c.army))}
 ${stat("秩序",Math.round(c.stability)+"%")}
 ${stat("星域",Math.round(c.territory/12))}
 </div>
-${c.id===player?`<small style="display:block;color:#9db0c4;margin-top:7px">财政趋势：${financeTrendLabel((lastFinance||financeSnapshot(c)).net)} · ${evolutionTypeDesc(ensureEvolution(c).type)}</small>`:""}` + evolutionDetailsHtml(c);
+${c.id===player?`<small style="display:block;color:#9db0c4;margin-top:7px">财政趋势：${financeTrendLabel((lastFinance||financeSnapshot(c)).net)}${trialMode?" · 试玩只显示核心状态":` · ${evolutionTypeDesc(ensureEvolution(c).type)}`}</small>`:""}` + (trialMode?"":evolutionDetailsHtml(c));
+if(c.id===player&&!trialMode)cp.innerHTML+=goalPanelHtml();
 if(c.id===player){
 const pressure=c.stability>85?"社会总体安定":c.stability>65?"社会尚算稳定":c.stability>45?"社会出现压力":"社会明显不稳";
 const finance=c.treasury>140?"财政宽裕":c.treasury>70?"财政可控":c.treasury>25?"财政偏紧":"财政危险";
-cp.innerHTML+=`${(()=>{const h=financeHumanSummary(c),w=playerWarStrain();return `<div id="financeHumanCard" class="card humanState ${h.level===2?"bad":h.level===1?"warn":"good"}" style="margin-top:12px"><b>${h.label}</b><small style="display:block;color:#c5d2de;margin-top:4px">${h.why}</small><small style="display:block;color:#9db0c4;margin-top:4px">现在建议：${h.next}</small><div style="display:flex;gap:7px;margin-top:9px;flex-wrap:wrap"><button id="financeReportBtn" aria-expanded="false">查看详细账本</button><button id="austerityBtn">${austerity?"结束紧缩":"财政紧缩"}</button><button id="demobBtn">裁军</button></div></div>${w.level?`<div class="card humanState ${w.level===2?"bad":"warn"}"><b>${w.label}</b><small style="display:block;color:#9db0c4">${w.detail}。战争疲劳会同时削弱前线效率、财政和社会稳定。</small></div>`:""}`})()}${economyLinkHtml(c)}${financeReportHtml()}${warFinanceSummary()}<h3 style="margin-top:14px">星域指令</h3><div class="actions">
+cp.innerHTML+=`${(()=>{const h=financeHumanSummary(c),w=playerWarStrain();return `<div id="financeHumanCard" class="card humanState ${h.level===2?"bad":h.level===1?"warn":"good"}" style="margin-top:12px"><b>${h.label}</b><small style="display:block;color:#c5d2de;margin-top:4px">${h.why}</small><small style="display:block;color:#9db0c4;margin-top:4px">现在建议：${h.next}</small><div style="display:flex;gap:7px;margin-top:9px;flex-wrap:wrap"><button id="financeReportBtn" aria-expanded="false">查看详细账本</button><button id="austerityBtn">${austerity?"结束紧缩":"财政紧缩"}</button><button id="demobBtn">裁军</button></div></div>${w.level?`<div class="card humanState ${w.level===2?"bad":"warn"}"><b>${w.label}</b><small style="display:block;color:#9db0c4">${w.detail}。战争疲劳会同时削弱前线效率、财政和社会稳定。</small></div>`:""}`})()}${trialMode?"":economyLinkHtml(c)}${trialMode?"":financeReportHtml()}${warFinanceSummary()}<h3 style="margin-top:14px">星域指令</h3><div class="actions">
 <button class="action" data-a="farm"><b>补给调度</b><small>扩充战略补给，维持殖民地运转</small></button>
 <button class="action" data-a="industry"><b>扩建船坞</b><small>${(()=>{const q=investmentPreview("工业");return `投入约 ${q.cost}；2 年后投产，从现在算约 ${q.years+q.payback} 年回本`})()}</small></button>
 <button class="action" data-a="research"><b>研究计划</b><small>${(()=>{const q=investmentPreview("科研");return `投入约 ${q.cost}；3 年后提升效率，从现在算约 ${q.years+q.payback} 年回本`})()}</small></button>
@@ -2431,8 +2700,34 @@ note.innerHTML=`<b>周边政治反应</b><small style="display:block;color:#9db0
 cp.appendChild(note);
 }
 
-const activeHtml=situations.length?`<h2>正在发展的局势</h2>`+situations.map(s=>{const A=countries[s.a],B=countries[s.b];return `<div class="card"><b>${s.type} · ${A.name} ↔ ${B.name}</b><small style="display:block;color:#9db0c4">始于 ${s.start} 年 · 当前：${relations[s.a][s.b]<-40?"彼此敌视":relations[s.a][s.b]<-10?"关系紧张":relations[s.a][s.b]>35?"关系亲近":"关系一般"}${atWar(s.a,s.b)?" · 战争中":""}</small></div>`}).join(""):"";
-document.getElementById("eventsPanel").innerHTML=activeHtml+"<h2>世界事件</h2>"+events.map(e=>`<div class="event ${e.sev}"><time>${e.year} 年</time><b>${e.title}</b><span>${e.text}</span></div>`).join("");
+if(document.getElementById("historyDrawer")?.classList.contains("show"))renderHistoryDrawer();
+}
+
+
+function isMajorHistory(e){
+const s=(e.title+" "+e.text);
+return /宣战|战争爆发|停战|和平|赔款|割让|条约|同盟|互不侵犯|贸易协定|国家结构演化|核心星|覆灭|财政危机|国内危机|最后通牒|军事动员|条约破裂|领土争端|边境对峙|军备竞赛升级/.test(s);
+}
+function renderHistoryDrawer(){
+const body=document.getElementById("historyDrawerBody");if(!body)return;
+const major=events.filter(isMajorHistory).slice(0,60);
+const active=situations.filter(s=>countries[s.a]?.alive&&countries[s.b]?.alive).slice(0,8);
+body.innerHTML=(active.length?`<h3>仍在发展的局势</h3>${active.map(s=>`<div class="card"><b>${s.type} · ${countries[s.a].name} ↔ ${countries[s.b].name}</b><small style="display:block;color:#91a8b7;margin-top:3px">始于 ${s.start} 年</small></div>`).join("")}`:"")
++`<h3>重大历史</h3>${major.length?major.map(e=>`<div class="event ${e.sev}"><time>${e.year} 年</time><b>${e.title}</b><span>${e.text}</span></div>`).join(""):'<small style="color:#829bab">目前还没有需要长期留档的重大事件。</small>'}`;
+}
+function openHistory(){
+const hb=document.getElementById("historyBtn");if(hb)hb.textContent="纪事";
+renderHistoryDrawer();
+document.getElementById("historyDrawer")?.classList.add("show");
+document.getElementById("historyShade")?.classList.add("show");
+document.getElementById("historyDrawer")?.setAttribute("aria-hidden","false");
+document.getElementById("historyBtn")?.setAttribute("aria-expanded","true");
+}
+function closeHistory(){
+document.getElementById("historyDrawer")?.classList.remove("show");
+document.getElementById("historyShade")?.classList.remove("show");
+document.getElementById("historyDrawer")?.setAttribute("aria-hidden","true");
+document.getElementById("historyBtn")?.setAttribute("aria-expanded","false");
 }
 function stat(a,b){return `<div class="stat"><span>${a}</span><b>${b}</b></div>`}
 function rebuildTexture(){
@@ -2467,19 +2762,20 @@ return {x:c.cap.x,y:c.cap.y};
 function drawWorldLandmarks(){
 for(const c of countries)if(c.alive){
 const important=cam.z>1.08||c.id===selected||c.id===player||playerWarTargets().includes(c.id);
-if(!important)continue;
 const city=ownedLandmarkPoint(c,(c.id*1.87)%6.28,6+(c.id%4)),ind=ownedLandmarkPoint(c,(c.id*2.41+1.1)%6.28,7+(c.id%3));
 ctx.save();
-// light C: a restrained national halo around the core star
-ctx.fillStyle=c.color+"20";ctx.beginPath();ctx.arc(c.cap.x,c.cap.y,3.4,0,Math.PI*2);ctx.fill();
+ctx.fillStyle=c.color+"1d";ctx.beginPath();ctx.arc(c.cap.x,c.cap.y,3.1,0,Math.PI*2);ctx.fill();
+ctx.fillStyle="#e8fbff";ctx.shadowColor=c.color;ctx.shadowBlur=4.5;ctx.beginPath();ctx.arc(c.cap.x,c.cap.y,1.05,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;
+if(important){
 ctx.strokeStyle=c.color+"aa";ctx.lineWidth=.55;ctx.beginPath();ctx.ellipse(c.cap.x,c.cap.y,2.7,1.2,.35,0,Math.PI*2);ctx.stroke();
-ctx.fillStyle="#e8fbff";ctx.shadowColor=c.color;ctx.shadowBlur=5;ctx.beginPath();ctx.arc(c.cap.x,c.cap.y,1.15,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;
-// secondary colony and shipyard stay subtle
-if(cam.z>1.18||c.id===selected||c.id===player){
 ctx.fillStyle="#9fd7e5";ctx.globalAlpha=.78;ctx.beginPath();ctx.moveTo(city.x,city.y-1.35);ctx.lineTo(city.x+1.35,city.y);ctx.lineTo(city.x,city.y+1.35);ctx.lineTo(city.x-1.35,city.y);ctx.closePath();ctx.fill();ctx.globalAlpha=1;
 ctx.strokeStyle="#ffbf66aa";ctx.lineWidth=.58;ctx.beginPath();for(let a=0;a<6;a++){const q=a*Math.PI/3,x=ind.x+Math.cos(q)*1.6,y=ind.y+Math.sin(q)*1.6;a?ctx.lineTo(x,y):ctx.moveTo(x,y)}ctx.closePath();ctx.stroke();
 }
-if(cam.z>1.65||c.id===selected){ctx.font="2.6px system-ui";ctx.textAlign="center";ctx.fillStyle="#bfefffcc";ctx.fillText("核心星",c.cap.x,c.cap.y-3.4)}
+ctx.textAlign="center";ctx.textBaseline="bottom";
+ctx.font=`${c.id===selected?3.5:3.0}px system-ui`;
+ctx.lineWidth=.9;ctx.strokeStyle="rgba(3,10,17,.92)";ctx.strokeText(c.name,c.cap.x,c.cap.y-3.0);
+ctx.fillStyle=c.id===selected?"#dcf7ff":"#c4d8e3";ctx.fillText(c.name,c.cap.x,c.cap.y-3.0);
+if(cam.z>1.8&&c.id===selected){ctx.font="2.3px system-ui";ctx.fillStyle="#8fc9dd";ctx.fillText("核心星",c.cap.x,c.cap.y-6.4)}
 ctx.restore();
 }
 }
@@ -2582,26 +2878,48 @@ for(const t of playerWarTargets()){
 const A=countries[player],B=countries[t],mx=(A.cap.x+B.cap.x)/2,my=(A.cap.y+B.cap.y)/2;
 if(Math.hypot(p.x-mx,p.y-my)<7){openTheater(t);return}
 }
-if(p.x>=0&&p.x<W&&p.y>=0&&p.y<H){let o=owner[idx(p.x,p.y)];if(o>=0){selected=o;document.querySelector('[data-tab="country"]').click();renderPanels();if(o!==player)toast(`已选中 ${countries[o].name}，可在右侧直接交往或宣战。`)}}});
+if(p.x>=0&&p.x<W&&p.y>=0&&p.y<H){let o=owner[idx(p.x,p.y)];if(o>=0){selected=o;renderPanels();if(o!==player)toast(`已选中 ${countries[o].name}，可在右侧直接交往或宣战。`)}}});
 canvas.addEventListener("pointerdown",e=>{drag={x:e.clientX,y:e.clientY,cx:cam.x,cy:cam.y,moved:false};canvas.setPointerCapture(e.pointerId)});
 canvas.addEventListener("pointermove",e=>{if(!drag)return;let dx=e.clientX-drag.x,dy=e.clientY-drag.y;if(Math.hypot(dx,dy)>3)drag.moved=true;cam.x=drag.cx+dx;cam.y=drag.cy+dy});
 canvas.addEventListener("pointerup",()=>drag=null);
 canvas.addEventListener("wheel",e=>{e.preventDefault();cam.z=clamp(cam.z*(e.deltaY<0?1.12:.89),.7,3)}, {passive:false});
-document.querySelectorAll(".tab").forEach(t=>t.onclick=()=>{document.querySelectorAll(".tab,.panel").forEach(x=>x.classList.remove("active"));t.classList.add("active");document.getElementById(t.dataset.tab+"Panel").classList.add("active")});
+
 document.getElementById("pauseBtn").onclick=()=>{if(pendingEvent){toast("请先处理右侧事件。");return}paused=!paused;document.getElementById("pauseBtn").textContent=paused?"继续":"暂停"};
 document.getElementById("speedSel").onchange=e=>speed=+e.target.value;
-document.getElementById("newBtn").onclick=()=>startGame(true);
-document.getElementById("startBtn").onclick=()=>{document.getElementById("start").style.display="none";startGame(false)};
-function startGame(reset){
-generateTerrain();generateCountries();treaties={};warEscalations={};mapDirty=true;year=1;ap=3;events=[];paused=false;selected=player=0;nextEventYear=Math.floor(rand(15,10));pendingEvent=null;resumeAfterEvent=true;worldTension=18;top3Streak=0;nextWorldEventYear=5;situations=[];mapSignals=[];threatMemory=Array(N).fill(0);playerArmyHistory=[];warPlans={};austerity=false;lastFinance=null;localBattle=null;localBattleLastYear={};theaterTarget=null;theaterWasPaused=false;warNoticeQueue=[];investmentQueue=[];peaceTalkLastYear={};yearOneOffCash=0;lastYearOneOffCash=0;lastExpansionYear=-99;expansionCount=0;document.getElementById("battleMode").classList.remove("show");document.getElementById("theaterPanel").classList.remove("show");renderPendingEvent();tickAcc=0;cam={x:0,y:0,z:1};gameStarted=true;
-logEvent("新纪元",`${countries[player].name} 进入了新的星历周期。你的目标是在 120 个星历周期内进入综合实力前三，并连续保持至少 10 年。`);
+document.getElementById("historyBtn").onclick=openHistory;
+document.getElementById("closeHistoryBtn").onclick=closeHistory;
+document.getElementById("historyShade").onclick=closeHistory;
+document.getElementById("newBtn").onclick=()=>startGame(trialMode?"trial":"full");
+if(trialCompletedBefore()){document.getElementById("startFullBtn").style.display="block";document.getElementById("startIntro").textContent="你已经完成过 5 分钟试玩，可以再次试玩，也可以直接进入完整纪元。"}
+document.getElementById("startTrialBtn").onclick=()=>{document.getElementById("start").style.display="none";startGame("trial")};
+document.getElementById("startFullBtn").onclick=()=>{document.getElementById("start").style.display="none";startGame("full")};
+function startGame(mode="full"){
+gameMode=mode;trialMode=mode==="trial";trialElapsed=0;trialEnded=false;playerGoal=null;goalStreak=0;goalSelectedYear=1;
+N=trialMode?7:14;
+generateTerrain();generateCountries();treaties={};warEscalations={};mapDirty=true;year=1;ap=3;events=[];paused=false;selected=player=0;nextEventYear=Math.floor(rand(15,10));pendingEvent=null;resumeAfterEvent=true;worldTension=18;top3Streak=0;nextWorldEventYear=5;situations=[];mapSignals=[];threatMemory=Array(N).fill(0);playerArmyHistory=[];warPlans={};austerity=false;lastFinance=null;localBattle=null;localBattleLastYear={};theaterTarget=null;theaterWasPaused=false;warNoticeQueue=[];investmentQueue=[];peaceTalkLastYear={};yearOneOffCash=0;lastYearOneOffCash=0;lastExpansionYear=-99;expansionCount=0;
+trialGoals={treaty:false,finance:false,battle:false,peace:false,expansion:false};trialFinanceYears=0;trialFlags={crisis:false,warning:false,ultimatum:false,mobilization:false};trialRival=trialFriendly=trialNeutral=trialStrong=null;
+document.getElementById("battleMode").classList.remove("show");document.getElementById("theaterPanel").classList.remove("show");renderPendingEvent();tickAcc=0;cam={x:0,y:0,z:1};gameStarted=true;
+if(trialMode){
+configureTrialWorld();speed=1;document.getElementById("speedSel").value="1";document.getElementById("speedSel").disabled=true;
+document.getElementById("goalShort").textContent="试玩：5 分钟内完成任意 2 项核心目标";
+trialStats={startTreasury:countries[player].treasury,startTerritory:countries[player].territory,startYear:year};
+logEvent("5 分钟试玩开始",`这是一局 7 国核心体验。先点一个国家做外交，再根据真实事件处理危机；系统会在五分钟内主动带来一条可缓和、也可能升级为战争的局势链。`);
+}else{
+document.getElementById("speedSel").disabled=false;document.getElementById("goalShort").textContent="请选择国家理想";
+logEvent("新纪元",`${countries[player].name} 进入新的星历周期。首先选择一条长期国家理想。`);
+}
 renderPanels();
+if(!trialMode)showGoalChooser();
 }
 function loop(t){
 let dt=Math.min(.05,(t-last)/1000);last=t;
-if(gameStarted&&!paused){tickAcc+=dt*speed;if(tickAcc>=12){tickAcc=0;yearly()}}
+if(gameStarted&&!paused){
+if(trialMode&&!trialEnded){trialElapsed+=dt;if(trialElapsed>=300){endTrial();draw();requestAnimationFrame(loop);return}}
+tickAcc+=dt*speed;if(tickAcc>=12){tickAcc=0;yearly()}
+}
+if(trialMode&&!trialEnded)renderTrialGuide();
 draw();requestAnimationFrame(loop);
 }
-if(location.hash==="#autostart"){document.getElementById("start").style.display="none";startGame(false);for(let i=0;i<3;i++)yearly();document.body.dataset.selftest=(countries.length===N&&terrain.length===W*H&&owner.length===W*H&&Number.isFinite(power(countries[0])))?"ok":"fail"}
+if(location.hash==="#autostart"){document.getElementById("start").style.display="none";startGame("full");for(let i=0;i<3;i++)yearly();document.body.dataset.selftest=(countries.length===N&&terrain.length===W*H&&owner.length===W*H&&Number.isFinite(power(countries[0])))?"ok":"fail"}
 requestAnimationFrame(loop);
 })();</script></body></html>
