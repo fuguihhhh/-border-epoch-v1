@@ -27,7 +27,7 @@ const canvas=document.getElementById("map"),ctx=canvas.getContext("2d");
 const off=document.createElement("canvas");off.width=W;off.height=H;const ox=off.getContext("2d");
 let terrain=new Uint8Array(W*H), owner=new Int16Array(W*H);
 let countries=[], relations=[], wars=new Set(), events=[], player=0, selected=0;
-let year=1, ap=3, paused=false, speed=1, tickAcc=0, last=performance.now(), nextEventYear=11, pendingEvent=null, resumeAfterEvent=true, worldTension=18, top3Streak=0, nextWorldEventYear=5, situations=[], mapSignals=[];
+let year=1, ap=3, paused=false, speed=1, tickAcc=0, last=performance.now(), nextEventYear=11, pendingEvent=null, resumeAfterEvent=true, worldTension=18, top3Streak=0, nextWorldEventYear=5, situations=[], mapSignals=[], threatMemory=Array(N).fill(0), playerArmyHistory=[];
 let cam={x:0,y:0,z:1},drag=null,gameStarted=false,mapDirty=true;
 const colors=["#56a9e6","#e87070","#75c48a","#d69c58","#a684e8","#59c6ba","#e17cab","#9fc766","#dfc264","#758de0","#bd7956","#70a0a7","#cd6c8d","#7eb067"];
 const namesA=["青河","赤原","北岚","苍湾","白岭","曜川","临海","新穹","霜谷","金泽","云岬","长风","南陆","星浦"];
@@ -109,12 +109,24 @@ if(owner[idx(x+1,y)]===b||owner[idx(x-1,y)]===b||owner[idx(x,y+1)]===b||owner[id
 }
 return n;
 }
+function visualContact(a,b){
+const ca=countries[a],cb=countries[b];
+if(!ca?.alive||!cb?.alive)return false;
+if(borders(a,b)>=2)return true;
+// fallback: if their territories are separated only by a very narrow diagonal/water gap,
+// treat them as practical neighbors for diplomacy/war.
+let near=0;
+for(let y=2;y<H-2;y++)for(let x=2;x<W-2;x++) if(owner[idx(x,y)]===a){
+for(let yy=-2;yy<=2;yy++)for(let xx=-2;xx<=2;xx++){
+if(Math.abs(xx)+Math.abs(yy)>3)continue;
+if(owner[idx(x+xx,y+yy)]===b){near++;if(near>=3)return true}
+}
+}
+return false;
+}
 function neighbors(a){
 let s=new Set();
-for(let y=1;y<H-1;y++)for(let x=1;x<W-1;x++) if(owner[idx(x,y)]===a){
-const ns=[owner[idx(x+1,y)],owner[idx(x-1,y)],owner[idx(x,y+1)],owner[idx(x,y-1)]];
-ns.forEach(v=>{if(v>=0&&v!==a)s.add(v)});
-}
+for(let i=0;i<countries.length;i++)if(i!==a&&countries[i]?.alive&&visualContact(a,i))s.add(i);
 return [...s];
 }
 function power(c){return c.army*1.2+c.industry*.55+c.tech*.7+c.pop*.08+c.treasury*.05}
@@ -135,8 +147,72 @@ function peace(a,b){
 wars.delete(warKey(a,b));setRelation(a,b,18);worldTension=clamp(worldTension-3,0,100);
 logEvent("停战",`${countries[a].name} 与 ${countries[b].name} 签署停火协议。`);
 }
+
+function playerThreatScore(observerId){
+const p=countries[player],o=countries[observerId];
+if(!p?.alive||!o?.alive)return 0;
+const adj=neighbors(observerId).includes(player);
+const powerRatio=power(p)/Math.max(1,power(o));
+const recentGrowth=playerArmyHistory.length>=4?Math.max(0,p.army-playerArmyHistory[Math.max(0,playerArmyHistory.length-4)]):0;
+const expansion=situations.filter(s=>s.a===player||s.b===player).length;
+let t=0;
+if(adj)t+=16;
+if(powerRatio>1.05)t+=(powerRatio-1)*28;
+t+=recentGrowth*1.8;
+t+=expansion*3;
+if(relations[observerId][player]<-20)t+=8;
+if(worldTension>70)t+=(worldTension-70)*.25;
+return clamp(t,0,100);
+}
+function updateThreatPerception(){
+const p=countries[player];
+playerArmyHistory.push(p.army);if(playerArmyHistory.length>10)playerArmyHistory.shift();
+for(const c of countries){
+if(!c.alive||c.id===player)continue;
+const now=playerThreatScore(c.id);
+threatMemory[c.id]=threatMemory[c.id]*.72+now*.28;
+}
+}
+function balancingBloc(){
+const wary=countries.filter(c=>c.alive&&c.id!==player&&threatMemory[c.id]>=34);
+if(wary.length<2)return;
+wary.sort((a,b)=>threatMemory[b.id]-threatMemory[a.id]);
+const a=wary[0],b=wary.find(x=>x.id!==a.id&&visualContact(x.id,a.id));
+if(!b)return;
+setRelation(a.id,b.id,10);
+a.army+=1.8;b.army+=1.8;a.treasury-=2;b.treasury-=2;
+logEvent("制衡靠拢",`${a.name} 与 ${b.name} 因担忧 ${countries[player].name} 的快速军备增长而加强合作。`,"warn");
+addSignal(a.id,b.id,"制衡合作","warn",7);
+}
+function preventiveWarAttempt(c){
+if(!c.alive||c.id===player)return false;
+const ns=neighbors(c.id).filter(i=>countries[i].alive);
+if(!ns.includes(player))return false;
+const threat=threatMemory[c.id];
+if(threat<48)return false;
+const ratio=power(c)/Math.max(1,power(countries[player]));
+const allies=countries.filter(x=>x.alive&&x.id!==player&&x.id!==c.id&&threatMemory[x.id]>36&&neighbors(x.id).includes(player));
+let blocSupport=allies.length?1+.12*Math.min(3,allies.length):1;
+let trigger=.03;
+if(threat>60)trigger+=.06;
+if(threat>75)trigger+=.10;
+if(worldTension>70)trigger+=.05;
+if(ratio*blocSupport>.82)trigger+=.08;
+if(Math.random()<trigger){
+declareWar(c.id,player);
+c.strategy="预防性战争";
+logEvent("预防性战争",`${c.name} 判断继续等待会让 ${countries[player].name} 更难制衡，于是选择提前开战。`,"bad");
+for(const ally of allies.slice(0,2)){
+if(Math.random()<.45&&!atWar(ally.id,player)){declareWar(ally.id,player);ally.strategy="加入制衡战争"}
+}
+return true;
+}
+return false;
+}
+
 function aiThink(c){
 if(!c.alive||c.id===player)return;
+if(preventiveWarAttempt(c))return;
 const ns=neighbors(c.id).filter(i=>countries[i].alive);
 const enemies=ns.filter(i=>atWar(c.id,i));
 const threat=ns.reduce((m,i)=>Math.max(m,power(countries[i])/Math.max(1,power(c))),0);
@@ -301,6 +377,8 @@ advanceSituations();
 [...wars].forEach(k=>{let[a,b]=k.split("-").map(Number);simulateWar(a,b)});
 if(year>=nextEventYear&&!pendingEvent){randomCrisis();nextEventYear=year+Math.floor(rand(17,11))}
 if(year>=nextWorldEventYear){worldEvent();nextWorldEventYear=year+Math.floor(rand(7,4))}
+updateThreatPerception();
+if(year%5===0) balancingBloc();
 if(year%7===0) normalizeRelations();
 const rnk=countries.filter(x=>x.alive).sort((a,b)=>power(b)-power(a)).findIndex(x=>x.id===player)+1;
 top3Streak=(rnk>0&&rnk<=3)?top3Streak+1:0;
@@ -447,7 +525,7 @@ p.tech+=4;msg="科研体系得到推进，但财政要承担更长期的投入";
 }else if(type==="army"){
 cost=Math.round(15+p.army*.11);
 if(p.treasury<cost){toast("财政无法承担这轮扩军。");return}
-p.army+=6;p.stability-=2;worldTension=clamp(worldTension+2,0,100);msg="军备扩大，威慑增强，但军费和社会压力都会上升";
+p.army+=6;p.stability-=2;worldTension=clamp(worldTension+3,0,100);for(const n of neighbors(player))threatMemory[n]=clamp(threatMemory[n]+6,0,100);msg="军备扩大，威慑增强，但周边国家也明显提高了警惕";
 }else if(type==="stability"){
 cost=Math.round(11+p.pop*.004);
 if(p.treasury<cost){toast("财政不足，难以扩大民生支出。");return}
@@ -462,7 +540,8 @@ if(ap<=0){toast("今年没有行动点了。");return}
 const p=countries[player],t=countries[target];if(!t.alive)return;
 if(kind==="trade"){ap--;p.treasury-=4;setRelation(player,target,13);p.treasury+=7;t.treasury+=5;toast("贸易协议改善了双边关系")}
 if(kind==="war"){
-if(!neighbors(player).includes(target)){toast("只能向接壤国家宣战。");return}
+if(!neighbors(player).includes(target)){toast("只能向真正接壤或紧邻的国家宣战。");return}
+if(relations[player][target]>25){worldTension=clamp(worldTension+8,0,100);for(const c of countries)if(c.alive&&c.id!==player)setRelation(player,c.id,-4);toast("突然攻击友好国家，引发了其他国家的普遍警惕。")}
 ap--;declareWar(player,target);
 }
 if(kind==="peace"){ap--;peace(player,target)}
@@ -497,6 +576,13 @@ cp.innerHTML+=`<div class="card" style="margin-top:12px"><b>${finance}</b><small
 </div>`;
 }
 cp.querySelectorAll("[data-a]").forEach(b=>b.onclick=()=>action(b.dataset.a));
+const alarmed=countries.filter(x=>x.alive&&x.id!==player&&threatMemory[x.id]>35).length;
+if(c.id===player&&alarmed>0){
+const note=document.createElement("div");note.className="card";
+note.innerHTML=`<b>周边政治反应</b><small style="display:block;color:#9db0c4">${alarmed>=4?"多个国家已把你的扩张视为共同威胁，制衡合作正在形成。":alarmed>=2?"一些国家开始因你的军备增长而彼此靠拢。":"至少一个邻国正在明显警惕你的军备增长。"}</small>`;
+cp.appendChild(note);
+}
+
 let dp=document.getElementById("diplPanel");dp.innerHTML="<h2>外交</h2>";
 countries.filter(x=>x.alive&&x.id!==player).sort((a,b)=>relations[player][b.id]-relations[player][a.id]).forEach(t=>{
 let rel=relations[player][t.id],war=atWar(player,t.id),adj=neighbors(player).includes(t.id);
@@ -504,7 +590,7 @@ let row=document.createElement("div");row.className="dipl-row";
 const ratio=(power(pc)/Math.max(1,power(t))).toFixed(1);
 row.innerHTML=`<span>${t.name}<small style="display:block;color:#8fa3b8">${adj?"接壤":"非接壤"} · ${war?"战争中":rel>30?"友好":rel<-30?"敌对":"中立"} · 我方实力 ${ratio}×</small></span><b>${rel>50?"亲近":rel>15?"友好":rel<-50?"敌视":rel<-15?"紧张":"中立"}</b><button>${war?"议和":"交往"}</button>`;
 row.querySelector("button").onclick=()=>diplomacyAction(t.id,war?"peace":"trade");dp.appendChild(row);
-if(!war&&adj&&rel<-15){let w=document.createElement("button");w.textContent="宣战";w.style.margin="4px 0 9px";w.onclick=()=>diplomacyAction(t.id,"war");dp.appendChild(w)}
+if(!war&&adj){let w=document.createElement("button");w.textContent="宣战";w.style.margin="4px 0 9px";w.onclick=()=>diplomacyAction(t.id,"war");dp.appendChild(w)}
 if(!war&&rel>-10){let a=document.createElement("button");a.textContent="援助";a.style.margin="4px 0 9px 6px";a.onclick=()=>diplomacyAction(t.id,"aid");dp.appendChild(a)}
 });
 const activeHtml=situations.length?`<h2>正在发展的局势</h2>`+situations.map(s=>{const A=countries[s.a],B=countries[s.b];return `<div class="card"><b>${s.type} · ${A.name} ↔ ${B.name}</b><small style="display:block;color:#9db0c4">始于 ${s.start} 年 · 当前：${relations[s.a][s.b]<-40?"彼此敌视":relations[s.a][s.b]<-10?"关系紧张":relations[s.a][s.b]>35?"关系亲近":"关系一般"}${atWar(s.a,s.b)?" · 战争中":""}</small></div>`}).join(""):"";
@@ -572,7 +658,7 @@ document.getElementById("speedSel").onchange=e=>speed=+e.target.value;
 document.getElementById("newBtn").onclick=()=>startGame(true);
 document.getElementById("startBtn").onclick=()=>{document.getElementById("start").style.display="none";startGame(false)};
 function startGame(reset){
-generateTerrain();generateCountries();mapDirty=true;year=1;ap=3;events=[];paused=false;selected=player=0;nextEventYear=Math.floor(rand(15,10));pendingEvent=null;resumeAfterEvent=true;worldTension=18;top3Streak=0;nextWorldEventYear=5;situations=[];mapSignals=[];renderPendingEvent();tickAcc=0;cam={x:0,y:0,z:1};gameStarted=true;
+generateTerrain();generateCountries();mapDirty=true;year=1;ap=3;events=[];paused=false;selected=player=0;nextEventYear=Math.floor(rand(15,10));pendingEvent=null;resumeAfterEvent=true;worldTension=18;top3Streak=0;nextWorldEventYear=5;situations=[];mapSignals=[];threatMemory=Array(N).fill(0);playerArmyHistory=[];renderPendingEvent();tickAcc=0;cam={x:0,y:0,z:1};gameStarted=true;
 logEvent("新纪元",`${countries[player].name} 开始了新的时代。你的目标是在 120 年内进入综合国力前三，并连续保持至少 10 年。`);
 renderPanels();
 }
