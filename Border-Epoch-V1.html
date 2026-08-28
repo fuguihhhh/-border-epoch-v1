@@ -20,14 +20,14 @@
   .startgrid{grid-template-columns:1fr}
   .startbox h1{font-size:28px}
 }
-</style></head><body><div id="app"><header><div><div class="brand">边界纪元</div><div class="sub">20–40 分钟国家策略沙盒</div></div><div class="spacer"></div><button id="pauseBtn">暂停</button><select id="speedSel"><option value="1" selected>1×</option><option value="2">2×</option><option value="4">4×</option><option value="8">8×</option></select><button id="newBtn">新世界</button></header><main id="mapWrap"><canvas id="map"></canvas><div id="hud"><div class="pill">年份 <b id="year">1</b></div><div class="pill">行动点 <b id="ap">3</b>/4</div><div class="pill">目标 <b id="goalShort">120 年内：前三并连续保持 10 年</b></div><div class="pill">排名 <b id="rank">—</b></div><div class="pill">前三连续 <b id="streak">0</b>/10</div><div class="pill">世界局势 <b id="tension">平静</b></div></div><div class="notice" id="notice"></div><div id="legend">滚轮缩放 · 拖动地图 · 点击国家查看<br>地图没有可见格子；底层区域仅用于模拟。</div><div id="start"><div class="startbox"><h1>边界纪元</h1><p>你不是在玩一张会换颜色的格子图。国家会判断威胁、粮食、财政、外交和战争收益，并根据局势改变策略。</p><div class="startgrid"><div class="card"><b>连续疆界</b><br><small>平滑大陆与国家边界</small></div><div class="card"><b>有限行动</b><br><small>行动收益会递减，不能无脑连点</small></div><div class="card"><b>会权衡的 AI</b><br><small>会因边境、实力与国际紧张度改变战略</small></div></div><button class="primary" id="startBtn">生成世界并开始</button></div></div></main><aside id="right"><div id="pendingEventBar"></div><div class="tabs"><div class="tab active" data-tab="country">国家</div><div class="tab" data-tab="dipl">外交</div><div class="tab" data-tab="events">事件</div></div><section class="panel active" id="countryPanel"></section><section class="panel" id="diplPanel"></section><section class="panel" id="eventsPanel"></section></aside></div><div id="modal"><div class="modalBox"><h2 id="modalTitle"></h2><div id="modalText"></div><div class="choices" id="modalChoices"></div></div></div><script>(()=>{
+</style></head><body><div id="app"><header><div><div class="brand">边界纪元</div><div class="sub">20–40 分钟国家策略沙盒</div></div><div class="spacer"></div><button id="pauseBtn">暂停</button><select id="speedSel"><option value="1" selected>1×</option><option value="2">2×</option><option value="4">4×</option><option value="8">8×</option></select><button id="newBtn">新世界</button></header><main id="mapWrap"><canvas id="map"></canvas><div id="hud"><div class="pill">年份 <b id="year">1</b></div><div class="pill">行动点 <b id="ap">3</b>/4</div><div class="pill">目标 <b id="goalShort">120 年内：前三并连续保持 10 年</b></div><div class="pill">排名 <b id="rank">—</b></div><div class="pill">前三连续 <b id="streak">0</b>/10</div><div class="pill">世界局势 <b id="tension">平静</b></div></div><div class="notice" id="notice"></div><div id="legend">滚轮缩放 · 拖动地图 · 点击国家查看<br>地图没有可见格子；底层区域仅用于模拟。</div><div id="start"><div class="startbox"><h1>边界纪元</h1><p>你不是在玩一张会换颜色的格子图。各国会根据威胁、财政、外交和战争收益改变策略。</p><div class="startgrid"><div class="card"><b>连续疆界</b><br><small>平滑大陆与国家边界</small></div><div class="card"><b>有限行动</b><br><small>行动收益会递减，不能无脑连点</small></div><div class="card"><b>会权衡的国家</b><br><small>会因边境、实力与国际紧张度改变战略</small></div></div><button class="primary" id="startBtn">生成世界并开始</button></div></div></main><aside id="right"><div id="pendingEventBar"></div><div class="tabs"><div class="tab active" data-tab="country">国家</div><div class="tab" data-tab="dipl">外交</div><div class="tab" data-tab="events">事件</div></div><section class="panel active" id="countryPanel"></section><section class="panel" id="diplPanel"></section><section class="panel" id="eventsPanel"></section></aside></div><div id="modal"><div class="modalBox"><h2 id="modalTitle"></h2><div id="modalText"></div><div class="choices" id="modalChoices"></div></div></div><script>(()=>{
 "use strict";
 const W=260,H=150,N=14;
 const canvas=document.getElementById("map"),ctx=canvas.getContext("2d");
 const off=document.createElement("canvas");off.width=W;off.height=H;const ox=off.getContext("2d");
 let terrain=new Uint8Array(W*H), owner=new Int16Array(W*H);
 let countries=[], relations=[], wars=new Set(), events=[], player=0, selected=0;
-let year=1, ap=3, paused=false, speed=1, tickAcc=0, last=performance.now(), nextEventYear=11, pendingEvent=null, resumeAfterEvent=true, worldTension=18, top3Streak=0, nextWorldEventYear=5, situations=[], mapSignals=[], threatMemory=Array(N).fill(0), playerArmyHistory=[], warPlans={};
+let year=1, ap=3, paused=false, speed=1, tickAcc=0, last=performance.now(), nextEventYear=11, pendingEvent=null, resumeAfterEvent=true, worldTension=18, top3Streak=0, nextWorldEventYear=5, situations=[], mapSignals=[], threatMemory=Array(N).fill(0), playerArmyHistory=[], warPlans={}, austerity=false, lastFinance=null;
 let cam={x:0,y:0,z:1},drag=null,gameStarted=false,mapDirty=true;
 const colors=["#56a9e6","#e87070","#75c48a","#d69c58","#a684e8","#59c6ba","#e17cab","#9fc766","#dfc264","#758de0","#bd7956","#70a0a7","#cd6c8d","#7eb067"];
 const namesA=["青河","赤原","北岚","苍湾","白岭","曜川","临海","新穹","霜谷","金泽","云岬","长风","南陆","星浦"];
@@ -342,6 +342,13 @@ logEvent("谈判破裂",`${e.name} 拒绝了 ${p.name} 提出的停战方案。`
 }
 renderPanels();
 }
+
+function battleWhy(a,b,winner){
+const f=warForecast(a,b);
+const reasons=f.factors.map(x=>x.text).slice(0,3).join("；");
+return `${winner===a?"进攻方":"防守方"}本轮占优。主要原因：${reasons||"双方有效战力接近，战场波动决定了这一轮结果"}`;
+}
+
 function battleIncident(a,b,winner,loser,take){
 if(!(a===player||b===player)||Math.random()>.18)return;
 const plan=getWarPlan(a,b),P=countries[player],E=countries[player===a?b:a];
@@ -366,11 +373,67 @@ logEvent(good?"局部胜利":"局部失利",good?`${P.name} 在一处关键战�
 }
 }
 
+
+function coalitionSupport(attacker,defender){
+let support=0, names=[];
+for(const c of countries){
+if(!c.alive||c.id===attacker||c.id===defender)continue;
+if(atWar(c.id,defender)&&!atWar(c.id,attacker)){
+const rel=relations[c.id][attacker],coord=rel>45?.85:rel>15?.72:.60;
+support+=power(c)*coord;
+names.push({name:c.name,coord});
+}
+}
+return {support,names};
+}
+function warForecast(attacker,defender){
+const A=countries[attacker],D=countries[defender],plan=getWarPlan(attacker,defender);
+const allies=coalitionSupport(attacker,defender);
+const enemyAllies=coalitionSupport(defender,attacker);
+const aSupply=plan? (attacker===Math.min(attacker,defender)?plan.supplyA:plan.supplyB):100;
+const dSupply=plan? (defender===Math.min(attacker,defender)?plan.supplyA:plan.supplyB):100;
+const aFat=plan? (attacker===Math.min(attacker,defender)?plan.fatigueA:plan.fatigueB):0;
+const dFat=plan? (defender===Math.min(attacker,defender)?plan.fatigueA:plan.fatigueB):0;
+const aEff=(power(A)+allies.support)*(.78+aSupply/430)*clamp(1-aFat*.0035,.75,1);
+const dEff=(power(D)+enemyAllies.support)*(.82+dSupply/420)*clamp(1-dFat*.0035,.75,1);
+const ratio=aEff/Math.max(1,dEff);
+const label=ratio>1.55?"明显优势":ratio>1.16?"略占优势":ratio>.88?"势均力敌":ratio>.64?"略处劣势":"明显劣势";
+const factors=[];
+factors.push({good:(power(A)+allies.support)>(power(D)+enemyAllies.support),text:(power(A)+allies.support)>(power(D)+enemyAllies.support)?"联军总体力量占优":"敌方总体力量占优"});
+if(allies.names.length)factors.push({good:true,text:`${allies.names.length} 个友军正在共同施压，但存在协调损耗`});
+if(aSupply<dSupply-10)factors.push({good:false,text:"我方补给更吃紧"});
+else if(aSupply>dSupply+10)factors.push({good:true,text:"我方补给更稳定"});
+if(aFat>dFat+12)factors.push({good:false,text:"我方战争疲劳更高"});
+else if(dFat>aFat+12)factors.push({good:true,text:"敌方战争疲劳更高"});
+if(plan?.posture==="闪击")factors.push({good:null,text:"闪击提高进攻强度，但失败代价更高"});
+return {label,ratio,factors: factors.slice(0,4),allies};
+}
+function showPrewarForecast(target){
+if(pendingEvent){toast("请先处理右侧待处理事件。");return;}
+const f=warForecast(player,target),t=countries[target];
+const modal=document.getElementById("modal");
+document.getElementById("modalTitle").textContent=`对 ${t.name} 的战争评估`;
+document.getElementById("modalText").innerHTML=`<b>总体判断：${f.label}</b><div style="margin-top:8px">${f.factors.map(x=>`<div style="margin:5px 0">${x.good===true?"▲":x.good===false?"▼":"•"} ${x.text}</div>`).join("")}</div>`;
+const box=document.getElementById("modalChoices");box.innerHTML="";
+const go=document.createElement("button");go.innerHTML="<b>发动战争</b><small>战争结果仍存在不确定性</small>";go.onclick=()=>{
+modal.classList.remove("show");
+if(relations[player][target]>25){
+worldTension=clamp(worldTension+8,0,100);
+for(const c of countries)if(c.alive&&c.id!==player)setRelation(player,c.id,-4);
+toast("突然攻击友好国家，引发了其他国家的普遍警惕。");
+}
+ap--;declareWar(player,target);renderPanels();
+};
+const cancel=document.createElement("button");cancel.innerHTML="<b>取消</b><small>返回外交界面</small>";cancel.onclick=()=>modal.classList.remove("show");
+box.append(go,cancel);modal.classList.add("show");
+}
+
 function simulateWar(a,b){
 const A=countries[a],B=countries[b]; if(!A.alive||!B.alive){wars.delete(warKey(a,b));return}
 let border=borders(a,b);if(!border){peace(a,b);return}
 const plan=getWarPlan(a,b);
-let pa=power(A)*(rand(1.15,.86))*(.75+A.food/400), pb=power(B)*(rand(1.15,.86))*(.75+B.food/400);
+const coa=coalitionSupport(a,b),cob=coalitionSupport(b,a);
+let pa=(power(A)+coa.support)*(rand(1.12,.89))*(.75+A.food/400), pb=(power(B)+cob.support)*(rand(1.12,.89))*(.75+B.food/400);
 const pA=(a===player||b===player)?plan:null;
 const eff=objectiveEffect(plan);
 plan.supplyA=supplyState(A,B,plan,a===player);
@@ -409,8 +472,8 @@ if((a===player||b===player)&&plan.posture==="坚守")dirMod=.72;
 if((a===player||b===player)&&plan.posture==="战略撤退")dirMod=.42;
 let objMove=(a===player||b===player)?eff.move:1;let quota=Math.min(candidates.length,Math.max(1,Math.floor(border*.08*dirMod*objMove*clamp(Math.abs(pa-pb)/Math.max(pa,pb)+.18,.08,.42))));
 for(let i=0;i<quota;i++){owner[candidates[i]]=winner;take++}
-if(take>0){mapDirty=true;addSignal(winner,loser,`前线推进 ${take}`,"war",5);if(winner===player||loser===player||neighbors(player).includes(winner)||neighbors(player).includes(loser))toast(`${countries[winner].name} 的前线发生推进，国境已改变。`)}
-if(take>0 && Math.random()<.25) logEvent("前线推进",`${countries[winner].name} 在对 ${countries[loser].name} 的战线上取得推进。`);
+if(take>0){mapDirty=true;addSignal(winner,loser,"战事","war",5);if(winner===player||loser===player||neighbors(player).includes(winner)||neighbors(player).includes(loser))toast(`${countries[winner].name} 的前线发生推进，国境已改变。`)}
+if(take>0 && Math.random()<.25) logEvent("前线推进",`${countries[winner].name} 在对 ${countries[loser].name} 的战线上取得推进。${battleWhy(a,b,winner)}`);
 if(take>0&&(winner===player||loser===player)){
 const wp=getWarPlan(player,winner===player?loser:winner);
 if(winner===player&&wp.objective==="切断补给"){
@@ -428,7 +491,15 @@ logEvent("国家灭亡",`${countries[loser].name} 失去了最后的有效领土
 }
 
 function addSignal(a,b,label,type="warn",life=7){
-mapSignals.push({a,b,label,type,until:year+life});if(mapSignals.length>12)mapSignals.shift();
+const lo=Math.min(a,b),hi=Math.max(a,b);
+const priority=type==="war"?3:type==="bad"?2:type==="warn"?1:0;
+const old=mapSignals.find(s=>Math.min(s.a,s.b)===lo&&Math.max(s.a,s.b)===hi);
+if(old){
+const oldP=old.type==="war"?3:old.type==="bad"?2:old.type==="warn"?1:0;
+if(priority>=oldP){old.label=label;old.type=type}
+old.until=Math.max(old.until,year+life);
+}else mapSignals.push({a,b,label,type,until:year+life});
+if(mapSignals.length>8)mapSignals.shift();
 }
 function addSituation(a,b,type,level=1){
 const lo=Math.min(a,b),hi=Math.max(a,b);let s=situations.find(x=>x.a===lo&&x.b===hi);
@@ -492,6 +563,48 @@ logEvent("领土争端",`${stronger.name} 对 ${weaker.name} 提出边境要求�
 }
 }
 
+
+function financeSnapshot(c){
+const normalIncome=c.industry*.17+c.pop*.022;
+const armyUpkeep=c.army*.105*(austerity&&c.id===player?.82:1);
+const industryUpkeep=c.industry*.038*(austerity&&c.id===player?.88:1);
+const adminCost=Math.max(0,c.territory/95-1)*1.2*(austerity&&c.id===player?.82:1);
+const warCost=[...wars].some(k=>k.split("-").map(Number).includes(c.id))?5.5+c.army*.025:0;
+const net=normalIncome-armyUpkeep-industryUpkeep-adminCost-warCost;
+return {normalIncome,armyUpkeep,industryUpkeep,adminCost,warCost,net};
+}
+function financeTrendLabel(net){
+return net>7?"正在明显恢复":net>2?"正在恢复":net>-2?"接近平衡":net>-7?"仍在亏损":"正在快速恶化";
+}
+function toggleAusterity(){
+austerity=!austerity;
+toast(austerity?"已启动财政紧缩：维护成本下降，但发展与民生会承压。":"已结束财政紧缩。");
+renderPanels();
+}
+function financeReportHtml(){
+const f=lastFinance||financeSnapshot(countries[player]);
+const topCosts=[
+["军费",f.armyUpkeep],
+["战争支出",f.warCost],
+["工业维护",f.industryUpkeep],
+["行政成本",f.adminCost]
+].sort((a,b)=>b[1]-a[1]);
+return `<div class="card" id="financeReport" style="display:none">
+<h3>年度财报</h3>
+<b>${financeTrendLabel(f.net)}</b>
+<small style="display:block;color:#9db0c4;margin:5px 0 8px">收入主要来自工业与人口；当前最大压力是 ${topCosts[0][0]}${topCosts[1][1]>1?" 和 "+topCosts[1][0]:""}。</small>
+<div class="stats">
+${stat("年度收入",Math.round(f.normalIncome))}
+${stat("年度支出",Math.round(f.armyUpkeep+f.industryUpkeep+f.adminCost+f.warCost))}
+${stat("年度净变化",(f.net>=0?"+":"")+Math.round(f.net))}
+${stat("财政政策",austerity?"紧缩中":"常态")}
+</div>
+</div>`;
+}
+function toggleFinanceReport(){
+const el=document.getElementById("financeReport");if(el)el.style.display=el.style.display==="none"?"block":"none";
+}
+
 function yearly(){
 year++;
 ap=Math.min(4,ap+1);
@@ -500,21 +613,20 @@ for(const c of countries) if(c.alive){
 const terr=Math.max(1,c.territory/70);
 c.pop=Math.max(8,c.pop*(1+clamp((c.food-50)/4500,-.018,.028)));
 c.food+=terr*2.2+c.industry*.035-c.pop*.018;
-const normalIncome=c.industry*.17+c.pop*.022;
-const armyUpkeep=c.army*.105;
-const industryUpkeep=c.industry*.038;
-const adminCost=Math.max(0,c.territory/95-1)*1.2;
-const warCost=[...wars].some(k=>k.split("-").map(Number).includes(c.id))?5.5+c.army*.025:0;
-c.treasury+=normalIncome-armyUpkeep-industryUpkeep-adminCost-warCost;
+const f=financeSnapshot(c);
+c.treasury+=f.net;
+if(c.id===player)lastFinance=f;
 const shortage=Math.max(0,45-c.food);
 const debt=Math.max(0,-c.treasury);
 const militarization=Math.max(0,c.army-(c.industry*.75+c.pop*.035));
 const overheat=Math.max(0,c.industry-95)*.015;
-c.stability+=clamp((c.food-52)/55,-1.7,.65)-debt/24-shortage*.018-militarization*.018-overheat;
+let stabDelta=clamp((c.food-52)/55,-1.7,.65)-Math.min(1.6,debt/80)-shortage*.018-militarization*.018-overheat;
+if(austerity&&c.id===player){stabDelta-=.45;c.industry=Math.max(5,c.industry-.18)}
+c.stability+=stabDelta;
 if(c.treasury>180)c.treasury-=Math.min(8,(c.treasury-180)*.08);c.food=clamp(c.food,0,180);c.treasury=clamp(c.treasury,-80,260);c.stability=clamp(c.stability,5,100);
 if(c.stability<38&&Math.random()<.12){c.industry*=.985;c.treasury-=5;logEvent("社会不安",`${c.name} 的社会压力开始影响生产和财政。`,"warn")}
 if(c.stability<20&&Math.random()<.22){c.army*=.9;c.treasury-=10;logEvent("国内危机",`${c.name} 因长期失稳发生大规模骚乱。`,"bad")}
-if(c.treasury<-25&&Math.random()<.18){c.stability-=4;c.army*=.96;logEvent("财政危机",`${c.name} 已难以轻松维持现有国家机器。`,"bad")}
+if(c.treasury<-25&&Math.random()<.10){c.stability-=2;logEvent("财政危机",`${c.name} 的债务压力正在限制政策空间，但只要年度收支转正仍可逐步恢复。`,"bad")}
 aiThink(c);
 }
 advanceSituations();
@@ -659,14 +771,17 @@ cost=Math.round(8+p.pop*.006);
 if(p.treasury<cost){toast("财政吃紧，无法推行这项计划。");return}
 p.food+=10;p.stability+=1;msg="供应更充裕，民众对生活保障更安心";
 }else if(type==="industry"){
+if(austerity){toast("财政紧缩期间，政府暂停新的大规模工业扩张。");return}
 cost=Math.round(14+p.industry*.11);
 if(p.treasury<cost){toast("财政吃紧，无法继续扩张工业。");return}
 p.industry+=4.5;p.food-=2;p.stability-=.5;msg="工业能力上升，但城市和供应体系的压力也加重";
 }else if(type==="research"){
+if(austerity){toast("财政紧缩期间，科研扩张受到限制。");return}
 cost=Math.round(13+p.tech*.10);
 if(p.treasury<cost){toast("科研预算不足。");return}
 p.tech+=4;msg="科研体系得到推进，但财政要承担更长期的投入";
 }else if(type==="army"){
+if(austerity){toast("财政紧缩期间无法继续大规模扩军。");return}
 cost=Math.round(15+p.army*.11);
 if(p.treasury<cost){toast("财政无法承担这轮扩军。");return}
 p.army+=6;p.stability-=2;worldTension=clamp(worldTension+3,0,100);for(const n of neighbors(player))threatMemory[n]=clamp(threatMemory[n]+6,0,100);msg="军备扩大，威慑增强，但周边国家也明显提高了警惕";
@@ -685,8 +800,8 @@ const p=countries[player],t=countries[target];if(!t.alive)return;
 if(kind==="trade"){ap--;p.treasury-=4;setRelation(player,target,13);p.treasury+=7;t.treasury+=5;toast("贸易协议改善了双边关系")}
 if(kind==="war"){
 if(!neighbors(player).includes(target)){toast("只能向真正接壤或紧邻的国家宣战。");return}
-if(relations[player][target]>25){worldTension=clamp(worldTension+8,0,100);for(const c of countries)if(c.alive&&c.id!==player)setRelation(player,c.id,-4);toast("突然攻击友好国家，引发了其他国家的普遍警惕。")}
-ap--;declareWar(player,target);
+if(ap<=0){toast("今年已经没有足够的施政空间了。");return}
+showPrewarForecast(target);return;
 }
 if(kind==="peace"){ap--;peace(player,target)}
 if(kind==="aid"){if(p.treasury<12){toast("国库不足 12。");return}ap--;p.treasury-=12;t.treasury+=9;setRelation(player,target,18);toast("援助改善了双边关系")}
@@ -706,12 +821,13 @@ ${stat("科技",Math.round(c.tech))}
 ${stat("军力",Math.round(c.army))}
 ${stat("稳定",Math.round(c.stability)+"%")}
 ${stat("领土",Math.round(c.territory/12))}
-</div>`;
+</div>
+${c.id===player?`<small style="display:block;color:#9db0c4;margin-top:7px">财政趋势：${financeTrendLabel((lastFinance||financeSnapshot(c)).net)}</small>`:""}`;
 if(c.id===player){
 const pressure=c.stability>85?"社会总体安定":c.stability>65?"社会尚算稳定":c.stability>45?"社会出现压力":"社会明显不稳";
 const finance=c.treasury>140?"财政宽裕":c.treasury>70?"财政可控":c.treasury>25?"财政偏紧":"财政危险";
 cp.innerHTML+=`<div class="card" style="margin-top:12px"><b>${finance}</b><small style="display:block;color:#9db0c4">${pressure}。军队、工业和战争都会产生持续维护成本。</small></div>
-<h3 style="margin-top:14px">国家行动</h3><div class="actions">
+<div class="card" style="margin-top:12px"><b>${financeTrendLabel((lastFinance||financeSnapshot(c)).net)}</b><small style="display:block;color:#9db0c4">负债不是死局；停战、削减维护或启动紧缩后，只要年度收支转正，国库会逐年回升。</small><div style="display:flex;gap:7px;margin-top:9px"><button id="financeReportBtn">年度财报</button><button id="austerityBtn">${austerity?"结束财政紧缩":"启动财政紧缩"}</button></div></div>${financeReportHtml()}<h3 style="margin-top:14px">国家行动</h3><div class="actions">
 <button class="action" data-a="farm"><b>保障供应</b><small>扩充粮食储备，缓和生活压力</small></button>
 <button class="action" data-a="industry"><b>推进工业</b><small>提高生产能力，但增加长期维护负担</small></button>
 <button class="action" data-a="research"><b>科研投入</b><small>提升技术能力，需要持续预算</small></button>
@@ -720,6 +836,7 @@ cp.innerHTML+=`<div class="card" style="margin-top:12px"><b>${finance}</b><small
 </div>`;
 }
 cp.querySelectorAll("[data-a]").forEach(b=>b.onclick=()=>action(b.dataset.a));
+const fr=document.getElementById("financeReportBtn");if(fr)fr.onclick=toggleFinanceReport;const au=document.getElementById("austerityBtn");if(au)au.onclick=toggleAusterity;
 
 if(c.id!==player&&atWar(player,c.id)){
 const plan=getWarPlan(player,c.id);
@@ -738,6 +855,7 @@ card.innerHTML=`<h3>战争指挥 · 对 ${c.name}</h3>
 </div>
 <small style="display:block;margin-top:8px;color:#c9d8e8">当前：${plan.direction} · ${plan.posture} · ${plan.objective}</small>
 <small style="display:block;margin-top:5px;color:#9db0c4">我方补给：${(player===Math.min(player,c.id)?plan.supplyA:plan.supplyB)>72?"充足":(player===Math.min(player,c.id)?plan.supplyA:plan.supplyB)>48?"吃紧":"危险"} · 战争疲劳：${(player===Math.min(player,c.id)?plan.fatigueA:plan.fatigueB)<25?"低":(player===Math.min(player,c.id)?plan.fatigueA:plan.fatigueB)<55?"上升":"严重"}</small>
+<small style="display:block;margin-top:4px;color:#9db0c4">${coalitionSupport(player,c.id).names.length?`有 ${coalitionSupport(player,c.id).names.length} 个友军共同施压；联合作战存在协调损耗。`:"目前没有友军共同施压。"}</small>
 <h3 style="margin-top:12px">停战谈判</h3>
 <div class="actions">
 <button data-peace="白和平">白和平</button><button data-peace="赔款">要求赔款</button><button data-peace="边境让步">要求边境让步</button>
@@ -808,9 +926,15 @@ for(const c of countries)if(c.alive){
 ctx.beginPath();ctx.arc(c.cap.x,c.cap.y,c.id===selected?2.2:1.4,0,Math.PI*2);ctx.fillStyle="#f7f5e8";ctx.fill();
 if(cam.z>1.15||c.id===selected){ctx.font="3.6px system-ui";ctx.fillStyle="#fff";ctx.textAlign="center";ctx.fillText(c.name.split(" ")[0],c.cap.x,c.cap.y-3)}
 }
+const drawn=[];
 for(const s of mapSignals){
-const A=countries[s.a],B=countries[s.b];if(!A||!B)continue;const mx=(A.cap.x+B.cap.x)/2,my=(A.cap.y+B.cap.y)/2;
-ctx.font="bold 3.5px system-ui";ctx.textAlign="center";ctx.fillStyle=s.type==="war"?"#ffd2cf":s.type==="good"?"#c9ffe2":"#ffe2a6";ctx.fillText(s.label,mx,my-2);
+const A=countries[s.a],B=countries[s.b];if(!A||!B)continue;
+const mx=(A.cap.x+B.cap.x)/2,my=(A.cap.y+B.cap.y)/2;
+if(drawn.some(p=>Math.hypot(p.x-mx,p.y-my)<9))continue;
+drawn.push({x:mx,y:my});
+ctx.font="bold 3.3px system-ui";ctx.textAlign="center";
+ctx.fillStyle=s.type==="war"?"#ffd2cf":s.type==="good"?"#c9ffe2":"#ffe2a6";
+ctx.fillText(s.label.length>6?s.label.slice(0,6):s.label,mx,my-2);
 }
 ctx.restore();
 }
@@ -830,7 +954,7 @@ document.getElementById("speedSel").onchange=e=>speed=+e.target.value;
 document.getElementById("newBtn").onclick=()=>startGame(true);
 document.getElementById("startBtn").onclick=()=>{document.getElementById("start").style.display="none";startGame(false)};
 function startGame(reset){
-generateTerrain();generateCountries();mapDirty=true;year=1;ap=3;events=[];paused=false;selected=player=0;nextEventYear=Math.floor(rand(15,10));pendingEvent=null;resumeAfterEvent=true;worldTension=18;top3Streak=0;nextWorldEventYear=5;situations=[];mapSignals=[];threatMemory=Array(N).fill(0);playerArmyHistory=[];warPlans={};renderPendingEvent();tickAcc=0;cam={x:0,y:0,z:1};gameStarted=true;
+generateTerrain();generateCountries();mapDirty=true;year=1;ap=3;events=[];paused=false;selected=player=0;nextEventYear=Math.floor(rand(15,10));pendingEvent=null;resumeAfterEvent=true;worldTension=18;top3Streak=0;nextWorldEventYear=5;situations=[];mapSignals=[];threatMemory=Array(N).fill(0);playerArmyHistory=[];warPlans={};austerity=false;lastFinance=null;renderPendingEvent();tickAcc=0;cam={x:0,y:0,z:1};gameStarted=true;
 logEvent("新纪元",`${countries[player].name} 开始了新的时代。你的目标是在 120 年内进入综合国力前三，并连续保持至少 10 年。`);
 renderPanels();
 }
