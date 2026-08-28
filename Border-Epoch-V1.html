@@ -27,7 +27,7 @@ const canvas=document.getElementById("map"),ctx=canvas.getContext("2d");
 const off=document.createElement("canvas");off.width=W;off.height=H;const ox=off.getContext("2d");
 let terrain=new Uint8Array(W*H), owner=new Int16Array(W*H);
 let countries=[], relations=[], wars=new Set(), events=[], player=0, selected=0;
-let year=1, ap=3, paused=false, speed=1, tickAcc=0, last=performance.now(), nextEventYear=11, pendingEvent=null, resumeAfterEvent=true, worldTension=18, top3Streak=0, nextWorldEventYear=5, situations=[], mapSignals=[], threatMemory=Array(N).fill(0), playerArmyHistory=[];
+let year=1, ap=3, paused=false, speed=1, tickAcc=0, last=performance.now(), nextEventYear=11, pendingEvent=null, resumeAfterEvent=true, worldTension=18, top3Streak=0, nextWorldEventYear=5, situations=[], mapSignals=[], threatMemory=Array(N).fill(0), playerArmyHistory=[], warPlans={};
 let cam={x:0,y:0,z:1},drag=null,gameStarted=false,mapDirty=true;
 const colors=["#56a9e6","#e87070","#75c48a","#d69c58","#a684e8","#59c6ba","#e17cab","#9fc766","#dfc264","#758de0","#bd7956","#70a0a7","#cd6c8d","#7eb067"];
 const namesA=["青河","赤原","北岚","苍湾","白岭","曜川","临海","新穹","霜谷","金泽","云岬","长风","南陆","星浦"];
@@ -138,9 +138,50 @@ function toast(msg){let d=document.createElement("div");d.className="toast";d.te
 function setRelation(a,b,delta){relations[a][b]=relations[b][a]=clamp(relations[a][b]+delta,-100,100)}
 function warKey(a,b){return a<b?a+"-"+b:b+"-"+a}
 function atWar(a,b){return wars.has(warKey(a,b))}
+
+function getWarPlan(a,b){
+const k=warKey(a,b);
+if(!warPlans[k])warPlans[k]={direction:"全线",posture:"稳步推进",objective:"消耗敌军",fatigueA:0,fatigueB:0,supplyA:100,supplyB:100};
+return warPlans[k];
+}
+function focusWar(a,b){
+const A=countries[a],B=countries[b];if(!A||!B)return;
+const r=canvas.getBoundingClientRect();
+const mx=(A.cap.x+B.cap.x)/2,my=(A.cap.y+B.cap.y)/2;
+const base=Math.min(r.width/W,r.height/H);
+cam.z=Math.max(cam.z,1.55);
+const scale=base*cam.z,dw=W*scale,dh=H*scale;
+const x0=(r.width-dw)/2,y0=(r.height-dh)/2;
+cam.x=r.width/2-(x0+mx*scale);
+cam.y=r.height/2-(y0+my*scale);
+}
+
+function objectiveEffect(plan){
+let atk=1,move=1,cost=1;
+if(plan.objective==="夺取首都"){atk=1.10;move=1.08;cost=1.18}
+else if(plan.objective==="切断补给"){atk=1.04;move=.92;cost=1.05}
+else if(plan.objective==="消耗敌军"){atk=1.02;move=.84;cost=1.00}
+else if(plan.objective==="占领工业区"){atk=1.07;move=1.00;cost=1.12}
+return {atk,move,cost};
+}
+function supplyState(c,enemy,plan,isPlayerSide){
+let s=100;
+s-=Math.max(0,c.army-c.industry*.75)*.42;
+s-=Math.max(0,enemy.territory-c.territory)*.025;
+s-=Math.max(0,40-c.food)*1.2;
+if(isPlayerSide&&plan.posture==="闪击")s-=14;
+if(isPlayerSide&&plan.posture==="战略撤退")s+=10;
+return clamp(s,25,100);
+}
+
+function setWarPlanField(target,field,value){
+const plan=getWarPlan(player,target);plan[field]=value;renderPanels();
+toast(field==="direction"?`主攻方向：${value}`:`战争姿态：${value}`);
+}
+
 function declareWar(a,b){
 if(atWar(a,b)||!countries[a].alive||!countries[b].alive)return;
-wars.add(warKey(a,b));setRelation(a,b,-55);worldTension=clamp(worldTension+7,0,100);
+wars.add(warKey(a,b));setRelation(a,b,-55);worldTension=clamp(worldTension+7,0,100);getWarPlan(a,b);if(a===player||b===player)setTimeout(()=>focusWar(a,b),60);
 logEvent("战争爆发",`${countries[a].name} 向 ${countries[b].name} 宣战。`,"bad");addSignal(a,b,`${countries[a].name} ↔ ${countries[b].name}`,"war",12);if(a===player||b===player||neighbors(player).includes(a)||neighbors(player).includes(b))toast(`${countries[a].name} 与 ${countries[b].name} 开战，附近局势已经改变。`);
 }
 function peace(a,b){
@@ -260,11 +301,101 @@ else if(r<.84){c.strategy="稳定民生";c.food+=4;c.stability+=1.2;c.treasury-=
 else{c.strategy="平衡发展";c.industry+=1.1;c.tech+=1;c.army+=.7;c.treasury-=3.5}
 }
 
+
+function playerWarFatigue(target){
+const p=getWarPlan(player,target),k=warKey(player,target);
+const [a,b]=k.split("-").map(Number);
+return player===a?p.fatigueA:p.fatigueB;
+}
+function enemyWarFatigue(target){
+const p=getWarPlan(player,target),k=warKey(player,target);
+const [a,b]=k.split("-").map(Number);
+return target===a?p.fatigueA:p.fatigueB;
+}
+function transferBorderLand(from,to,count=2){
+const cells=[];
+for(let y=1;y<H-1;y++)for(let x=1;x<W-1;x++)if(owner[idx(x,y)]===from){
+if(owner[idx(x+1,y)]===to||owner[idx(x-1,y)]===to||owner[idx(x,y+1)]===to||owner[idx(x,y-1)]===to)cells.push(idx(x,y));
+}
+cells.sort(()=>Math.random()-.5);
+for(let i=0;i<Math.min(count,cells.length);i++)owner[cells[i]]=to;
+if(cells.length){mapDirty=true;recount();}
+}
+function proposePeace(target,term){
+if(!atWar(player,target)){toast("当前没有与该国交战。");return}
+const p=countries[player],e=countries[target],ourFat=playerWarFatigue(target),theirFat=enemyWarFatigue(target);
+const ratio=power(p)/Math.max(1,power(e));
+let accept=.34+theirFat*.006-ourFat*.002+(ratio-1)*.22;
+if(term==="赔款")accept-=.18;
+if(term==="边境让步")accept-=.27;
+accept=clamp(accept,.08,.9);
+if(Math.random()<accept){
+if(term==="赔款"){const pay=Math.min(25,Math.max(8,e.treasury*.18));e.treasury-=pay;p.treasury+=pay}
+if(term==="边境让步")transferBorderLand(target,player,3);
+peace(player,target);
+logEvent("和平协议",term==="白和平"?`${p.name} 与 ${e.name} 停止战争，边界基本恢复现状。`:term==="赔款"?`${e.name} 接受停战并支付战争赔偿。`:`${e.name} 接受边境让步后停战。`,"good");
+toast(`${e.name} 接受了你的停战条件。`);
+}else{
+setRelation(player,target,-3);
+toast(`${e.name} 拒绝了这项停战条件。`);
+logEvent("谈判破裂",`${e.name} 拒绝了 ${p.name} 提出的停战方案。`,"warn");
+}
+renderPanels();
+}
+function battleIncident(a,b,winner,loser,take){
+if(!(a===player||b===player)||Math.random()>.18)return;
+const plan=getWarPlan(a,b),P=countries[player],E=countries[player===a?b:a];
+const roll=Math.random();
+if(roll<.25&&plan.posture==="闪击"){
+P.army=Math.max(2,P.army-2.2);plan.fatigueA+=player===a?3:0;plan.fatigueB+=player===b?3:0;
+addSignal(player,E.id,"闪击受阻","bad",5);logEvent("闪击受阻",`${P.name} 的快速攻势遭遇顽强抵抗，伤亡和疲劳上升。`,"warn");
+toast("战场消息：闪击受阻，军队疲劳上升。");
+}else if(roll<.50&&plan.objective==="切断补给"){
+E.food=Math.max(0,E.food-6);E.treasury-=3;addSignal(player,E.id,"补给线受袭","warn",5);
+logEvent("补给线受袭",`${P.name} 的部队打击了 ${E.name} 的补给体系。`,"good");
+toast("战场消息：敌方补给线受到打击。");
+}else if(roll<.72&&plan.posture==="坚守"){
+P.stability+=1;P.army+=.4;addSignal(player,E.id,"防线稳固","good",5);
+logEvent("防线稳固",`${P.name} 的防御体系成功遏制了敌军推进。`,"good");
+toast("战场消息：防线稳固，敌军攻势受阻。");
+}else{
+const good=winner===player;
+if(good){P.stability+=1.5;addSignal(player,E.id,"局部胜利","good",5);toast("战场消息：取得一场局部胜利。")}
+else{P.stability-=1.5;addSignal(player,E.id,"局部失利","bad",5);toast("战场消息：前线遭遇局部失利。")}
+logEvent(good?"局部胜利":"局部失利",good?`${P.name} 在一处关键战线上取得优势。`:`${P.name} 在一处关键战线上被迫后退。`,good?"good":"warn");
+}
+}
+
 function simulateWar(a,b){
 const A=countries[a],B=countries[b]; if(!A.alive||!B.alive){wars.delete(warKey(a,b));return}
 let border=borders(a,b);if(!border){peace(a,b);return}
+const plan=getWarPlan(a,b);
 let pa=power(A)*(rand(1.15,.86))*(.75+A.food/400), pb=power(B)*(rand(1.15,.86))*(.75+B.food/400);
-A.treasury-=2.4;B.treasury-=2.4;A.food-=1.3;B.food-=1.3;A.stability-=.42;B.stability-=.42;
+const pA=(a===player||b===player)?plan:null;
+const eff=objectiveEffect(plan);
+plan.supplyA=supplyState(A,B,plan,a===player);
+plan.supplyB=supplyState(B,A,plan,b===player);
+if(a===player){pa*=eff.atk*(.72+plan.supplyA/360)}
+else pa*=.72+plan.supplyA/360;
+if(b===player){pb*=eff.atk*(.72+plan.supplyB/360)}
+else pb*=.72+plan.supplyB/360;
+pa*=clamp(1-plan.fatigueA*.004,.72,1);
+pb*=clamp(1-plan.fatigueB*.004,.72,1);
+if(pA){
+const playerSide=a===player?"A":"B";
+const posture=pA.posture;
+let mult=1;
+if(posture==="闪击")mult=1.16;
+else if(posture==="坚守")mult=.92;
+else if(posture==="战略撤退")mult=.78;
+if(playerSide==="A")pa*=mult;else pb*=mult;
+}
+const costA=2.4*(a===player?eff.cost:1),costB=2.4*(b===player?eff.cost:1);
+A.treasury-=costA;B.treasury-=costB;A.food-=1.3;B.food-=1.3;A.stability-=.42;B.stability-=.42;
+plan.fatigueA=clamp(plan.fatigueA+1.6+(plan.posture==="闪击"&&a===player?1.8:0),0,100);
+plan.fatigueB=clamp(plan.fatigueB+1.6+(plan.posture==="闪击"&&b===player?1.8:0),0,100);
+if(plan.posture==="战略撤退"&&a===player)plan.fatigueA=Math.max(0,plan.fatigueA-2);
+if(plan.posture==="战略撤退"&&b===player)plan.fatigueB=Math.max(0,plan.fatigueB-2);
 A.army=Math.max(2,A.army-rand(1.4,.3));B.army=Math.max(2,B.army-rand(1.4,.3));
 let winner=pa>pb?a:b, loser=winner===a?b:a, take=0;
 const candidates=[];
@@ -272,11 +403,24 @@ for(let y=1;y<H-1;y++)for(let x=1;x<W-1;x++) if(owner[idx(x,y)]===loser){
 if(owner[idx(x+1,y)]===winner||owner[idx(x-1,y)]===winner||owner[idx(x,y+1)]===winner||owner[idx(x,y-1)]===winner) candidates.push(idx(x,y));
 }
 candidates.sort(()=>Math.random()-.5);
-let quota=Math.min(candidates.length,Math.max(1,Math.floor(border*.08*clamp(Math.abs(pa-pb)/Math.max(pa,pb)+.18,.08,.42))));
+let dirMod=1;
+if((a===player||b===player)&&plan.direction!=="全线")dirMod=1.18;
+if((a===player||b===player)&&plan.posture==="坚守")dirMod=.72;
+if((a===player||b===player)&&plan.posture==="战略撤退")dirMod=.42;
+let objMove=(a===player||b===player)?eff.move:1;let quota=Math.min(candidates.length,Math.max(1,Math.floor(border*.08*dirMod*objMove*clamp(Math.abs(pa-pb)/Math.max(pa,pb)+.18,.08,.42))));
 for(let i=0;i<quota;i++){owner[candidates[i]]=winner;take++}
 if(take>0){mapDirty=true;addSignal(winner,loser,`前线推进 ${take}`,"war",5);if(winner===player||loser===player||neighbors(player).includes(winner)||neighbors(player).includes(loser))toast(`${countries[winner].name} 的前线发生推进，国境已改变。`)}
 if(take>0 && Math.random()<.25) logEvent("前线推进",`${countries[winner].name} 在对 ${countries[loser].name} 的战线上取得推进。`);
+if(take>0&&(winner===player||loser===player)){
+const wp=getWarPlan(player,winner===player?loser:winner);
+if(winner===player&&wp.objective==="切断补给"){
+if(player===a)wp.supplyB=Math.max(25,wp.supplyB-8);else wp.supplyA=Math.max(25,wp.supplyA-8);
+}
+if(winner===player&&wp.objective==="占领工业区"){countries[loser].industry=Math.max(5,countries[loser].industry-1.2);countries[player].industry+=.35}
+if(winner===player&&wp.objective==="夺取首都"&&Math.random()<.10){countries[loser].stability-=5;logEvent("首都受威胁",`${countries[player].name} 的攻势正在逼近 ${countries[loser].name} 的政治中心。`,"bad")}
+}
 recount();
+battleIncident(a,b,winner,loser,take);
 if(!countries[loser].alive){
 logEvent("国家灭亡",`${countries[loser].name} 失去了最后的有效领土。`,"bad");
 [...wars].forEach(k=>{if(k.split("-").map(Number).includes(loser))wars.delete(k)});
@@ -576,6 +720,34 @@ cp.innerHTML+=`<div class="card" style="margin-top:12px"><b>${finance}</b><small
 </div>`;
 }
 cp.querySelectorAll("[data-a]").forEach(b=>b.onclick=()=>action(b.dataset.a));
+
+if(c.id!==player&&atWar(player,c.id)){
+const plan=getWarPlan(player,c.id);
+const card=document.createElement("div");card.className="card";
+card.innerHTML=`<h3>战争指挥 · 对 ${c.name}</h3>
+<small style="color:#9db0c4">战争开始时地图会自动放大到战区。你可以随时调整方向和姿态。</small>
+<div class="actions" style="margin-top:10px">
+<button data-dir="北线">北线主攻</button><button data-dir="南线">南线主攻</button>
+<button data-dir="全线">全线推进</button><button data-post="闪击">闪击</button>
+<button data-post="稳步推进">稳步推进</button><button data-post="坚守">坚守</button>
+<button data-post="战略撤退">战略撤退</button>
+</div>
+<div class="actions" style="margin-top:8px">
+<button data-obj="夺取首都">夺取首都</button><button data-obj="切断补给">切断补给</button>
+<button data-obj="消耗敌军">消耗敌军</button><button data-obj="占领工业区">占工业区</button>
+</div>
+<small style="display:block;margin-top:8px;color:#c9d8e8">当前：${plan.direction} · ${plan.posture} · ${plan.objective}</small>
+<small style="display:block;margin-top:5px;color:#9db0c4">我方补给：${(player===Math.min(player,c.id)?plan.supplyA:plan.supplyB)>72?"充足":(player===Math.min(player,c.id)?plan.supplyA:plan.supplyB)>48?"吃紧":"危险"} · 战争疲劳：${(player===Math.min(player,c.id)?plan.fatigueA:plan.fatigueB)<25?"低":(player===Math.min(player,c.id)?plan.fatigueA:plan.fatigueB)<55?"上升":"严重"}</small>
+<h3 style="margin-top:12px">停战谈判</h3>
+<div class="actions">
+<button data-peace="白和平">白和平</button><button data-peace="赔款">要求赔款</button><button data-peace="边境让步">要求边境让步</button>
+</div>
+<small style="display:block;margin-top:6px;color:#9db0c4">条件越苛刻，对方越可能拒绝。战场优势和对方战争疲劳会提高成功率。</small>`;
+cp.appendChild(card);
+card.querySelectorAll("[data-dir]").forEach(b=>b.onclick=()=>setWarPlanField(c.id,"direction",b.dataset.dir));
+card.querySelectorAll("[data-post]").forEach(b=>b.onclick=()=>setWarPlanField(c.id,"posture",b.dataset.post));card.querySelectorAll("[data-obj]").forEach(b=>b.onclick=()=>setWarPlanField(c.id,"objective",b.dataset.obj));card.querySelectorAll("[data-peace]").forEach(b=>b.onclick=()=>proposePeace(c.id,b.dataset.peace));
+}
+
 const alarmed=countries.filter(x=>x.alive&&x.id!==player&&threatMemory[x.id]>35).length;
 if(c.id===player&&alarmed>0){
 const note=document.createElement("div");note.className="card";
@@ -589,7 +761,7 @@ let rel=relations[player][t.id],war=atWar(player,t.id),adj=neighbors(player).inc
 let row=document.createElement("div");row.className="dipl-row";
 const ratio=(power(pc)/Math.max(1,power(t))).toFixed(1);
 row.innerHTML=`<span>${t.name}<small style="display:block;color:#8fa3b8">${adj?"接壤":"非接壤"} · ${war?"战争中":rel>30?"友好":rel<-30?"敌对":"中立"} · 我方实力 ${ratio}×</small></span><b>${rel>50?"亲近":rel>15?"友好":rel<-50?"敌视":rel<-15?"紧张":"中立"}</b><button>${war?"议和":"交往"}</button>`;
-row.querySelector("button").onclick=()=>diplomacyAction(t.id,war?"peace":"trade");dp.appendChild(row);
+row.querySelector("button").onclick=()=>{if(war){selected=t.id;document.querySelector('[data-tab="country"]').click();renderPanels();toast("已打开战争谈判与指挥面板。")}else diplomacyAction(t.id,"trade")};dp.appendChild(row);
 if(!war&&adj){let w=document.createElement("button");w.textContent="宣战";w.style.margin="4px 0 9px";w.onclick=()=>diplomacyAction(t.id,"war");dp.appendChild(w)}
 if(!war&&rel>-10){let a=document.createElement("button");a.textContent="援助";a.style.margin="4px 0 9px 6px";a.onclick=()=>diplomacyAction(t.id,"aid");dp.appendChild(a)}
 });
@@ -658,7 +830,7 @@ document.getElementById("speedSel").onchange=e=>speed=+e.target.value;
 document.getElementById("newBtn").onclick=()=>startGame(true);
 document.getElementById("startBtn").onclick=()=>{document.getElementById("start").style.display="none";startGame(false)};
 function startGame(reset){
-generateTerrain();generateCountries();mapDirty=true;year=1;ap=3;events=[];paused=false;selected=player=0;nextEventYear=Math.floor(rand(15,10));pendingEvent=null;resumeAfterEvent=true;worldTension=18;top3Streak=0;nextWorldEventYear=5;situations=[];mapSignals=[];threatMemory=Array(N).fill(0);playerArmyHistory=[];renderPendingEvent();tickAcc=0;cam={x:0,y:0,z:1};gameStarted=true;
+generateTerrain();generateCountries();mapDirty=true;year=1;ap=3;events=[];paused=false;selected=player=0;nextEventYear=Math.floor(rand(15,10));pendingEvent=null;resumeAfterEvent=true;worldTension=18;top3Streak=0;nextWorldEventYear=5;situations=[];mapSignals=[];threatMemory=Array(N).fill(0);playerArmyHistory=[];warPlans={};renderPendingEvent();tickAcc=0;cam={x:0,y:0,z:1};gameStarted=true;
 logEvent("新纪元",`${countries[player].name} 开始了新的时代。你的目标是在 120 年内进入综合国力前三，并连续保持至少 10 年。`);
 renderPanels();
 }
