@@ -59,8 +59,67 @@ function distToPolyline(px,py,pts){let minD=1e9; for(let i=0;i<pts.length-1;i++)
 function pointInPoly(pt,poly){let c=false; const x=pt[0], y=pt[1]; for(let i=0,j=poly.length-1;i<poly.length;j=i++){const xi=poly[i][0], yi=poly[i][1], xj=poly[j][0], yj=poly[j][1]; const intersect=((yi>y)!=(yj>y)) && (x<(xj-xi)*(y-yi)/((yj-yi)||1e-9)+xi); if(intersect) c=!c} return c}
 function sampleHeight(ds,nx,ny){
   let h=0.34+0.035*(1-ny)+0.025*(0.5-Math.abs(nx-0.5));
-  (ds.hills||[]).forEach(hill=>{const dx=(nx-hill.x)/hill.rx,dy=(ny-hill.y)/hill.ry; h+=hill.h*Math.exp(-2.6*(dx*dx+dy*dy));});
-  (ds.depressions||[]).forEach(dep=>{const dx=(nx-dep.x)/dep.rx,dy=(ny-dep.y)/dep.ry; h-=dep.h*Math.exp(-2.7*(dx*dx+dy*dy));});
+
+  // 山体不再是规则高斯“圆包”。每座山都按 seed 生成不对称山肩、尖峰、次峰和局部鞍部。
+  // 同一组数据每次渲染完全一致，但不同山峰的轮廓与峰顶细节会不同。
+  (ds.hills||[]).forEach((hill,hi)=>{
+    const dx=(nx-hill.x)/hill.rx, dy=(ny-hill.y)/hill.ry;
+    const r=Math.hypot(dx,dy), ang=Math.atan2(dy,dx);
+    const phase=hash2(ds.seed+137,hi*19+3,11)*Math.PI*2;
+
+    // 让山脚轮廓有自然的瓣状起伏，避免完美椭圆。
+    const lobes=1
+      +0.105*Math.sin(3*ang+phase)
+      +0.060*Math.sin(5*ang+phase*1.71)
+      +0.035*Math.sin(7*ang-phase*0.63);
+    const wr=r/clamp(lobes,0.78,1.25);
+
+    // 宽山体 + 尖峰核：尖峰核消除“山顶平台”感。
+    const broad=Math.exp(-2.85*wr*wr);
+    const sharp=Math.exp(-5.7*wr);
+    let mountain=hill.h*(0.74*broad+0.26*sharp);
+
+    // 峰顶局部粗糙度：只作用于山峰上部，不把平原弄得噪声过多。
+    const summitMask=Math.exp(-4.2*wr*wr);
+    const shoulderMask=Math.exp(-1.75*wr*wr)*(1-Math.exp(-5.0*wr*wr));
+    const fine=(fractalNoise(ds.seed+401+hi*97,nx*33,ny*33)-0.5)*2;
+    const mid =(fractalNoise(ds.seed+509+hi*83,nx*16,ny*16)-0.5)*2;
+    mountain += hill.h*(0.115*fine*summitMask + 0.055*mid*shoulderMask);
+
+    // 2~3 个窄次峰，让部分山体出现双峰/偏峰，而不是圆顶。
+    const subCount=2+(hash2(ds.seed+613,hi,5)>0.58?1:0);
+    for(let k=0;k<subCount;k++){
+      const a=hash2(ds.seed+701+hi*31,k,3)*Math.PI*2;
+      const rr=0.10+0.22*hash2(ds.seed+733+hi*37,k,7);
+      const ox=Math.cos(a)*rr, oy=Math.sin(a)*rr;
+      const ddx=dx-ox, ddy=dy-oy;
+      const amp=hill.h*(0.045+0.055*hash2(ds.seed+761+hi*41,k,13));
+      const tight=13+10*hash2(ds.seed+797+hi*43,k,17);
+      mountain += amp*Math.exp(-tight*(ddx*ddx+ddy*ddy));
+    }
+
+    // 一部分山顶带轻微鞍口/凹槽，形成更真实的峰顶结构；幅度控制得很小，不会变火山口。
+    if(hash2(ds.seed+823,hi,23)>0.42){
+      const a=hash2(ds.seed+857,hi,29)*Math.PI*2;
+      const rr=0.08+0.10*hash2(ds.seed+881,hi,31);
+      const ox=Math.cos(a)*rr, oy=Math.sin(a)*rr;
+      const ddx=dx-ox, ddy=dy-oy;
+      mountain -= hill.h*(0.035+0.030*hash2(ds.seed+907,hi,37))*Math.exp(-24*(ddx*ddx+ddy*ddy));
+    }
+
+    h+=mountain;
+  });
+
+  // 洼地也加入轻微不规则边缘，避免规则椭圆凹坑。
+  (ds.depressions||[]).forEach((dep,di)=>{
+    const dx=(nx-dep.x)/dep.rx,dy=(ny-dep.y)/dep.ry;
+    const r=Math.hypot(dx,dy),ang=Math.atan2(dy,dx);
+    const phase=hash2(ds.seed+929,di*17+1,41)*Math.PI*2;
+    const warp=1+0.08*Math.sin(3*ang+phase)+0.04*Math.sin(5*ang-phase*0.8);
+    const wr=r/clamp(warp,0.82,1.20);
+    h-=dep.h*Math.exp(-2.9*wr*wr);
+  });
+
   (ds.rivers||[]).forEach(r=>{const d=distToPolyline(nx,ny,r); h-=0.052*Math.exp(-(d*d)/(2*0.010*0.010)); h-=0.028*Math.exp(-(d*d)/(2*0.046*0.046));});
   (ds.coast||[]).forEach(c=>{if(pointInPoly([nx,ny],c)) h=Math.min(h,0.085);});
   h+=(fractalNoise(ds.seed,nx*6.4,ny*6.4)-0.5)*0.070;
@@ -100,22 +159,24 @@ function buildElevation(ds){
   }
   vals.sort((a,b)=>a-b);
   const q=q=>vals[Math.max(0,Math.min(vals.length-1,Math.floor(q*(vals.length-1))))];
-  const p03=q(0.03),p08=q(0.08),p50=q(0.50),p92=q(0.92),p97=q(0.97);
-  // 视觉层自适应拉伸，但保留一部分绝对高程，避免“平原也被拉成高山”。
-  const span=Math.max(0.10,p92-p08);
+  const p005=q(0.005),p03=q(0.03),p08=q(0.08),p50=q(0.50),p92=q(0.92),p97=q(0.97),p995=q(0.995);
+  // 不再在 p92 就硬截到最高色阶；旧版宽阔“平顶”主要就是这里产生的。
+  // 现在把 0.5%~99.5% 高程连续映射，只有极少量真正最高点才到顶色。
+  const spanWide=Math.max(0.12,p995-p005);
   const displayGrid=Array.from({length:resH},()=>new Float32Array(resW));
   for(let j=0;j<resH;j++){
     for(let i=0;i<resW;i++){
       const h=grid[j][i];
-      const local=clamp((h-p08)/span,0,1);
-      const absolute=clamp((h-0.14)/0.66,0,1);
-      let t=clamp(local*0.78+absolute*0.22,0,1);
-      // 让高地/低地更分明；中段稍微压缩，端点拉开。
-      t=clamp(0.5+(t-0.5)*1.22,0,1);
+      let local=clamp((h-p005)/spanWide,0,1);
+      // 轻微 S 曲线：加强中高地层次，但保留峰顶连续梯度。
+      local=smoothstep(local);
+      const absolute=clamp((h-0.12)/0.78,0,1);
+      let t=clamp(local*0.84+absolute*0.16,0,1);
+      t=clamp(0.5+(t-0.5)*1.10,0,1);
       displayGrid[j][i]=t;
     }
   }
-  return {grid,displayGrid,resW,resH,stats:{p03,p08,p50,p92,p97,span}};
+  return {grid,displayGrid,resW,resH,stats:{p005,p03,p08,p50,p92,p97,p995,span:spanWide}};
 }
 function drawTerrain(ds){
   elevationCache=buildElevation(ds);
