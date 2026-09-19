@@ -67,40 +67,155 @@ function sampleHeight(ds,nx,ny){
   h+=(fractalNoise(ds.seed+99,nx*17,ny*17)-0.5)*0.022;
   return clamp(h,0.02,0.96);
 }
-function terrainColor(h){
-  const stops=[[0.00,[146,169,176]],[0.14,[176,184,161]],[0.28,[184,187,157]],[0.42,[176,176,147]],[0.56,[165,160,136]],[0.70,[154,148,132]],[0.84,[169,164,151]],[1.00,[190,187,178]]];
-  for(let i=0;i<stops.length-1;i++){if(h<=stops[i+1][0]){const a=stops[i],b=stops[i+1],t=clamp((h-a[0])/(b[0]-a[0]),0,1); return [lerp(a[1][0],b[1][0],t),lerp(a[1][1],b[1][1],t),lerp(a[1][2],b[1][2],t)];}}
+function terrainColor(t){
+  // 纸质军事地图的分层设色：低地偏灰绿，高地逐步转为黄褐/灰褐。
+  // t 是“显示高程”而不是原始高程；每张地图会自适应拉开 5%~95% 高程差。
+  const stops=[
+    [0.00,[218,222,197]],
+    [0.14,[203,211,174]],
+    [0.28,[188,200,151]],
+    [0.42,[178,187,132]],
+    [0.56,[176,170,116]],
+    [0.70,[174,151,101]],
+    [0.82,[160,129,88]],
+    [0.92,[145,111,82]],
+    [1.00,[128,96,75]]
+  ];
+  for(let i=0;i<stops.length-1;i++){
+    if(t<=stops[i+1][0]){
+      const a=stops[i],b=stops[i+1],u=clamp((t-a[0])/(b[0]-a[0]),0,1);
+      return [lerp(a[1][0],b[1][0],u),lerp(a[1][1],b[1][1],u),lerp(a[1][2],b[1][2],u)];
+    }
+  }
   return stops[stops.length-1][1];
 }
-function buildElevation(ds){const resW=300,resH=200, grid=Array.from({length:resH},()=>new Float32Array(resW)); for(let j=0;j<resH;j++){for(let i=0;i<resW;i++){grid[j][i]=sampleHeight(ds,i/(resW-1),j/(resH-1))}} return {grid,resW,resH}}
+function buildElevation(ds){
+  const resW=360,resH=240, grid=Array.from({length:resH},()=>new Float32Array(resW));
+  const vals=[];
+  for(let j=0;j<resH;j++){
+    for(let i=0;i<resW;i++){
+      const h=sampleHeight(ds,i/(resW-1),j/(resH-1));
+      grid[j][i]=h; vals.push(h);
+    }
+  }
+  vals.sort((a,b)=>a-b);
+  const q=q=>vals[Math.max(0,Math.min(vals.length-1,Math.floor(q*(vals.length-1))))];
+  const p03=q(0.03),p08=q(0.08),p50=q(0.50),p92=q(0.92),p97=q(0.97);
+  // 视觉层自适应拉伸，但保留一部分绝对高程，避免“平原也被拉成高山”。
+  const span=Math.max(0.10,p92-p08);
+  const displayGrid=Array.from({length:resH},()=>new Float32Array(resW));
+  for(let j=0;j<resH;j++){
+    for(let i=0;i<resW;i++){
+      const h=grid[j][i];
+      const local=clamp((h-p08)/span,0,1);
+      const absolute=clamp((h-0.14)/0.66,0,1);
+      let t=clamp(local*0.78+absolute*0.22,0,1);
+      // 让高地/低地更分明；中段稍微压缩，端点拉开。
+      t=clamp(0.5+(t-0.5)*1.22,0,1);
+      displayGrid[j][i]=t;
+    }
+  }
+  return {grid,displayGrid,resW,resH,stats:{p03,p08,p50,p92,p97,span}};
+}
 function drawTerrain(ds){
   elevationCache=buildElevation(ds);
-  const {grid,resW,resH}=elevationCache;
+  const {grid,displayGrid,resW,resH}=elevationCache;
   const off=document.createElement('canvas'); off.width=resW; off.height=resH;
   const octx=off.getContext('2d'); const img=octx.createImageData(resW,resH);
-  const light=[-0.58,-0.48,0.66]; const len=Math.hypot(...light); light[0]/=len; light[1]/=len; light[2]/=len;
-  const at=(x,y)=>grid[clamp(y,0,resH-1)|0][clamp(x,0,resW-1)|0];
-  for(let j=0;j<resH;j++) for(let i=0;i<resW;i++){
-    const h=grid[j][i],dx=(at(i+1,j)-at(i-1,j))*14.0,dy=(at(i,j+1)-at(i,j-1))*14.0;
-    let nx=-dx,ny=-dy,nz=1.0; const nl=Math.hypot(nx,ny,nz); nx/=nl;ny/=nl;nz/=nl;
-    const lambert=clamp(nx*light[0]+ny*light[1]+nz*light[2],-0.35,1);
-    let neigh=0,count=0; for(const r of [3,7,12]){neigh+=at(i+r,j)+at(i-r,j)+at(i,j+r)+at(i,j-r)+at(i+r,j+r)+at(i-r,j-r)+at(i+r,j-r)+at(i-r,j+r);count+=8;}
-    const avg=neigh/count,valley=clamp((avg-h)*8.5,0,0.38),ridge=clamp((h-avg)*7.0,0,0.22),slope=clamp(Math.hypot(dx,dy)*0.55,0,0.28);
-    let shade=clamp(0.76+lambert*0.32-valley*0.72+ridge*0.34-slope*0.12,0.42,1.18);
-    const c=terrainColor(h),warm=clamp((lambert+0.2)*0.035,0,0.05),cool=clamp(valley*0.10,0,0.05),idx=(j*resW+i)*4;
-    img.data[idx]=clamp(c[0]*shade+warm*80-cool*18,0,255); img.data[idx+1]=clamp(c[1]*shade+warm*45-cool*8,0,255); img.data[idx+2]=clamp(c[2]*shade+warm*22+cool*30,0,255); img.data[idx+3]=255;
+  const at=(arr,x,y)=>arr[clamp(y,0,resH-1)|0][clamp(x,0,resW-1)|0];
+  const light=[-0.60,-0.52,0.61]; const llen=Math.hypot(light[0],light[1],light[2]); light[0]/=llen;light[1]/=llen;light[2]/=llen;
+  for(let j=0;j<resH;j++){
+    for(let i=0;i<resW;i++){
+      const raw=grid[j][i], t=displayGrid[j][i];
+      // 用“显示高程”计算坡面，视觉纵深比真实数值更明显，但不改原始地理数据。
+      const dx=(at(displayGrid,i+1,j)-at(displayGrid,i-1,j))*22.0;
+      const dy=(at(displayGrid,i,j+1)-at(displayGrid,i,j-1))*22.0;
+      let nx=-dx,ny=-dy,nz=1.0; const nl=Math.hypot(nx,ny,nz); nx/=nl;ny/=nl;nz/=nl;
+      const lambert=clamp(nx*light[0]+ny*light[1]+nz*light[2],-0.55,1.0);
+
+      // 多尺度地形遮蔽：谷地压暗、山脊提亮，形成“凹进去/凸出来”的感觉。
+      let near=0,far=0,nc=0,fc=0;
+      for(const r of [3,6,10]){
+        near+=at(displayGrid,i+r,j)+at(displayGrid,i-r,j)+at(displayGrid,i,j+r)+at(displayGrid,i,j-r)+at(displayGrid,i+r,j+r)+at(displayGrid,i-r,j-r)+at(displayGrid,i+r,j-r)+at(displayGrid,i-r,j+r);nc+=8;
+      }
+      for(const r of [16,24]){
+        far+=at(displayGrid,i+r,j)+at(displayGrid,i-r,j)+at(displayGrid,i,j+r)+at(displayGrid,i,j-r)+at(displayGrid,i+r,j+r)+at(displayGrid,i-r,j-r)+at(displayGrid,i+r,j-r)+at(displayGrid,i-r,j+r);fc+=8;
+      }
+      const avgNear=near/nc,avgFar=far/fc;
+      const valley=clamp((avgNear-t)*2.5+(avgFar-t)*1.4,0,0.55);
+      const ridge=clamp((t-avgNear)*2.8+(t-avgFar)*1.1,0,0.40);
+      const slope=clamp(Math.hypot(dx,dy),0,1.4);
+
+      // 强化纸质浮雕：坡向是主层，谷地阴影是次层，高地本身还会被分层设色。
+      let shade=0.78 + lambert*0.43 - valley*0.72 + ridge*0.25 - slope*0.035;
+      shade=clamp(shade,0.38,1.22);
+      const c=terrainColor(t);
+      const warmHigh=clamp((t-0.55)*0.12,0,0.07);
+      const coolLow=clamp((0.35-t)*0.10,0,0.05);
+      const idx=(j*resW+i)*4;
+      img.data[idx]=clamp(c[0]*shade + warmHigh*65 - coolLow*20,0,255);
+      img.data[idx+1]=clamp(c[1]*shade + warmHigh*30 - coolLow*6,0,255);
+      img.data[idx+2]=clamp(c[2]*shade + coolLow*28,0,255);
+      img.data[idx+3]=255;
+    }
   }
-  octx.putImageData(img,0,0); ctx.imageSmoothingEnabled=true; ctx.drawImage(off,mapRect.x,mapRect.y,mapRect.w,mapRect.h);
-  ctx.save(); ctx.globalCompositeOperation='multiply'; for(let y=mapRect.y;y<mapRect.y+mapRect.h;y+=4){const a=0.010+0.006*hash2(ds.seed,0,y|0);ctx.fillStyle=`rgba(86,73,56,${a})`;ctx.fillRect(mapRect.x,y,mapRect.w,1);} ctx.restore();
+  octx.putImageData(img,0,0);
+  ctx.imageSmoothingEnabled=true;
+  ctx.drawImage(off,mapRect.x,mapRect.y,mapRect.w,mapRect.h);
+
+  // 低频纸张纤维 + 很轻的旧地图颗粒；全部由 seed 决定，重复渲染不跳动。
+  ctx.save();
+  ctx.globalCompositeOperation='multiply';
+  for(let y=mapRect.y;y<mapRect.y+mapRect.h;y+=3){
+    const a=0.008+0.006*hash2(ds.seed,0,y|0);
+    ctx.fillStyle=`rgba(91,76,57,${a})`;
+    ctx.fillRect(mapRect.x,y,mapRect.w,1);
+  }
+  for(let k=0;k<900;k++){
+    const rx=hash2(ds.seed+311,k,17), ry=hash2(ds.seed+719,k,29), a=0.006+0.010*hash2(ds.seed+991,k,43);
+    ctx.fillStyle=`rgba(77,65,50,${a})`;
+    ctx.fillRect(mapRect.x+rx*mapRect.w,mapRect.y+ry*mapRect.h,0.8,0.8);
+  }
+  ctx.restore();
+
+  // 高程带边界非常轻地压一层，让“高/低层”即使不显示等高线也能被眼睛分辨。
+  ctx.save();
+  ctx.globalCompositeOperation='multiply';
+  const bands=[0.20,0.36,0.52,0.68,0.84];
+  const bandOff=document.createElement('canvas');bandOff.width=resW;bandOff.height=resH;const bctx=bandOff.getContext('2d');
+  const bimg=bctx.createImageData(resW,resH);
+  for(let j=1;j<resH-1;j++){
+    for(let i=1;i<resW-1;i++){
+      const t=displayGrid[j][i]; let edge=0;
+      for(const b of bands){
+        const d=Math.abs(t-b); if(d<0.012) edge=Math.max(edge,1-d/0.012);
+      }
+      if(edge>0){const idx=(j*resW+i)*4;bimg.data[idx]=72;bimg.data[idx+1]=64;bimg.data[idx+2]=54;bimg.data[idx+3]=Math.round(18*edge);}
+    }
+  }
+  bctx.putImageData(bimg,0,0);ctx.drawImage(bandOff,mapRect.x,mapRect.y,mapRect.w,mapRect.h);ctx.restore();
 }
 function drawSmoothPoly(points,close=true){if(!points.length) return; ctx.beginPath(); ctx.moveTo(mapX(points[0][0]),mapY(points[0][1])); for(let i=1;i<points.length;i++){const p0=points[i-1], p1=points[i], mx=(mapX(p0[0])+mapX(p1[0]))/2, my=(mapY(p0[1])+mapY(p1[1]))/2; ctx.quadraticCurveTo(mapX(p0[0]),mapY(p0[1]),mx,my)} const last=points[points.length-1]; ctx.lineTo(mapX(last[0]),mapY(last[1])); if(close) ctx.closePath()}
 function drawPolyline(points){ctx.beginPath(); ctx.moveTo(mapX(points[0][0]),mapY(points[0][1])); for(let i=1;i<points.length;i++) ctx.lineTo(mapX(points[i][0]),mapY(points[i][1]))}
 function drawIsolines(ds){
-  const ec=elevationCache||buildElevation(ds),grid=ec.grid,resW=ec.resW,resH=ec.resH,levels=[0.22,0.30,0.38,0.46,0.54,0.62,0.70,0.78,0.86];
-  const interp=(a,b,tA,tB,level)=>{const tt=(level-a)/((b-a)||1e-9);return [lerp(tA[0],tB[0],tt),lerp(tA[1],tB[1],tt)];}; ctx.save();
-  levels.forEach((level,li)=>{const major=li%3===1;ctx.strokeStyle=major?'rgba(73,66,57,0.42)':'rgba(78,72,63,0.22)';ctx.lineWidth=major?1.15:0.62;
-    for(let j=0;j<resH-1;j++) for(let i=0;i<resW-1;i++){const v0=grid[j][i],v1=grid[j][i+1],v2=grid[j+1][i+1],v3=grid[j+1][i],mask=(v0>level?1:0)|(v1>level?2:0)|(v2>level?4:0)|(v3>level?8:0);if(mask===0||mask===15)continue;const x=i/(resW-1),y=j/(resH-1),sx=1/(resW-1),sy=1/(resH-1);const pTop=interp(v0,v1,[x,y],[x+sx,y],level),pRight=interp(v1,v2,[x+sx,y],[x+sx,y+sy],level),pBottom=interp(v3,v2,[x,y+sy],[x+sx,y+sy],level),pLeft=interp(v0,v3,[x,y],[x,y+sy],level);const segs={1:[[pLeft,pTop]],2:[[pTop,pRight]],3:[[pLeft,pRight]],4:[[pRight,pBottom]],5:[[pLeft,pBottom],[pTop,pRight]],6:[[pTop,pBottom]],7:[[pLeft,pBottom]],8:[[pBottom,pLeft]],9:[[pTop,pBottom]],10:[[pTop,pLeft],[pRight,pBottom]],11:[[pRight,pBottom]],12:[[pLeft,pRight]],13:[[pTop,pRight]],14:[[pLeft,pTop]]}[mask]||[];segs.forEach(seg=>{ctx.beginPath();ctx.moveTo(mapX(seg[0][0]),mapY(seg[0][1]));ctx.lineTo(mapX(seg[1][0]),mapY(seg[1][1]));ctx.stroke();});}
-  }); ctx.restore();
+  const ec=elevationCache||buildElevation(ds),grid=ec.displayGrid||ec.grid,resW=ec.resW,resH=ec.resH;
+  // 使用每张地图的“显示高程”自适应等高线，避免平原或高原出现几乎没有等高线的情况。
+  const levels=[]; for(let k=1;k<=11;k++) levels.push(k/12);
+  const interp=(a,b,tA,tB,level)=>{const tt=(level-a)/((b-a)||1e-9);return [lerp(tA[0],tB[0],tt),lerp(tA[1],tB[1],tt)];};
+  ctx.save();
+  levels.forEach((level,li)=>{
+    const major=(li%3===2);
+    ctx.strokeStyle=major?'rgba(66,58,49,0.50)':'rgba(72,65,56,0.26)';
+    ctx.lineWidth=major?1.35:0.66;
+    for(let j=0;j<resH-1;j++) for(let i=0;i<resW-1;i++){
+      const v0=grid[j][i],v1=grid[j][i+1],v2=grid[j+1][i+1],v3=grid[j+1][i],mask=(v0>level?1:0)|(v1>level?2:0)|(v2>level?4:0)|(v3>level?8:0);if(mask===0||mask===15)continue;
+      const x=i/(resW-1),y=j/(resH-1),sx=1/(resW-1),sy=1/(resH-1);
+      const pTop=interp(v0,v1,[x,y],[x+sx,y],level),pRight=interp(v1,v2,[x+sx,y],[x+sx,y+sy],level),pBottom=interp(v3,v2,[x,y+sy],[x+sx,y+sy],level),pLeft=interp(v0,v3,[x,y],[x,y+sy],level);
+      const segs={1:[[pLeft,pTop]],2:[[pTop,pRight]],3:[[pLeft,pRight]],4:[[pRight,pBottom]],5:[[pLeft,pBottom],[pTop,pRight]],6:[[pTop,pBottom]],7:[[pLeft,pBottom]],8:[[pBottom,pLeft]],9:[[pTop,pBottom]],10:[[pTop,pLeft],[pRight,pBottom]],11:[[pRight,pBottom]],12:[[pLeft,pRight]],13:[[pTop,pRight]],14:[[pLeft,pTop]]}[mask]||[];
+      segs.forEach(seg=>{ctx.beginPath();ctx.moveTo(mapX(seg[0][0]),mapY(seg[0][1]));ctx.lineTo(mapX(seg[1][0]),mapY(seg[1][1]));ctx.stroke();});
+    }
+  });
+  ctx.restore();
 }
 function drawNature(ds){
   (ds.coast||[]).forEach(coast=>{ctx.save();ctx.fillStyle='rgba(126,157,171,0.90)';drawSmoothPoly(coast,true);ctx.fill();ctx.strokeStyle='rgba(225,222,196,0.65)';ctx.lineWidth=1.3;ctx.stroke();ctx.restore();});
