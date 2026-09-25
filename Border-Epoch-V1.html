@@ -15,12 +15,12 @@ button,input{font:inherit}.app{height:100%;display:grid;grid-template-rows:54px 
 .brand{font-weight:800;letter-spacing:.4px}.crumb{font-size:12px;color:var(--muted);display:flex;gap:7px;align-items:center}.crumb .active{color:#fff;background:#394039;border:1px solid #4b534a;padding:5px 8px;border-radius:99px}.grow{flex:1}.badge{font-size:11px;color:#cfc7b8;background:#2b302b;border:1px solid #454b44;padding:5px 8px;border-radius:99px}
 .main{min-height:0;display:grid;grid-template-columns:260px minmax(0,1fr) 300px;gap:8px;padding:8px}.panel{min-height:0;background:var(--panel);border:1px solid #343a34;border-radius:13px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.16)}.scroll{height:100%;overflow:auto;padding:13px}.panel h2{font-size:16px;margin:0 0 5px}.sub{font-size:11px;line-height:1.55;color:var(--muted)}.section{margin-top:13px;padding-top:12px;border-top:1px solid #363c36}.section h3{font-size:11px;letter-spacing:.5px;color:#d0c6b4;margin:0 0 8px;text-transform:uppercase}.card{background:#292e29;border:1px solid #3b413a;border-radius:10px;padding:10px;font-size:11px;line-height:1.55}.kv{display:grid;grid-template-columns:76px 1fr;gap:5px 8px}.k{color:#928b80}.v{font-weight:650;color:#e5ded0}.pillrow{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}.pill{font-size:10px;padding:4px 6px;border:1px solid #454c44;border-radius:99px;color:#c8c0b3;background:#242924}
 .btnrow{display:grid;grid-template-columns:1fr 1fr;gap:6px}.btnrow.one{grid-template-columns:1fr}button{cursor:pointer;border:1px solid #464d45;background:#2e342e;color:#ddd5c7;border-radius:8px;padding:8px 9px;font-size:11px}button:hover{background:#394039}.primary{background:#586257;border-color:#707c6e;color:#fff}.danger{color:#d9a09a}.orderGrid{display:grid;grid-template-columns:1fr 1fr;gap:6px}.orderGrid button.active{background:#59675b;border-color:#8a9b89;color:#fff}.targetRow{margin-top:7px;display:grid;grid-template-columns:68px 1fr;gap:7px;align-items:center}.targetRow label{font-size:10px;color:#989084}.targetRow select{width:100%;border:1px solid #464d45;background:#282e28;color:#e3dccf;border-radius:7px;padding:7px 8px;font-size:10px}.targetRow select:disabled{opacity:.45}.actionState{margin-top:7px;padding:7px 8px;border-radius:7px;background:#252a25;border:1px solid #3c433b;color:#bcb4a7;font-size:10px;line-height:1.45}
-.mapPanel{display:flex;flex-direction:column;min-width:0;position:relative}.toolbar{height:44px;display:flex;align-items:center;gap:12px;padding:0 10px;border-bottom:1px solid #343a34;background:#242924;flex-wrap:wrap}.toolbar label{font-size:10px;color:#b6aea0;display:flex;gap:5px;align-items:center}.toolbar input{accent-color:#7a8977}.toolsep{height:18px;width:1px;background:#3c423b}.toolbar button{padding:6px 8px}.mapwrap{position:relative;flex:1;min-height:0;background:#101310}.mapwrap canvas{width:100%;height:100%;display:block;cursor:grab}.mapwrap canvas.dragging{cursor:grabbing}.maptitle{position:absolute;left:18px;top:15px;pointer-events:none;color:#2f302d;text-shadow:0 1px rgba(255,255,255,.35)}.maptitle .big{font-family:Georgia,"Times New Roman",serif;font-weight:700;font-size:22px;letter-spacing:1px}.maptitle .small{font-size:10px;letter-spacing:1.4px;margin-top:2px;color:#5f5d55}.compass{position:absolute;right:18px;top:17px;width:54px;height:54px;border:1px solid rgba(46,46,42,.28);border-radius:50%;pointer-events:none;color:#3f403c;display:flex;align-items:center;justify-content:center;font:700 11px Georgia,serif}.compass:before{content:"";position:absolute;width:1px;height:40px;background:#55564f}.compass:after{content:"";position:absolute;height:1px;width:40px;background:#55564f}.compass span{position:absolute;top:4px}.scale{position:absolute;right:18px;bottom:18px;background:rgba(227,219,201,.82);color:#494943;border:1px solid rgba(59,59,54,.23);padding:6px 8px;border-radius:5px;font-size:9px;pointer-events:none}.scale .bar{width:82px;border-top:2px solid #474842;margin-bottom:3px;position:relative}.scale .bar:before,.scale .bar:after{content:"";position:absolute;top:-4px;height:6px;border-left:2px solid #474842}.scale .bar:before{left:0}.scale .bar:after{right:0}
+.mapPanel{display:flex;flex-direction:column;min-width:0;position:relative}.toolbar{height:44px;display:flex;align-items:center;gap:12px;padding:0 10px;border-bottom:1px solid #343a34;background:#242924;flex-wrap:wrap}.toolbar label{font-size:10px;color:#b6aea0;display:flex;gap:5px;align-items:center}.toolbar input{accent-color:#7a8977}.toolsep{height:18px;width:1px;background:#3c423b}.toolbar button{padding:6px 8px}.mapwrap{position:relative;flex:1;min-height:0;background:#101310}.mapwrap canvas{width:100%;height:100%;display:block;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none}.mapwrap canvas.dragging{cursor:grabbing}.maptitle{position:absolute;left:18px;top:15px;pointer-events:none;color:#2f302d;text-shadow:0 1px rgba(255,255,255,.35)}.maptitle .big{font-family:Georgia,"Times New Roman",serif;font-weight:700;font-size:22px;letter-spacing:1px}.maptitle .small{font-size:10px;letter-spacing:1.4px;margin-top:2px;color:#5f5d55}.compass{position:absolute;right:18px;top:17px;width:54px;height:54px;border:1px solid rgba(46,46,42,.28);border-radius:50%;pointer-events:none;color:#3f403c;display:flex;align-items:center;justify-content:center;font:700 11px Georgia,serif}.compass:before{content:"";position:absolute;width:1px;height:40px;background:#55564f}.compass:after{content:"";position:absolute;height:1px;width:40px;background:#55564f}.compass span{position:absolute;top:4px}.scale{position:absolute;right:18px;bottom:18px;background:rgba(227,219,201,.82);color:#494943;border:1px solid rgba(59,59,54,.23);padding:6px 8px;border-radius:5px;font-size:9px;pointer-events:none}.scale .bar{width:82px;border-top:2px solid #474842;margin-bottom:3px;position:relative}.scale .bar:before,.scale .bar:after{content:"";position:absolute;top:-4px;height:6px;border-left:2px solid #474842}.scale .bar:before{left:0}.scale .bar:after{right:0}
 .legend{position:absolute;left:16px;bottom:16px;background:rgba(235,227,210,.88);color:#3c3d38;border:1px solid rgba(65,65,59,.22);padding:7px 8px;border-radius:7px;font-size:9px;line-height:1.55;pointer-events:none;backdrop-filter:blur(2px)}.leg{display:flex;align-items:center;gap:6px}.sw{width:16px;height:6px}.sw.front{height:0;border-top:3px solid #2f312e}.sw.supply{height:0;border-top:2px dashed #5d6d54}.sw.road{height:0;border-top:3px solid #7c705c}.sw.river{height:0;border-top:3px solid #66839a}.sw.arrow{height:0;border-top:3px solid #9d624e}
 .note{padding:8px 10px;border-left:3px solid #7c8a77;background:#282d28;border-radius:5px;font-size:10px;line-height:1.5;color:#c9c1b3}.timeline{display:flex;flex-direction:column;gap:6px}.event{font-size:10px;line-height:1.45;padding:7px 8px;border-radius:7px;background:#282d28;border-left:3px solid #666}.event.blue{border-color:#5f839f}.event.red{border-color:#9d6961}.event.neutral{border-color:#a8915a}.layersExplain{display:grid;gap:5px}.layerline{display:flex;gap:8px;align-items:center;font-size:10px;color:#bdb5a7}.dot{width:7px;height:7px;border-radius:50%;background:#778373}
 .modal{display:none;position:fixed;inset:0;background:rgba(9,11,9,.72);z-index:20;align-items:center;justify-content:center;padding:22px}.modal.open{display:flex}.modalbox{width:min(1100px,95vw);height:min(760px,90vh);background:#222622;border:1px solid #444b43;border-radius:14px;overflow:hidden;display:grid;grid-template-columns:minmax(0,1fr) 280px;box-shadow:0 26px 70px rgba(0,0,0,.45)}.battlecanvas{min-width:0;background:#d6cdb8}.battlecanvas canvas{display:block;width:100%;height:100%}.modalSide{padding:14px;overflow:auto}.modalSide h2{margin:0 0 5px}.close{width:100%;margin-top:10px}
 .toast{position:fixed;right:18px;top:66px;z-index:40;background:#e9e1d2;color:#282a27;border:1px solid #c8bda8;border-radius:8px;padding:8px 11px;font-size:10px;opacity:0;transform:translateY(-8px);transition:.18s;pointer-events:none}.toast.show{opacity:1;transform:none}
-@media(max-width:1060px){.main{grid-template-columns:230px 1fr}.right{display:none}}
+@media(max-width:1060px){.main{grid-template-columns:230px 1fr}.right{display:none}.modal{padding:10px}.modalbox{width:calc(100vw - 20px);height:calc(100vh - 20px);grid-template-columns:minmax(0,1fr) 260px}}
 @media(max-width:760px){html,body{overflow:auto}.app{height:auto;min-height:100vh}.main{grid-template-columns:1fr}.left{max-height:none}.mapPanel{height:74vh}.crumb{display:none}.modalbox{grid-template-columns:1fr}.modalSide{max-height:240px}}
 
 .sectorHint{margin-top:8px;padding:8px 9px;border-radius:8px;border:1px solid #4b5149;background:#252b25;color:#cbc3b5;font-size:10px;line-height:1.5}.sectorHint b{color:#fff}.bridgeStatus{display:grid;gap:5px}.bridgeLine{display:grid;grid-template-columns:72px 1fr;gap:8px}.bridgeLine span:first-child{color:#918a7f}.bridgeLine span:last-child{color:#e3dccf;font-weight:650}
@@ -116,18 +116,973 @@ button,input{font:inherit}.app{height:100%;display:grid;grid-template-rows:54px 
   </div>
 </div></div>
 <div class="toast" id="toast"></div>
-<script src="modules/01-war-contracts.js"></script>
-<script src="modules/02-terrain-renderer-core.js"></script>
-<script src="modules/03-sector-terrain-adapter.js"></script>
-<script src="modules/04-theater-state.js"></script>
-<script src="modules/05-theater-deployment.js"></script>
-<script src="modules/06-theater-deployment-ui.js"></script>
-<script src="modules/07-theater-pathfinding.js"></script>
-<script src="modules/08-theater-supply.js"></script>
-<script src="modules/09-theater-orders.js"></script>
-<script src="modules/10-theater-ai.js"></script>
-<script src="modules/11-theater-phase.js"></script>
-<script src="modules/12-sector-battle-bridge.js"></script>
+
+<script>
+/* ===== INLINE MODULE 01-war-contracts.js ===== */
+(function (global) {
+  'use strict';
+
+  global.BorderEpoch = global.BorderEpoch || {};
+
+  var SIDES = Object.freeze({
+    blue: 'blue',
+    red: 'red'
+  });
+
+  var ORDERS = Object.freeze({
+    hold: 'hold',
+    attack: 'attack',
+    breakthrough: 'breakthrough',
+    encircle: 'encircle',
+    withdraw: 'withdraw',
+    reserve: 'reserve'
+  });
+
+  var UNIT_TYPES = Object.freeze({
+    infantry: 'infantry',
+    motorized: 'motorized',
+    mechanized: 'mechanized',
+    armor: 'armor',
+    lightInfantry: 'lightInfantry',
+    specialMobility: 'specialMobility',
+    artillery: 'artillery',
+    engineer: 'engineer',
+    recon: 'recon',
+    airDefense: 'airDefense',
+    logistics: 'logistics'
+  });
+
+  var CONTROL_STATES = Object.freeze({
+    blue: 'blue',
+    red: 'red',
+    contested: 'contested',
+    neutral: 'neutral'
+  });
+
+  var SIDE_VALUES = Object.freeze(Object.keys(SIDES).map(function (key) { return SIDES[key]; }));
+  var ORDER_VALUES = Object.freeze(Object.keys(ORDERS).map(function (key) { return ORDERS[key]; }));
+  var UNIT_TYPE_VALUES = Object.freeze(Object.keys(UNIT_TYPES).map(function (key) { return UNIT_TYPES[key]; }));
+  var CONTROL_STATE_VALUES = Object.freeze(Object.keys(CONTROL_STATES).map(function (key) { return CONTROL_STATES[key]; }));
+
+  function isPlainObject(value) {
+    if (value === null || typeof value !== 'object' || Array.isArray(value)) {
+      return false;
+    }
+    var proto = Object.getPrototypeOf(value);
+    return proto === Object.prototype || proto === null;
+  }
+
+  function isFiniteNumber(value) {
+    return typeof value === 'number' && Number.isFinite(value);
+  }
+
+  function isNonEmptyString(value) {
+    return typeof value === 'string' && value.trim().length > 0;
+  }
+
+  function isIdLike(value) {
+    return isNonEmptyString(value);
+  }
+
+  function isSeed(value) {
+    return isNonEmptyString(value) || isFiniteNumber(value);
+  }
+
+  function isScalar(value) {
+    return value === null || typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean';
+  }
+
+  function isPhaseValue(value) {
+    return isNonEmptyString(value) || isFiniteNumber(value);
+  }
+
+  function isDataValue(value, seen) {
+    if (isScalar(value)) {
+      return typeof value !== 'number' || Number.isFinite(value);
+    }
+
+    if (!Array.isArray(value) && !isPlainObject(value)) {
+      return false;
+    }
+
+    if (seen.indexOf(value) !== -1) {
+      return false;
+    }
+
+    seen.push(value);
+
+    if (Array.isArray(value)) {
+      for (var i = 0; i < value.length; i += 1) {
+        if (!isDataValue(value[i], seen)) {
+          seen.pop();
+          return false;
+        }
+      }
+      seen.pop();
+      return true;
+    }
+
+    var keys = Object.keys(value);
+    for (var k = 0; k < keys.length; k += 1) {
+      if (!isDataValue(value[keys[k]], seen)) {
+        seen.pop();
+        return false;
+      }
+    }
+    seen.pop();
+    return true;
+  }
+
+  function isOrdinaryData(value) {
+    return isDataValue(value, []);
+  }
+
+  function hasOwn(object, key) {
+    return Object.prototype.hasOwnProperty.call(object, key);
+  }
+
+  function enumContains(values, value) {
+    return values.indexOf(value) !== -1;
+  }
+
+  function pushError(errors, path, message) {
+    errors.push(path + ': ' + message);
+  }
+
+  function requireOwn(errors, object, key, path) {
+    if (!hasOwn(object, key)) {
+      pushError(errors, path + '.' + key, 'missing required field');
+      return false;
+    }
+    return true;
+  }
+
+  function validateStringArray(errors, value, path) {
+    if (!Array.isArray(value)) {
+      pushError(errors, path, 'must be an Array');
+      return;
+    }
+    for (var i = 0; i < value.length; i += 1) {
+      if (!isIdLike(value[i])) {
+        pushError(errors, path + '[' + i + ']', 'must be a non-empty string');
+      }
+    }
+  }
+
+  function validateDataArray(errors, value, path) {
+    if (!Array.isArray(value)) {
+      pushError(errors, path, 'must be an Array');
+      return;
+    }
+    for (var i = 0; i < value.length; i += 1) {
+      if (!isOrdinaryData(value[i])) {
+        pushError(errors, path + '[' + i + ']', 'must contain only ordinary JS data');
+      }
+    }
+  }
+
+  function validateGeography(errors, geography, path) {
+    if (!isPlainObject(geography)) {
+      pushError(errors, path, 'must be a plain Object');
+      return;
+    }
+
+    var fields = [
+      'meanElevation',
+      'relief',
+      'mountainDensity',
+      'forestCover',
+      'wetness',
+      'soilBearing',
+      'urbanDensity'
+    ];
+
+    for (var i = 0; i < fields.length; i += 1) {
+      var field = fields[i];
+      if (requireOwn(errors, geography, field, path) && !isFiniteNumber(geography[field])) {
+        pushError(errors, path + '.' + field, 'must be a finite number');
+      }
+    }
+  }
+
+  function validateInfrastructureRefs(errors, refs, path) {
+    if (!isPlainObject(refs)) {
+      pushError(errors, path, 'must be a plain Object');
+      return;
+    }
+
+    var fields = ['roads', 'rails', 'rivers', 'bridges'];
+    for (var i = 0; i < fields.length; i += 1) {
+      var field = fields[i];
+      if (requireOwn(errors, refs, field, path)) {
+        validateStringArray(errors, refs[field], path + '.' + field);
+      }
+    }
+  }
+
+  function validateRegion(errors, region, regionKey, allRegions, path) {
+    if (!isPlainObject(region)) {
+      pushError(errors, path, 'must be a plain Object');
+      return;
+    }
+
+    if (requireOwn(errors, region, 'id', path)) {
+      if (!isIdLike(region.id)) {
+        pushError(errors, path + '.id', 'must be a non-empty string');
+      } else if (region.id !== regionKey) {
+        pushError(errors, path + '.id', 'must match its regions map key');
+      }
+    }
+
+    if (requireOwn(errors, region, 'name', path) && !isNonEmptyString(region.name)) {
+      pushError(errors, path + '.name', 'must be a non-empty string');
+    }
+
+    if (requireOwn(errors, region, 'polygon', path)) {
+      if (!Array.isArray(region.polygon)) {
+        pushError(errors, path + '.polygon', 'must be an Array');
+      } else if (!isOrdinaryData(region.polygon)) {
+        pushError(errors, path + '.polygon', 'must contain only ordinary JS data');
+      }
+    }
+
+    if (requireOwn(errors, region, 'neighbors', path)) {
+      validateStringArray(errors, region.neighbors, path + '.neighbors');
+      if (Array.isArray(region.neighbors)) {
+        for (var i = 0; i < region.neighbors.length; i += 1) {
+          var neighborId = region.neighbors[i];
+          if (isIdLike(neighborId) && !hasOwn(allRegions, neighborId)) {
+            pushError(errors, path + '.neighbors[' + i + ']', 'references unknown region "' + neighborId + '"');
+          }
+        }
+      }
+    }
+
+    if (requireOwn(errors, region, 'control', path) && !enumContains(CONTROL_STATE_VALUES, region.control)) {
+      pushError(errors, path + '.control', 'must be one of: ' + CONTROL_STATE_VALUES.join(', '));
+    }
+
+    if (requireOwn(errors, region, 'geography', path)) {
+      validateGeography(errors, region.geography, path + '.geography');
+    }
+
+    if (requireOwn(errors, region, 'infrastructureRefs', path)) {
+      validateInfrastructureRefs(errors, region.infrastructureRefs, path + '.infrastructureRefs');
+    }
+  }
+
+  function validateFormation(errors, formation, formationKey, regions, path) {
+    if (!isPlainObject(formation)) {
+      pushError(errors, path, 'must be a plain Object');
+      return;
+    }
+
+    if (requireOwn(errors, formation, 'id', path)) {
+      if (!isIdLike(formation.id)) {
+        pushError(errors, path + '.id', 'must be a non-empty string');
+      } else if (formation.id !== formationKey) {
+        pushError(errors, path + '.id', 'must match its formations map key');
+      }
+    }
+
+    if (requireOwn(errors, formation, 'name', path) && !isNonEmptyString(formation.name)) {
+      pushError(errors, path + '.name', 'must be a non-empty string');
+    }
+
+    if (requireOwn(errors, formation, 'side', path) && !enumContains(SIDE_VALUES, formation.side)) {
+      pushError(errors, path + '.side', 'must be one of: ' + SIDE_VALUES.join(', '));
+    }
+
+    if (requireOwn(errors, formation, 'type', path) && !enumContains(UNIT_TYPE_VALUES, formation.type)) {
+      pushError(errors, path + '.type', 'must be one of: ' + UNIT_TYPE_VALUES.join(', '));
+    }
+
+    if (requireOwn(errors, formation, 'regionId', path)) {
+      if (!isIdLike(formation.regionId)) {
+        pushError(errors, path + '.regionId', 'must be a non-empty string');
+      } else if (!hasOwn(regions, formation.regionId)) {
+        pushError(errors, path + '.regionId', 'references unknown region "' + formation.regionId + '"');
+      }
+    }
+
+    if (requireOwn(errors, formation, 'position', path)) {
+      if (!(Array.isArray(formation.position) || isPlainObject(formation.position)) || !isOrdinaryData(formation.position)) {
+        pushError(errors, path + '.position', 'must be an Array or plain Object containing only ordinary JS data');
+      }
+    }
+
+    if (requireOwn(errors, formation, 'subunits', path)) {
+      validateDataArray(errors, formation.subunits, path + '.subunits');
+    }
+
+    if (requireOwn(errors, formation, 'assignedSectorId', path) && formation.assignedSectorId !== null && !isIdLike(formation.assignedSectorId)) {
+      pushError(errors, path + '.assignedSectorId', 'must be null or a non-empty string');
+    }
+
+    if (requireOwn(errors, formation, 'order', path) && !enumContains(ORDER_VALUES, formation.order)) {
+      pushError(errors, path + '.order', 'must be one of: ' + ORDER_VALUES.join(', '));
+    }
+
+    if (requireOwn(errors, formation, 'status', path) && !isOrdinaryData(formation.status)) {
+      pushError(errors, path + '.status', 'must contain only ordinary JS data');
+    }
+  }
+
+  function validateTheaterState(value) {
+    var errors = [];
+    var path = 'TheaterState';
+
+    if (!isPlainObject(value)) {
+      return { ok: false, errors: [path + ': must be a plain Object'] };
+    }
+
+    if (requireOwn(errors, value, 'id', path) && !isIdLike(value.id)) {
+      pushError(errors, path + '.id', 'must be a non-empty string');
+    }
+
+    if (requireOwn(errors, value, 'seed', path) && !isSeed(value.seed)) {
+      pushError(errors, path + '.seed', 'must be a finite number or non-empty string');
+    }
+
+    if (requireOwn(errors, value, 'phase', path) && !isPhaseValue(value.phase)) {
+      pushError(errors, path + '.phase', 'must be a finite number or non-empty string');
+    }
+
+    var regions = null;
+    if (requireOwn(errors, value, 'regions', path)) {
+      if (!isPlainObject(value.regions)) {
+        pushError(errors, path + '.regions', 'must be a plain Object map');
+      } else {
+        regions = value.regions;
+        var regionKeys = Object.keys(regions);
+        for (var r = 0; r < regionKeys.length; r += 1) {
+          var regionKey = regionKeys[r];
+          validateRegion(errors, regions[regionKey], regionKey, regions, path + '.regions.' + regionKey);
+        }
+      }
+    }
+
+    if (requireOwn(errors, value, 'formations', path)) {
+      if (!isPlainObject(value.formations)) {
+        pushError(errors, path + '.formations', 'must be a plain Object map');
+      } else if (regions) {
+        var formationKeys = Object.keys(value.formations);
+        for (var f = 0; f < formationKeys.length; f += 1) {
+          var formationKey = formationKeys[f];
+          validateFormation(errors, value.formations[formationKey], formationKey, regions, path + '.formations.' + formationKey);
+        }
+      }
+    }
+
+    var arrayFields = ['roads', 'rails', 'rivers', 'bridges', 'depots', 'events'];
+    for (var a = 0; a < arrayFields.length; a += 1) {
+      var arrayField = arrayFields[a];
+      if (requireOwn(errors, value, arrayField, path)) {
+        validateDataArray(errors, value[arrayField], path + '.' + arrayField);
+      }
+    }
+
+    var objectFields = ['deployments', 'intel'];
+    for (var o = 0; o < objectFields.length; o += 1) {
+      var objectField = objectFields[o];
+      if (requireOwn(errors, value, objectField, path)) {
+        if (!isPlainObject(value[objectField])) {
+          pushError(errors, path + '.' + objectField, 'must be a plain Object');
+        } else if (!isOrdinaryData(value[objectField])) {
+          pushError(errors, path + '.' + objectField, 'must contain only ordinary JS data');
+        }
+      }
+    }
+
+    return { ok: errors.length === 0, errors: errors };
+  }
+
+  function validateDeploymentPlan(value) {
+    var errors = [];
+    var path = 'DeploymentPlan';
+
+    if (!isPlainObject(value)) {
+      return { ok: false, errors: [path + ': must be a plain Object'] };
+    }
+
+    if (requireOwn(errors, value, 'side', path) && !enumContains(SIDE_VALUES, value.side)) {
+      pushError(errors, path + '.side', 'must be one of: ' + SIDE_VALUES.join(', '));
+    }
+
+    if (requireOwn(errors, value, 'sectors', path)) {
+      if (!isPlainObject(value.sectors)) {
+        pushError(errors, path + '.sectors', 'must be a plain Object map');
+      } else {
+        var sectorKeys = Object.keys(value.sectors);
+        for (var i = 0; i < sectorKeys.length; i += 1) {
+          var sectorId = sectorKeys[i];
+          var sector = value.sectors[sectorId];
+          var sectorPath = path + '.sectors.' + sectorId;
+
+          if (!isPlainObject(sector)) {
+            pushError(errors, sectorPath, 'must be a plain Object');
+            continue;
+          }
+
+          if (requireOwn(errors, sector, 'commitmentShare', sectorPath)) {
+            if (!isFiniteNumber(sector.commitmentShare)) {
+              pushError(errors, sectorPath + '.commitmentShare', 'must be a finite number');
+            } else if (sector.commitmentShare < 0 || sector.commitmentShare > 1) {
+              pushError(errors, sectorPath + '.commitmentShare', 'must be between 0 and 1');
+            }
+          }
+
+          var formationLists = ['mainFormations', 'supportFormations', 'reserveFormations'];
+          for (var j = 0; j < formationLists.length; j += 1) {
+            var listName = formationLists[j];
+            if (requireOwn(errors, sector, listName, sectorPath)) {
+              validateStringArray(errors, sector[listName], sectorPath + '.' + listName);
+            }
+          }
+        }
+      }
+    }
+
+    return { ok: errors.length === 0, errors: errors };
+  }
+
+  function validateTheaterOrder(value) {
+    var errors = [];
+    var path = 'TheaterOrder';
+
+    if (!isPlainObject(value)) {
+      return { ok: false, errors: [path + ': must be a plain Object'] };
+    }
+
+    if (requireOwn(errors, value, 'formationId', path) && !isIdLike(value.formationId)) {
+      pushError(errors, path + '.formationId', 'must be a non-empty string');
+    }
+
+    if (requireOwn(errors, value, 'side', path) && !enumContains(SIDE_VALUES, value.side)) {
+      pushError(errors, path + '.side', 'must be one of: ' + SIDE_VALUES.join(', '));
+    }
+
+    if (requireOwn(errors, value, 'type', path) && !enumContains(ORDER_VALUES, value.type)) {
+      pushError(errors, path + '.type', 'must be one of: ' + ORDER_VALUES.join(', '));
+    }
+
+    if (requireOwn(errors, value, 'targetRegionId', path) && value.targetRegionId !== null && !isIdLike(value.targetRegionId)) {
+      pushError(errors, path + '.targetRegionId', 'must be null or a non-empty string');
+    }
+
+    if (requireOwn(errors, value, 'targetSectorId', path) && value.targetSectorId !== null && !isIdLike(value.targetSectorId)) {
+      pushError(errors, path + '.targetSectorId', 'must be null or a non-empty string');
+    }
+
+    if (requireOwn(errors, value, 'route', path)) {
+      validateDataArray(errors, value.route, path + '.route');
+    }
+
+    if (requireOwn(errors, value, 'groupId', path) && value.groupId !== null && !isIdLike(value.groupId)) {
+      pushError(errors, path + '.groupId', 'must be null or a non-empty string');
+    }
+
+    if (requireOwn(errors, value, 'issuedPhase', path) && !isPhaseValue(value.issuedPhase)) {
+      pushError(errors, path + '.issuedPhase', 'must be a finite number or non-empty string');
+    }
+
+    return { ok: errors.length === 0, errors: errors };
+  }
+
+  function validateBattleRequest(value) {
+    var errors = [];
+    var path = 'BattleRequest';
+
+    if (!isPlainObject(value)) {
+      return { ok: false, errors: [path + ': must be a plain Object'] };
+    }
+
+    var idFields = ['battleId', 'theaterId', 'sectorId', 'parentRegionId'];
+    for (var i = 0; i < idFields.length; i += 1) {
+      var idField = idFields[i];
+      if (requireOwn(errors, value, idField, path) && !isIdLike(value[idField])) {
+        pushError(errors, path + '.' + idField, 'must be a non-empty string');
+      }
+    }
+
+    if (requireOwn(errors, value, 'seed', path) && !isSeed(value.seed)) {
+      pushError(errors, path + '.seed', 'must be a finite number or non-empty string');
+    }
+
+    if (requireOwn(errors, value, 'terrainDataset', path)) {
+      if (!isPlainObject(value.terrainDataset)) {
+        pushError(errors, path + '.terrainDataset', 'must be a plain Object');
+      } else if (!isOrdinaryData(value.terrainDataset)) {
+        pushError(errors, path + '.terrainDataset', 'must contain only ordinary JS data');
+      }
+    }
+
+    var arrayFields = [
+      'blueForces',
+      'redForces',
+      'blueSupport',
+      'redSupport',
+      'parentOrders',
+      'boundaryAnchors'
+    ];
+
+    for (var a = 0; a < arrayFields.length; a += 1) {
+      var arrayField = arrayFields[a];
+      if (requireOwn(errors, value, arrayField, path)) {
+        validateDataArray(errors, value[arrayField], path + '.' + arrayField);
+      }
+    }
+
+    return { ok: errors.length === 0, errors: errors };
+  }
+
+  function validateBattleResult(value) {
+    var errors = [];
+    var path = 'BattleResult';
+
+    if (!isPlainObject(value)) {
+      return { ok: false, errors: [path + ': must be a plain Object'] };
+    }
+
+    if (requireOwn(errors, value, 'battleId', path) && !isIdLike(value.battleId)) {
+      pushError(errors, path + '.battleId', 'must be a non-empty string');
+    }
+
+    if (requireOwn(errors, value, 'sectorId', path) && !isIdLike(value.sectorId)) {
+      pushError(errors, path + '.sectorId', 'must be a non-empty string');
+    }
+
+    if (requireOwn(errors, value, 'controlChange', path)) {
+      if (value.controlChange !== null && !isPlainObject(value.controlChange)) {
+        pushError(errors, path + '.controlChange', 'must be null or a plain Object');
+      } else if (value.controlChange !== null && !isOrdinaryData(value.controlChange)) {
+        pushError(errors, path + '.controlChange', 'must contain only ordinary JS data');
+      }
+    }
+
+    var arrayFields = ['formationUpdates', 'infrastructureDamage', 'events'];
+    for (var i = 0; i < arrayFields.length; i += 1) {
+      var arrayField = arrayFields[i];
+      if (requireOwn(errors, value, arrayField, path)) {
+        validateDataArray(errors, value[arrayField], path + '.' + arrayField);
+      }
+    }
+
+    return { ok: errors.length === 0, errors: errors };
+  }
+
+  var WarContracts = {
+    SIDES: SIDES,
+    ORDERS: ORDERS,
+    UNIT_TYPES: UNIT_TYPES,
+    CONTROL_STATES: CONTROL_STATES,
+
+    validateTheaterState: validateTheaterState,
+    validateDeploymentPlan: validateDeploymentPlan,
+    validateTheaterOrder: validateTheaterOrder,
+    validateBattleRequest: validateBattleRequest,
+    validateBattleResult: validateBattleResult
+  };
+
+  global.BorderEpoch.WarContracts = Object.freeze(WarContracts);
+})(window);
+
+/* ===== END INLINE MODULE 01-war-contracts.js ===== */
+</script>
+<script>
+/* ===== INLINE MODULE 02-terrain-renderer-core.js ===== */
+(function(global){
+  'use strict';
+  global.BorderEpoch=global.BorderEpoch||{};
+  var cache=new WeakMap();
+  function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
+  function lerp(a,b,t){return a+(b-a)*t;}
+  function smoothstep(t){return t*t*(3-2*t);}
+  function hashString(s){var h=2166136261>>>0;s=String(s);for(var i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);}return h>>>0;}
+  function seedNumber(seed){return typeof seed==='number'&&Number.isFinite(seed)?seed:hashString(seed||'terrain');}
+  function hash2(seed,x,y){var s=Math.sin(x*127.1+y*311.7+seed*17.17)*43758.5453123;return s-Math.floor(s);}
+  function valueNoise(seed,x,y){var xi=Math.floor(x),yi=Math.floor(y),xf=x-xi,yf=y-yi,n00=hash2(seed,xi,yi),n10=hash2(seed,xi+1,yi),n01=hash2(seed,xi,yi+1),n11=hash2(seed,xi+1,yi+1),u=smoothstep(xf),v=smoothstep(yf);return lerp(lerp(n00,n10,u),lerp(n01,n11,u),v);}
+  function fractalNoise(seed,x,y){var total=0,amp=.6,freq=1,sum=0;for(var i=0;i<4;i++){total+=valueNoise(seed+i*13,x*freq,y*freq)*amp;sum+=amp;amp*=.5;freq*=2.15;}return total/sum;}
+  function pointInPoly(pt,poly){var c=false,x=pt[0],y=pt[1];for(var i=0,j=poly.length-1;i<poly.length;j=i++){var xi=poly[i][0],yi=poly[i][1],xj=poly[j][0],yj=poly[j][1],intersect=((yi>y)!=(yj>y))&&(x<(xj-xi)*(y-yi)/((yj-yi)||1e-9)+xi);if(intersect)c=!c;}return c;}
+  function distToPolyline(px,py,pts){var min=1e9;for(var i=0;i<pts.length-1;i++){var a=pts[i],b=pts[i+1],vx=b[0]-a[0],vy=b[1]-a[1],wx=px-a[0],wy=py-a[1],c1=vx*wx+vy*wy,c2=vx*vx+vy*vy,t=c2===0?0:clamp(c1/c2,0,1),qx=a[0]+t*vx,qy=a[1]+t*vy,d=Math.hypot(px-qx,py-qy);if(d<min)min=d;}return min;}
+  function pathsOf(list){return (list||[]).map(function(x){return Array.isArray(x)?x:(x.points||x.pts||x.path||[]);}).filter(function(p){return p.length>1;});}
+  function sampleHeight(ds,nx,ny){
+    var seed=seedNumber(ds.seed),h=.34+.035*(1-ny)+.025*(.5-Math.abs(nx-.5));
+    (ds.hills||[]).forEach(function(hill,hi){
+      var rx=Math.max(.02,hill.rx||hill.r||.12),ry=Math.max(.02,hill.ry||hill.r||.12),dx=(nx-hill.x)/rx,dy=(ny-hill.y)/ry,r=Math.hypot(dx,dy),ang=Math.atan2(dy,dx),phase=hash2(seed+137,hi*19+3,11)*Math.PI*2,lobes=1+.105*Math.sin(3*ang+phase)+.060*Math.sin(5*ang+phase*1.71)+.035*Math.sin(7*ang-phase*.63),wr=r/clamp(lobes,.78,1.25),height=hill.h||hill.height||.18,broad=Math.exp(-2.85*wr*wr),sharp=Math.exp(-5.7*wr),mountain=height*(.74*broad+.26*sharp),summitMask=Math.exp(-4.2*wr*wr),shoulderMask=Math.exp(-1.75*wr*wr)*(1-Math.exp(-5*wr*wr)),fine=(fractalNoise(seed+401+hi*97,nx*33,ny*33)-.5)*2,mid=(fractalNoise(seed+509+hi*83,nx*16,ny*16)-.5)*2;
+      mountain+=height*(.115*fine*summitMask+.055*mid*shoulderMask);
+      var subCount=2+(hash2(seed+613,hi,5)>.58?1:0);for(var k=0;k<subCount;k++){var a=hash2(seed+701+hi*31,k,3)*Math.PI*2,rr=.10+.22*hash2(seed+733+hi*37,k,7),ox=Math.cos(a)*rr,oy=Math.sin(a)*rr,ddx=dx-ox,ddy=dy-oy,amp=height*(.045+.055*hash2(seed+761+hi*41,k,13)),tight=13+10*hash2(seed+797+hi*43,k,17);mountain+=amp*Math.exp(-tight*(ddx*ddx+ddy*ddy));}
+      if(hash2(seed+823,hi,23)>.42){var aa=hash2(seed+857,hi,29)*Math.PI*2,rr2=.08+.10*hash2(seed+881,hi,31),ox2=Math.cos(aa)*rr2,oy2=Math.sin(aa)*rr2,ddx2=dx-ox2,ddy2=dy-oy2;mountain-=height*(.035+.030*hash2(seed+907,hi,37))*Math.exp(-24*(ddx2*ddx2+ddy2*ddy2));}
+      h+=mountain;
+    });
+    (ds.depressions||[]).forEach(function(dep,di){var dx=(nx-dep.x)/(dep.rx||.1),dy=(ny-dep.y)/(dep.ry||.1),r=Math.hypot(dx,dy),ang=Math.atan2(dy,dx),phase=hash2(seed+929,di*17+1,41)*Math.PI*2,warp=1+.08*Math.sin(3*ang+phase)+.04*Math.sin(5*ang-phase*.8),wr=r/clamp(warp,.82,1.20);h-=(dep.h||.07)*Math.exp(-2.9*wr*wr);});
+    pathsOf(ds.rivers).forEach(function(r){var d=distToPolyline(nx,ny,r);h-=.052*Math.exp(-(d*d)/(2*.010*.010));h-=.028*Math.exp(-(d*d)/(2*.046*.046));});
+    (ds.coast||[]).forEach(function(c){if(pointInPoly([nx,ny],c))h=Math.min(h,.085);});
+    // Hard/soft elevation constraints from the parent sector bridge.
+    (ds.elevationConstraints||[]).forEach(function(c){var pts=c.points||[],d=pts.length>1?distToPolyline(nx,ny,pts):Math.hypot(nx-(c.x||0),ny-(c.y||0)),rad=c.radius||.04,w=Math.exp(-(d*d)/(2*rad*rad)),strength=c.strength===undefined?.14:c.strength;if(c.kind==='ridge'||c.kind==='high')h+=strength*w;else if(c.kind==='river'||c.kind==='low'||c.kind==='valley')h-=strength*w;});
+    h+=(fractalNoise(seed,nx*6.4,ny*6.4)-.5)*.070;h+=(fractalNoise(seed+99,nx*17,ny*17)-.5)*.022;return clamp(h,.02,.96);
+  }
+  function terrainColor(t){var stops=[[0,[218,222,197]],[.14,[203,211,174]],[.28,[188,200,151]],[.42,[178,187,132]],[.56,[176,170,116]],[.70,[174,151,101]],[.82,[160,129,88]],[.92,[145,111,82]],[1,[128,96,75]]];for(var i=0;i<stops.length-1;i++){if(t<=stops[i+1][0]){var a=stops[i],b=stops[i+1],u=clamp((t-a[0])/(b[0]-a[0]),0,1);return[lerp(a[1][0],b[1][0],u),lerp(a[1][1],b[1][1],u),lerp(a[1][2],b[1][2],u)];}}return stops[stops.length-1][1];}
+  function buildElevation(ds,options){options=options||{};var resW=options.resW||360,resH=options.resH||240,grid=Array.from({length:resH},function(){return new Float32Array(resW);}),vals=[];for(var j=0;j<resH;j++)for(var i=0;i<resW;i++){var h=sampleHeight(ds,i/(resW-1),j/(resH-1));grid[j][i]=h;vals.push(h);}vals.sort(function(a,b){return a-b;});function q(n){return vals[Math.max(0,Math.min(vals.length-1,Math.floor(n*(vals.length-1))))];}var p005=q(.005),p995=q(.995),span=Math.max(.12,p995-p005),display=Array.from({length:resH},function(){return new Float32Array(resW);});for(j=0;j<resH;j++)for(i=0;i<resW;i++){h=grid[j][i];var local=clamp((h-p005)/span,0,1);local=smoothstep(local);var absolute=clamp((h-.12)/.78,0,1),t=clamp(local*.84+absolute*.16,0,1);display[j][i]=clamp(.5+(t-.5)*1.10,0,1);}var out={grid:grid,displayGrid:display,resW:resW,resH:resH,stats:{p005:p005,p995:p995,span:span}};cache.set(ds,out);return out;}
+  function setup(canvas,options){var rect=canvas.getBoundingClientRect?canvas.getBoundingClientRect():{width:canvas.width,height:canvas.height},dpr=options&&options.dpr||global.devicePixelRatio||1,w=Math.max(1,rect.width||canvas.width||900),h=Math.max(1,rect.height||canvas.height||600);canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);var ctx=canvas.getContext('2d');ctx.setTransform(dpr,0,0,dpr,0,0);return{ctx:ctx,w:w,h:h,pad:(options&&options.pad)||18};}
+  function drawPolyline(ctx,pts,mapX,mapY){if(!pts.length)return;ctx.beginPath();ctx.moveTo(mapX(pts[0][0]),mapY(pts[0][1]));for(var i=1;i<pts.length;i++)ctx.lineTo(mapX(pts[i][0]),mapY(pts[i][1]));}
+  function drawIsolines(ctx,ec,mapX,mapY){var grid=ec.displayGrid,resW=ec.resW,resH=ec.resH,levels=[];for(var k=1;k<=11;k++)levels.push(k/12);function interp(a,b,A,B,l){var t=(l-a)/((b-a)||1e-9);return[lerp(A[0],B[0],t),lerp(A[1],B[1],t)];}levels.forEach(function(level,li){var major=li%3===2;ctx.strokeStyle=major?'rgba(66,58,49,.50)':'rgba(72,65,56,.26)';ctx.lineWidth=major?1.3:.65;for(var j=0;j<resH-1;j++)for(var i=0;i<resW-1;i++){var v0=grid[j][i],v1=grid[j][i+1],v2=grid[j+1][i+1],v3=grid[j+1][i],mask=(v0>level?1:0)|(v1>level?2:0)|(v2>level?4:0)|(v3>level?8:0);if(mask===0||mask===15)continue;var x=i/(resW-1),y=j/(resH-1),sx=1/(resW-1),sy=1/(resH-1),pT=interp(v0,v1,[x,y],[x+sx,y],level),pR=interp(v1,v2,[x+sx,y],[x+sx,y+sy],level),pB=interp(v3,v2,[x,y+sy],[x+sx,y+sy],level),pL=interp(v0,v3,[x,y],[x,y+sy],level),segs={1:[[pL,pT]],2:[[pT,pR]],3:[[pL,pR]],4:[[pR,pB]],5:[[pL,pB],[pT,pR]],6:[[pT,pB]],7:[[pL,pB]],8:[[pB,pL]],9:[[pT,pB]],10:[[pT,pL],[pR,pB]],11:[[pR,pB]],12:[[pL,pR]],13:[[pT,pR]],14:[[pL,pT]]}[mask]||[];segs.forEach(function(s){ctx.beginPath();ctx.moveTo(mapX(s[0][0]),mapY(s[0][1]));ctx.lineTo(mapX(s[1][0]),mapY(s[1][1]));ctx.stroke();});}});}
+  function render(canvas,ds,options){options=options||{};var s=setup(canvas,options),ctx=s.ctx,w=s.w,h=s.h,p=s.pad,mapX=function(x){return p+x*(w-p*2);},mapY=function(y){return p+y*(h-p*2);},ec=buildElevation(ds,options),off=document.createElement('canvas');off.width=ec.resW;off.height=ec.resH;var oc=off.getContext('2d'),img=oc.createImageData(ec.resW,ec.resH),at=function(arr,x,y){return arr[clamp(y,0,ec.resH-1)|0][clamp(x,0,ec.resW-1)|0];},light=[-.60,-.52,.61],ll=Math.hypot(light[0],light[1],light[2]);light=light.map(function(x){return x/ll;});for(var j=0;j<ec.resH;j++)for(var i=0;i<ec.resW;i++){var t=ec.displayGrid[j][i],dx=(at(ec.displayGrid,i+1,j)-at(ec.displayGrid,i-1,j))*22,dy=(at(ec.displayGrid,i,j+1)-at(ec.displayGrid,i,j-1))*22,nx=-dx,ny=-dy,nz=1,nl=Math.hypot(nx,ny,nz);nx/=nl;ny/=nl;nz/=nl;var lam=clamp(nx*light[0]+ny*light[1]+nz*light[2],-.55,1),near=0,far=0,nc=0,fc=0;[3,6,10].forEach(function(r){near+=at(ec.displayGrid,i+r,j)+at(ec.displayGrid,i-r,j)+at(ec.displayGrid,i,j+r)+at(ec.displayGrid,i,j-r)+at(ec.displayGrid,i+r,j+r)+at(ec.displayGrid,i-r,j-r)+at(ec.displayGrid,i+r,j-r)+at(ec.displayGrid,i-r,j+r);nc+=8;});[16,24].forEach(function(r){far+=at(ec.displayGrid,i+r,j)+at(ec.displayGrid,i-r,j)+at(ec.displayGrid,i,j+r)+at(ec.displayGrid,i,j-r)+at(ec.displayGrid,i+r,j+r)+at(ec.displayGrid,i-r,j-r)+at(ec.displayGrid,i+r,j-r)+at(ec.displayGrid,i-r,j+r);fc+=8;});var valley=clamp((near/nc-t)*2.5+(far/fc-t)*1.4,0,.55),ridge=clamp((t-near/nc)*2.8+(t-far/fc)*1.1,0,.40),slope=clamp(Math.hypot(dx,dy),0,1.4),shade=clamp(.78+lam*.43-valley*.72+ridge*.25-slope*.035,.38,1.22),c=terrainColor(t),idx=(j*ec.resW+i)*4;img.data[idx]=clamp(c[0]*shade,0,255);img.data[idx+1]=clamp(c[1]*shade,0,255);img.data[idx+2]=clamp(c[2]*shade,0,255);img.data[idx+3]=255;}oc.putImageData(img,0,0);ctx.fillStyle='#d9d0bb';ctx.fillRect(0,0,w,h);ctx.imageSmoothingEnabled=true;ctx.drawImage(off,p,p,w-p*2,h-p*2);if(options.contours!==false)drawIsolines(ctx,ec,mapX,mapY);
+    ctx.lineCap='round';ctx.lineJoin='round';pathsOf(ds.rivers).forEach(function(r){ctx.strokeStyle='rgba(48,58,55,.22)';ctx.lineWidth=10;drawPolyline(ctx,r,mapX,mapY);ctx.stroke();ctx.strokeStyle='rgba(89,131,151,.98)';ctx.lineWidth=5;drawPolyline(ctx,r,mapX,mapY);ctx.stroke();});(ds.roads||[]).forEach(function(r){var pts=r.points||r.pts||r.path||r;ctx.strokeStyle=r.kind==='primary'?'rgba(78,68,58,.88)':'rgba(103,92,78,.76)';ctx.lineWidth=r.kind==='primary'?3.4:2.3;drawPolyline(ctx,pts,mapX,mapY);ctx.stroke();});(ds.rails||[]).forEach(function(r){var pts=r.points||r.pts||r.path||r;ctx.strokeStyle='rgba(48,48,46,.82)';ctx.lineWidth=1.8;drawPolyline(ctx,pts,mapX,mapY);ctx.stroke();ctx.setLineDash([1,10]);ctx.strokeStyle='rgba(238,233,222,.75)';drawPolyline(ctx,pts,mapX,mapY);ctx.stroke();ctx.setLineDash([]);});(ds.forests||[]).forEach(function(f,fi){var poly=f.poly||f.points||f;if(!poly.length)return;ctx.save();ctx.beginPath();poly.forEach(function(q,k){k?ctx.lineTo(mapX(q[0]),mapY(q[1])):ctx.moveTo(mapX(q[0]),mapY(q[1]));});ctx.closePath();ctx.fillStyle='rgba(67,83,58,.18)';ctx.fill();ctx.clip();var seed=seedNumber(ds.seed);for(var k=0;k<180;k++){var x=hash2(seed+fi*37,k,11),y=hash2(seed+fi*53,k,29);if(!pointInPoly([x,y],poly))continue;ctx.fillStyle='rgba(48,67,45,.15)';ctx.beginPath();ctx.arc(mapX(x),mapY(y),1.2+hash2(seed,k,71)*2.6,0,Math.PI*2);ctx.fill();}ctx.restore();});
+    (ds.cities||[]).forEach(function(c){var poly=c.poly||c.polygon||[];if(poly.length){ctx.save();ctx.beginPath();poly.forEach(function(q,k){k?ctx.lineTo(mapX(q[0]),mapY(q[1])):ctx.moveTo(mapX(q[0]),mapY(q[1]));});ctx.closePath();ctx.fillStyle='rgba(100,94,84,.35)';ctx.fill();ctx.restore();}else if(Number.isFinite(c.x)){ctx.fillStyle='rgba(82,77,69,.76)';ctx.fillRect(mapX(c.x)-7,mapY(c.y)-5,14,10);}});ctx.strokeStyle='rgba(55,54,49,.42)';ctx.lineWidth=2;ctx.strokeRect(p,p,w-p*2,h-p*2);return {elevation:ec};}
+  function analyzeTerrainAt(ds,x,y){var ec=cache.get(ds)||buildElevation(ds,{resW:180,resH:120}),i=clamp(Math.round(x*(ec.resW-1)),1,ec.resW-2),j=clamp(Math.round(y*(ec.resH-1)),1,ec.resH-2),h=ec.grid[j][i],sx=(ec.grid[j][i+1]-ec.grid[j][i-1])*(ec.resW-1)/2,sy=(ec.grid[j+1][i]-ec.grid[j-1][i])*(ec.resH-1)/2;return{height:h,slope:Math.hypot(sx,sy)};}
+  global.BorderEpoch.TerrainRenderer={sampleHeight:sampleHeight,buildElevation:buildElevation,render:render,analyzeTerrainAt:analyzeTerrainAt};
+})(window);
+
+/* ===== END INLINE MODULE 02-terrain-renderer-core.js ===== */
+</script>
+<script>
+/* ===== INLINE MODULE 03-sector-terrain-adapter.js ===== */
+(function(global){
+  'use strict';global.BorderEpoch=global.BorderEpoch||{};
+  function clone(v){return typeof structuredClone==='function'?structuredClone(v):JSON.parse(JSON.stringify(v));}
+  function hash(s){var h=2166136261>>>0;s=String(s);for(var i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);}return h>>>0;}
+  function rand(seed,i,j){var x=Math.sin((seed+i*17.17+j*73.31)*12.9898)*43758.5453;return x-Math.floor(x);}
+  function boundsOf(sector){var b=sector.identity&&sector.identity.parentBounds||sector.parentBounds||{x0:0,y0:0,x1:1,y1:1};var w=b.w||b.x1-b.x0||1,h=b.h||b.y1-b.y0||1;return{x0:b.x0||0,y0:b.y0||0,w:w,h:h};}
+  function normPoint(p,b){if(Array.isArray(p))return[(p[0]-b.x0)/b.w,(p[1]-b.y0)/b.h];var x=p.x,y=p.y;if(x>=0&&x<=1&&y>=0&&y<=1&&p.local)return[x,y];return[(x-b.x0)/b.w,(y-b.y0)/b.h];}
+  function normPath(path,b){return(path||[]).map(function(p){return normPoint(p,b);});}
+  function convertFeatureList(list,b){var out=[];(list||[]).forEach(function(f){if(Array.isArray(f)){out.push(normPath(f,b));return;}if(Array.isArray(f.paths)){f.paths.forEach(function(path,pi){var o=clone(f);delete o.paths;o.id=(f.id||'feature')+'-'+pi;o.pts=path.map(function(p){return Array.isArray(p)?p:[p.x,p.y];});out.push(o);});return;}var o=clone(f),pts=f.points||f.pts||f.path||f.poly||[];if(pts.length){var alreadyLocal=pts.every(function(p){var x=Array.isArray(p)?p[0]:p.x,y=Array.isArray(p)?p[1]:p.y;return x>=0&&x<=1&&y>=0&&y<=1;});var n=alreadyLocal?pts.map(function(p){return Array.isArray(p)?p.slice():[p.x,p.y];}):normPath(pts,b);if(f.poly)o.poly=n;else if(f.points)o.points=n;else if(f.path)o.path=n;else o.pts=n;}if(f.local){var lp=Array.isArray(f.local)?f.local:[f.local.x,f.local.y];o.x=lp[0];o.y=lp[1];delete o.local;}else if(Number.isFinite(f.x)){var p=normPoint(f,b);o.x=p[0];o.y=p[1];}out.push(o);});return out;}
+  function anchorConstraint(a,b){var p=a.local?(Array.isArray(a.local)?a.local:[a.local.x,a.local.y]):normPoint(a,b),kind=a.kind||a.type||'low',mapped=(kind==='ridges'||kind==='ridge')?'ridge':(kind==='rivers'||kind==='river')?'river':kind;return{kind:mapped,x:p[0],y:p[1],radius:mapped==='ridge'?.055:.035,strength:mapped==='ridge'?.12:.10,sourceAnchorId:a.id||null};}
+  function ridgeSecondary(ridges,seed){var hills=[];(ridges||[]).forEach(function(r,ri){var pts=Array.isArray(r)?r:(r.points||r.pts||r.path||[]);if(pts.length<2)return;for(var k=1;k<pts.length-1;k+=2){var p=pts[k],nx=(rand(seed,ri,k)-.5)*.035,ny=(rand(seed+13,ri,k)-.5)*.035;hills.push({x:Math.max(.02,Math.min(.98,p[0]+nx)),y:Math.max(.02,Math.min(.98,p[1]+ny)),rx:.07+.035*rand(seed+31,ri,k),ry:.08+.045*rand(seed+47,ri,k),h:.12+.10*rand(seed+59,ri,k),source:'parent-ridge-detail'});}});return hills;}
+  function buildTerrainDataset(sector){
+    if(!sector)throw new Error('sector required');var b=boundsOf(sector),f=sector.features||{},ref=sector.refinement||{},identity=sector.identity||{},seed=hash(identity.sectorId||sector.id||JSON.stringify(b)),ridges=convertFeatureList(f.ridges||[],b),rivers=convertFeatureList(f.rivers||[],b),roads=convertFeatureList(f.roads||[],b),rails=convertFeatureList(f.rails||[],b),cities=convertFeatureList(f.cities||[],b),forests=convertFeatureList(f.forests||ref.forests||[],b),hills=convertFeatureList(ref.hills||[],b),depressions=convertFeatureList(ref.depressions||[],b),constraints=[];
+    (sector.anchors||[]).forEach(function(a){constraints.push(anchorConstraint(a,b));});ridges.forEach(function(r){var pts=Array.isArray(r)?r:(r.points||r.pts||r.path||[]);if(pts.length)constraints.push({kind:'ridge',points:pts,radius:.05,strength:.13,source:'parent-ridge'});});rivers.forEach(function(r){var pts=Array.isArray(r)?r:(r.points||r.pts||r.path||[]);if(pts.length)constraints.push({kind:'river',points:pts,radius:.025,strength:.11,source:'parent-river'});});
+    hills=hills.concat(ridgeSecondary(ridges,seed));var geo=clone(sector.geography||{}),forestCover=Number.isFinite(geo.forestCover)?geo.forestCover:0.25;if(forests.length===0&&forestCover>.15){var count=Math.min(6,Math.max(1,Math.round(forestCover*6)));for(var i=0;i<count;i++){var cx=.08+.84*rand(seed,i,11),cy=.08+.84*rand(seed,i,17),s=.04+.06*forestCover;forests.push([[cx-s,cy],[cx-s*.5,cy-s],[cx+s*.6,cy-s*.7],[cx+s,cy+s*.2],[cx,cy+s]]);}}
+    return{id:identity.sectorId||sector.id||'sector',name:identity.parentRegionName||sector.name||'Detailed Sector',seed:seed,geography:geo,hills:hills,depressions:depressions,rivers:rivers,roads:roads,rails:rails,ridges:ridges,cities:cities,forests:forests,coast:convertFeatureList(f.coast||[],b),lakes:convertFeatureList(f.lakes||[],b),elevationConstraints:constraints,boundaryAnchors:clone(sector.anchors||[]),parentBounds:clone(identity.parentBounds||sector.parentBounds||null),metadata:{parentRegionId:identity.parentRegionId||sector.parentRegionId||null,refinement:clone(ref)}};
+  }
+  global.BorderEpoch.SectorTerrainAdapter={buildTerrainDataset:buildTerrainDataset};
+})(window);
+
+/* ===== END INLINE MODULE 03-sector-terrain-adapter.js ===== */
+</script>
+<script>
+/* ===== INLINE MODULE 04-theater-state.js ===== */
+(function (global) {
+  'use strict';
+  global.BorderEpoch = global.BorderEpoch || {};
+  var Contracts = global.BorderEpoch.WarContracts;
+  if (!Contracts) throw new Error('TheaterState requires BorderEpoch.WarContracts');
+
+  function isObject(v){return v && typeof v==='object' && !Array.isArray(v);}
+  function clone(v){
+    if (typeof structuredClone === 'function') return structuredClone(v);
+    return JSON.parse(JSON.stringify(v));
+  }
+  function sortValue(v){
+    if(Array.isArray(v)) return v.map(sortValue);
+    if(!isObject(v)) return v;
+    var out={}; Object.keys(v).sort().forEach(function(k){out[k]=sortValue(v[k]);}); return out;
+  }
+  function stableStringify(v){return JSON.stringify(sortValue(v));}
+  function deepFreeze(v){
+    if(!v || typeof v!=='object' || Object.isFrozen(v)) return v;
+    Object.freeze(v); Object.keys(v).forEach(function(k){deepFreeze(v[k]);}); return v;
+  }
+  function mapify(input, idField){
+    if(!input) return {};
+    if(!Array.isArray(input)) return clone(input);
+    var out={}; input.forEach(function(x){ if(x && x[idField]) out[x[idField]]=clone(x); }); return out;
+  }
+  function normalizeRegion(r,id){
+    r=clone(r||{}); r.id=r.id||id; r.name=r.name||r.id; r.polygon=r.polygon||r.poly||[];
+    r.neighbors=Array.isArray(r.neighbors)?r.neighbors.slice():[]; r.control=r.control||'neutral';
+    r.geography=Object.assign({meanElevation:0.35,relief:0.35,mountainDensity:0.25,forestCover:0.25,wetness:0.35,soilBearing:0.65,urbanDensity:0.15},r.geography||{});
+    r.infrastructureRefs=Object.assign({roads:[],rails:[],rivers:[],bridges:[]},r.infrastructureRefs||{});
+    return r;
+  }
+  function normalizeFormation(f,id){
+    f=clone(f||{}); f.id=f.id||id; f.name=f.name||f.id; f.side=f.side||'blue'; f.type=f.type||'infantry';
+    f.regionId=f.regionId||f.region||''; f.position=f.position||((Number.isFinite(f.x)&&Number.isFinite(f.y))?{x:f.x,y:f.y}:{x:0,y:0});
+    f.subunits=Array.isArray(f.subunits)?clone(f.subunits):(Array.isArray(f.subordinates)?clone(f.subordinates):[]);
+    f.assignedSectorId=Object.prototype.hasOwnProperty.call(f,'assignedSectorId')?f.assignedSectorId:null;
+    f.order=f.order||'hold';
+    f.status=Object.assign({readiness:0.9,supply:0.9,cohesion:0.9,supplyStatus:'secure',role:'main'},isObject(f.status)?f.status:{});
+    return f;
+  }
+  function create(input){
+    input=input||{}; var regionsRaw=mapify(input.regions,'id'), regions={};
+    Object.keys(regionsRaw).forEach(function(id){regions[id]=normalizeRegion(regionsRaw[id],id);});
+    var formationsRaw=mapify(input.formations||input.units,'id'), formations={};
+    Object.keys(formationsRaw).forEach(function(id){formations[id]=normalizeFormation(formationsRaw[id],id);});
+    var state={
+      id:String(input.id||'theater'), seed:(input.seed!==undefined?input.seed:'theater-seed'), phase:(input.phase!==undefined?input.phase:0),
+      regions:regions, formations:formations,
+      roads:clone(input.roads||[]), rails:clone(input.rails||[]), rivers:clone(input.rivers||[]), bridges:clone(input.bridges||[]), depots:clone(input.depots||[]),
+      deployments:clone(input.deployments||{}), intel:clone(input.intel||{blue:{},red:{}}), events:clone(input.events||[])
+    };
+    var check=Contracts.validateTheaterState(state); if(!check.ok) throw new Error('Invalid TheaterState: '+check.errors.join('; '));
+    return state;
+  }
+  function snapshot(state){
+    var snap=clone(state); snap.__snapshotHash=hash(stableStringify(snap)); return deepFreeze(snap);
+  }
+  function hash(s){var h=2166136261>>>0; for(var i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);} return ('00000000'+(h>>>0).toString(16)).slice(-8);}
+  function getRegion(state,id){return state && state.regions ? state.regions[id]||null:null;}
+  function getFormation(state,id){return state && state.formations ? state.formations[id]||null:null;}
+  function merge(target,patch){
+    Object.keys(patch||{}).forEach(function(k){
+      if(isObject(patch[k])&&isObject(target[k])) merge(target[k],patch[k]); else target[k]=clone(patch[k]);
+    }); return target;
+  }
+  function moveFormation(state,id,patch){var f=getFormation(state,id); if(!f) throw new Error('Unknown formation '+id); merge(f,patch||{}); return f;}
+  function updateRegion(state,id,patch){var r=getRegion(state,id); if(!r) throw new Error('Unknown region '+id); merge(r,patch||{}); return r;}
+  function appendEvent(state,event){state.events=state.events||[]; state.events.push(clone(event)); return event;}
+  function applyPatch(state,patch){
+    patch=patch||{};
+    if(patch.phase!==undefined) state.phase=patch.phase;
+    Object.keys(patch.formations||{}).forEach(function(id){moveFormation(state,id,patch.formations[id]);});
+    Object.keys(patch.regions||{}).forEach(function(id){updateRegion(state,id,patch.regions[id]);});
+    ['roads','rails','rivers','bridges','depots'].forEach(function(kind){
+      var updates=patch[kind]; if(!updates) return;
+      if(Array.isArray(updates)){ updates.forEach(function(up){var arr=state[kind]||[]; var i=arr.findIndex(function(x){return x.id===up.id;}); if(i>=0) merge(arr[i],up); else arr.push(clone(up));}); }
+    });
+    if(patch.deployments) state.deployments=merge(state.deployments||{},patch.deployments);
+    if(patch.intel) state.intel=merge(state.intel||{},patch.intel);
+    (patch.events||[]).forEach(function(e){appendEvent(state,e);});
+    return state;
+  }
+  function serialize(state){return stableStringify(state);}
+  function deserialize(json){var raw=typeof json==='string'?JSON.parse(json):clone(json); if(raw.__snapshotHash) delete raw.__snapshotHash; return create(raw);}
+
+  global.BorderEpoch.TheaterState={create:create,snapshot:snapshot,clone:clone,getRegion:getRegion,getFormation:getFormation,moveFormation:moveFormation,updateRegion:updateRegion,appendEvent:appendEvent,applyPatch:applyPatch,serialize:serialize,deserialize:deserialize,stableStringify:stableStringify};
+})(window);
+
+/* ===== END INLINE MODULE 04-theater-state.js ===== */
+</script>
+<script>
+/* ===== INLINE MODULE 05-theater-deployment.js ===== */
+(function(global){
+  'use strict';global.BorderEpoch=global.BorderEpoch||{};var C=global.BorderEpoch.WarContracts;if(!C)throw new Error('TheaterDeployment requires WarContracts');
+  function clone(v){return typeof structuredClone==='function'?structuredClone(v):JSON.parse(JSON.stringify(v));}
+  function sectorIds(state){var d=state.deployments||{};if(d.sectors&&typeof d.sectors==='object')return Object.keys(d.sectors);if(Array.isArray(d.sectorIds))return d.sectorIds.slice();return Object.keys(state.regions||{});}
+  function blankSector(){return {commitmentShare:0,mainFormations:[],supportFormations:[],reserveFormations:[]};}
+  function createPlan(state,side){var p={side:side,sectors:{},mode:'explicit'};sectorIds(state).forEach(function(id){p.sectors[id]=blankSector();});return p;}
+  function allLists(sec){return ['mainFormations','supportFormations','reserveFormations'];}
+  function removeEverywhere(plan,id){Object.keys(plan.sectors).forEach(function(sid){allLists().forEach(function(k){var a=plan.sectors[sid][k],i=a.indexOf(id);while(i>=0){a.splice(i,1);i=a.indexOf(id);}});});}
+  function assignFormation(plan,formationId,sectorId,role){if(!plan.sectors[sectorId])plan.sectors[sectorId]=blankSector();removeEverywhere(plan,formationId);var key=role==='support'?'supportFormations':role==='reserve'?'reserveFormations':'mainFormations';plan.sectors[sectorId][key].push(formationId);plan.mode='explicit';return plan;}
+  function setCommitmentShare(plan,sectorId,share){if(!plan.sectors[sectorId])plan.sectors[sectorId]=blankSector();plan.sectors[sectorId].commitmentShare=Math.max(0,Math.min(1,Number(share)||0));plan.mode='share';return plan;}
+  function normalizeShares(plan){var ids=Object.keys(plan.sectors),sum=ids.reduce(function(a,id){return a+(Number(plan.sectors[id].commitmentShare)||0);},0);if(sum<=0){var x=ids.length?1/ids.length:0;ids.forEach(function(id){plan.sectors[id].commitmentShare=x;});return;}ids.forEach(function(id){plan.sectors[id].commitmentShare/=sum;});}
+  function isSupport(f){return ['artillery','engineer','airDefense','logistics','recon'].indexOf(f.type)>=0;}
+  function seedRank(seed,id){var s=String(seed)+'|'+id,h=2166136261>>>0;for(var i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);}return h>>>0;}
+  function autoAssign(state,plan){normalizeShares(plan);Object.keys(plan.sectors).forEach(function(id){plan.sectors[id].mainFormations=[];plan.sectors[id].supportFormations=[];plan.sectors[id].reserveFormations=[];});var fs=Object.keys(state.formations||{}).map(function(id){return state.formations[id];}).filter(function(f){return f.side===plan.side;});fs.sort(function(a,b){return seedRank(state.seed,a.id)-seedRank(state.seed,b.id);});var ids=Object.keys(plan.sectors),total=fs.length,targets={},assigned={};ids.forEach(function(id){targets[id]=plan.sectors[id].commitmentShare*total;assigned[id]=0;});fs.forEach(function(f,idx){var best=ids[0],gap=-Infinity;ids.forEach(function(id){var g=targets[id]-assigned[id];if(g>gap){gap=g;best=id;}});var role=isSupport(f)?'support':'main';if(!isSupport(f)&&idx>=Math.max(0,total- Math.max(1,Math.round(total*.12))))role='reserve';assignFormation(plan,f.id,best,role);assigned[best]++;});plan.mode='share';return plan;}
+  function validatePlan(plan,state){var c=C.validateDeploymentPlan(plan),errors=c.errors.slice(),seen={};Object.keys(plan.sectors||{}).forEach(function(sid){allLists().forEach(function(k){(plan.sectors[sid][k]||[]).forEach(function(fid){if(seen[fid])errors.push('formation '+fid+' assigned more than once');seen[fid]=sid;var f=state&&state.formations&&state.formations[fid];if(!f)errors.push('unknown formation '+fid);else if(f.side!==plan.side)errors.push('wrong-side formation '+fid);});});});return {ok:errors.length===0,errors:errors};}
+  function buildPatch(plan){var f={};Object.keys(plan.sectors).forEach(function(sid){var sec=plan.sectors[sid];[['mainFormations','main'],['supportFormations','support'],['reserveFormations','reserve']].forEach(function(x){(sec[x[0]]||[]).forEach(function(id){f[id]={assignedSectorId:sid,status:{role:x[1]}};});});});return {formations:f,deployments:{plans:(function(){var o={};o[plan.side]=clone(plan);return o;})()}};}
+  global.BorderEpoch.TheaterDeployment={createPlan:createPlan,assignFormation:assignFormation,setCommitmentShare:setCommitmentShare,autoAssign:autoAssign,normalizeShares:normalizeShares,validatePlan:validatePlan,buildPatch:buildPatch};
+})(window);
+
+/* ===== END INLINE MODULE 05-theater-deployment.js ===== */
+</script>
+<script>
+/* ===== INLINE MODULE 06-theater-deployment-ui.js ===== */
+(function(global){
+  'use strict';global.BorderEpoch=global.BorderEpoch||{};var D=global.BorderEpoch.TheaterDeployment;if(!D)throw new Error('TheaterDeploymentUI requires TheaterDeployment');
+  var root=null,opts={},state=null,plan=null,selectedFormation=null,selectedSector=null;
+  function el(tag,cls,text){var x=document.createElement(tag);if(cls)x.className=cls;if(text!==undefined)x.textContent=text;return x;}
+  function emit(){if(typeof opts.onChange==='function')opts.onChange(D?plan:null);}
+  function roleButton(label,role){var b=el('button','be-deploy-role',label);b.type='button';b.onclick=function(){if(selectedFormation&&selectedSector){D.assignFormation(plan,selectedFormation,selectedSector,role);emit();render();}};return b;}
+  function formationRole(id){var out=null;Object.keys(plan.sectors).some(function(sid){var s=plan.sectors[sid];if(s.mainFormations.indexOf(id)>=0)out=sid+' · 主力';if(s.supportFormations.indexOf(id)>=0)out=sid+' · 支援';if(s.reserveFormations.indexOf(id)>=0)out=sid+' · 预备';return !!out;});return out||'未部署';}
+  function render(){if(!root||!state||!plan)return;root.innerHTML='';root.style.cssText='font:13px system-ui;display:grid;gap:10px;';var pool=el('div','be-deploy-pool');pool.appendChild(el('h3','', '战区可用兵力池'));Object.keys(state.formations).filter(function(id){return state.formations[id].side===plan.side;}).sort().forEach(function(id){var f=state.formations[id],b=el('button','be-deploy-unit'+(id===selectedFormation?' active':''),f.name+'｜'+formationRole(id));b.type='button';b.style.cssText='display:block;width:100%;min-height:44px;margin:4px 0;text-align:left';b.onclick=function(){selectedFormation=id;render();};pool.appendChild(b);});root.appendChild(pool);
+    var sectors=el('div','be-deploy-sectors');sectors.appendChild(el('h3','', '当前部署区'));Object.keys(plan.sectors).forEach(function(id){var s=plan.sectors[id],card=el('div','be-deploy-sector');card.style.cssText='border:1px solid #7775;padding:7px;border-radius:8px;margin:6px 0';var b=el('button','',id+(id===selectedSector?' ✓':''));b.style.cssText='min-height:42px;width:100%';b.onclick=function(){selectedSector=id;render();};card.appendChild(b);var row=el('div','');row.style.cssText='display:flex;gap:6px;margin-top:6px;align-items:center';var minus=el('button','', '−'),plus=el('button','', '+'),txt=el('span','',Math.round((s.commitmentShare||0)*100)+'%');[minus,plus].forEach(function(x){x.style.minWidth='44px';x.style.minHeight='40px';});minus.onclick=function(){D.setCommitmentShare(plan,id,Math.max(0,(s.commitmentShare||0)-.05));emit();render();};plus.onclick=function(){D.setCommitmentShare(plan,id,Math.min(1,(s.commitmentShare||0)+.05));emit();render();};row.append(minus,txt,plus);card.appendChild(row);var lines=el('div','', '主力：'+s.mainFormations.join('、')+'\n支援：'+s.supportFormations.join('、')+'\n预备：'+s.reserveFormations.join('、'));lines.style.whiteSpace='pre-wrap';lines.style.fontSize='11px';card.appendChild(lines);sectors.appendChild(card);});root.appendChild(sectors);
+    var role=el('div','');role.append(roleButton('主力','main'),roleButton('支援','support'),roleButton('预备','reserve'));role.style.cssText='display:grid;grid-template-columns:repeat(3,1fr);gap:6px';root.appendChild(role);var auto=el('button','', '按投入比例自动分配真实单位');auto.style.minHeight='46px';auto.onclick=function(){D.autoAssign(state,plan);emit();render();};root.appendChild(auto);var confirm=el('button','', '确认部署');confirm.style.cssText='min-height:48px;font-weight:700';confirm.onclick=function(){if(typeof opts.onConfirm==='function')opts.onConfirm(plan);};root.appendChild(confirm);
+  }
+  function mount(container,options){unmount();root=container;opts=options||{};state=opts.state||null;plan=opts.plan||null;if(!plan&&state&&opts.side)plan=D.createPlan(state,opts.side);render();return api;}
+  function unmount(){if(root)root.innerHTML='';root=null;opts={};state=null;plan=null;selectedFormation=null;selectedSector=null;}
+  function refresh(newState,newPlan){state=newState||state;plan=newPlan||plan;render();return plan;}
+  function getPlan(){return plan;}
+  var api={mount:mount,unmount:unmount,refresh:refresh,getPlan:getPlan};global.BorderEpoch.TheaterDeploymentUI=api;
+})(window);
+
+/* ===== END INLINE MODULE 06-theater-deployment-ui.js ===== */
+</script>
+<script>
+/* ===== INLINE MODULE 07-theater-pathfinding.js ===== */
+(function(global){
+  'use strict'; global.BorderEpoch=global.BorderEpoch||{};
+  function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
+  function arr(v){return Array.isArray(v)?v:[];}
+  function pairMatches(x,a,b){
+    if(!x) return false; var A=x.fromRegionId||x.a||x.from, B=x.toRegionId||x.b||x.to;
+    if(A&&B) return (A===a&&B===b)||(A===b&&B===a);
+    if(Array.isArray(x.regions)&&x.regions.length>=2) return x.regions.indexOf(a)>=0&&x.regions.indexOf(b)>=0;
+    return false;
+  }
+  function infraBetween(state,kind,a,b){return arr(state[kind]).filter(function(x){return pairMatches(x,a,b);});}
+  function terrainName(r){return r.terrain||r.geography&&r.geography.terrain||'plain';}
+  function movementClass(f){
+    if(f.mobilityType) return f.mobilityType;
+    if(f.type==='armor'||f.type==='mechanized') return 'tracked';
+    if(f.type==='motorized'||f.type==='logistics'||f.type==='airDefense') return 'wheeled';
+    if(f.type==='lightInfantry'||f.type==='recon'||f.type==='engineer') return 'light';
+    return 'foot';
+  }
+  function centroid(r){
+    if(r.center&&Number.isFinite(r.center.x)) return {x:r.center.x,y:r.center.y};
+    var p=r.polygon||r.poly||[]; if(!p.length) return {x:0,y:0}; var x=0,y=0; p.forEach(function(q){x+=q[0];y+=q[1];}); return {x:x/p.length,y:y/p.length};
+  }
+  function terrainCost(formation,region){
+    var t=terrainName(region), mc=movementClass(formation), c=1;
+    if(t==='mountain') c*=mc==='tracked'?2.7:mc==='wheeled'?3.0:mc==='light'?.82:1.35;
+    else if(t==='forest') c*=mc==='tracked'?1.75:mc==='wheeled'?1.55:mc==='light'?.85:1.12;
+    else if(t==='wetland'||t==='marsh') c*=mc==='tracked'?2.5:mc==='wheeled'?3.2:mc==='light'?1.25:1.55;
+    else if(t==='rough') c*=mc==='tracked'?1.6:mc==='wheeled'?1.75:mc==='light'?.92:1.22;
+    else if(t==='urban') c*=mc==='tracked'?1.45:mc==='wheeled'?1.25:1.05;
+    else if(t==='plain'&&(mc==='tracked'||mc==='wheeled')) c*=.78;
+    var bearing=region.geography&&Number.isFinite(region.geography.soilBearing)?region.geography.soilBearing:0.65;
+    if(mc==='tracked') c*=1+clamp(.58-bearing,0,.5)*1.35;
+    if(mc==='wheeled') c*=1+clamp(.62-bearing,0,.6)*1.75;
+    return c;
+  }
+  function edgeCost(state,formation,a,b,options){
+    options=options||{}; var r=state.regions[b]; if(!r) return Infinity; var c=terrainCost(formation,r), roads=infraBetween(state,'roads',a,b), rails=infraBetween(state,'rails',a,b), rivers=infraBetween(state,'rivers',a,b), bridges=infraBetween(state,'bridges',a,b);
+    var road=roads.find(function(x){return x.status!=='destroyed'&&x.status!=='blocked';}); var rail=rails.find(function(x){return x.status!=='destroyed'&&x.status!=='blocked';});
+    if(road) c*=road.status==='damaged'?.88:.68;
+    if(rail&&(formation.type==='infantry'||formation.type==='motorized'||formation.type==='logistics')) c*=rail.status==='damaged'?.90:.72;
+    if(rivers.length){
+      var usableBridge=bridges.find(function(x){return x.status!=='destroyed'&&x.status!=='blocked';}); var mc=movementClass(formation);
+      if(!usableBridge){ if(mc==='tracked'||mc==='wheeled') return Infinity; c*=mc==='light'?2.4:3.0; }
+      else if(usableBridge.status==='damaged') c*=1.35;
+    }
+    var ctl=r.control; if(options.avoidEnemy&&ctl&&ctl!==formation.side&&ctl!=='neutral') c*=2.5;
+    if(options.friendlyOnly&&ctl&&ctl!==formation.side&&ctl!=='contested') return Infinity;
+    if(options.attackMode&&ctl&&ctl!==formation.side) c*=1.22;
+    return c;
+  }
+  function buildGraph(state,formation){
+    var graph={}; Object.keys(state.regions||{}).forEach(function(id){var r=state.regions[id], edges=[]; arr(r.neighbors).forEach(function(n){if(state.regions[n]) edges.push({to:n,cost:edgeCost(state,formation,id,n,{})});}); graph[id]=edges;}); return graph;
+  }
+  function findRoute(state,formation,start,target,options){
+    options=options||{}; if(!formation||!state.regions[start]||!state.regions[target]) return {ok:false,regions:[],cost:Infinity,warnings:['unknown start/target/formation']}; if(start===target) return {ok:true,regions:[start],cost:0,warnings:[]};
+    var dist={},prev={},open={}; dist[start]=0;open[start]=true;
+    while(Object.keys(open).length){var cur=null,best=Infinity;Object.keys(open).forEach(function(id){if(dist[id]<best){best=dist[id];cur=id;}});delete open[cur];if(cur===target)break;
+      arr(state.regions[cur].neighbors).forEach(function(n){if(!state.regions[n])return;var ec=edgeCost(state,formation,cur,n,options);if(!Number.isFinite(ec))return;var nd=best+ec;if(nd<(dist[n]===undefined?Infinity:dist[n])){dist[n]=nd;prev[n]=cur;open[n]=true;}});
+    }
+    if(prev[target]===undefined) return {ok:false,regions:[],cost:Infinity,warnings:['no traversable region route']}; var path=[target],p=target; while(p!==start){p=prev[p]; if(p===undefined) return {ok:false,regions:[],cost:Infinity,warnings:['route reconstruction failed']}; path.push(p);} path.reverse();
+    var warnings=[]; for(var i=0;i<path.length-1;i++){var a=path[i],b=path[i+1]; if(infraBetween(state,'rivers',a,b).length&&!infraBetween(state,'bridges',a,b).some(function(x){return x.status!=='destroyed';})) warnings.push('unbridged river crossing '+a+'→'+b);}
+    return {ok:true,regions:path,cost:dist[target],warnings:warnings};
+  }
+  function routeCost(state,formation,route,options){var rs=Array.isArray(route)?route:(route&&route.regions)||[];var c=0;for(var i=0;i<rs.length-1;i++){var e=edgeCost(state,formation,rs[i],rs[i+1],options||{});if(!Number.isFinite(e))return Infinity;c+=e;}return c;}
+  function getNextRegion(route){var rs=Array.isArray(route)?route:(route&&route.regions)||[];return rs.length>1?rs[1]:(rs[0]||null);}
+  function routeToPolyline(state,route){var rs=Array.isArray(route)?route:(route&&route.regions)||[];return rs.map(function(id){var c=centroid(state.regions[id]);return {x:c.x,y:c.y,regionId:id};});}
+  global.BorderEpoch.TheaterPathfinding={buildGraph:buildGraph,findRoute:findRoute,routeCost:routeCost,getNextRegion:getNextRegion,routeToPolyline:routeToPolyline,_edgeCost:edgeCost,_infraBetween:infraBetween,_centroid:centroid};
+})(window);
+
+/* ===== END INLINE MODULE 07-theater-pathfinding.js ===== */
+</script>
+<script>
+/* ===== INLINE MODULE 08-theater-supply.js ===== */
+(function(global){
+  'use strict'; global.BorderEpoch=global.BorderEpoch||{}; var PF=global.BorderEpoch.TheaterPathfinding; if(!PF) throw new Error('TheaterSupply requires TheaterPathfinding');
+  function arr(v){return Array.isArray(v)?v:[];}
+  function edgeInfra(state,a,b){var roads=PF._infraBetween(state,'roads',a,b).filter(function(x){return x.status!=='destroyed'&&x.status!=='blocked';}), rails=PF._infraBetween(state,'rails',a,b).filter(function(x){return x.status!=='destroyed'&&x.status!=='blocked';}), rivers=PF._infraBetween(state,'rivers',a,b), bridges=PF._infraBetween(state,'bridges',a,b).filter(function(x){return x.status!=='destroyed'&&x.status!=='blocked';}); return {roads:roads,rails:rails,rivers:rivers,bridges:bridges};}
+  function edgeCost(state,a,b){var x=edgeInfra(state,a,b);if(!x.roads.length&&!x.rails.length)return Infinity;if(x.rivers.length&&!x.bridges.length)return Infinity;var c=x.rails.length?0.65:1.0;if(x.roads.length)c=Math.min(c,0.9);if(x.rails.some(function(z){return z.status==='damaged';})||x.roads.some(function(z){return z.status==='damaged';}))c*=1.45;if(x.bridges.some(function(z){return z.status==='damaged';}))c*=1.4;return c;}
+  function buildSupplyGraph(state,side){var g={};Object.keys(state.regions||{}).forEach(function(id){g[id]=[];arr(state.regions[id].neighbors).forEach(function(n){var c=edgeCost(state,id,n);if(Number.isFinite(c))g[id].push({to:n,cost:c});});});return {side:side,nodes:g,depots:arr(state.depots).filter(function(d){return !d.side||d.side===side;})};}
+  function dijkstra(graph,start,target){var dist={},prev={},open={};dist[start]=0;open[start]=true;while(Object.keys(open).length){var cur=null,b=Infinity;Object.keys(open).forEach(function(x){if(dist[x]<b){b=dist[x];cur=x;}});delete open[cur];if(cur===target)break;(graph.nodes[cur]||[]).forEach(function(e){var nd=b+e.cost;if(nd<(dist[e.to]===undefined?Infinity:dist[e.to])){dist[e.to]=nd;prev[e.to]=cur;open[e.to]=true;}});}if(start!==target&&prev[target]===undefined)return null;var p=[target],q=target;while(q!==start){q=prev[q];if(q===undefined)return null;p.push(q);}return {regions:p.reverse(),cost:dist[target]||0};}
+  function findSupplyRoute(state,formationId){var f=state.formations[formationId];if(!f)return {ok:false,status:'isolated',route:[],cost:Infinity,sourceDepotId:null};var g=buildSupplyGraph(state,f.side),best=null;g.depots.forEach(function(d){var rid=d.regionId;if(!rid&&d.position){var bestR=null,bestD=Infinity;Object.keys(state.regions).forEach(function(id){var c=PF._centroid(state.regions[id]),dx=c.x-d.position.x,dy=c.y-d.position.y,dd=dx*dx+dy*dy;if(dd<bestD){bestD=dd;bestR=id;}});rid=bestR;}if(!rid)return;var r=dijkstra(g,rid,f.regionId);if(r&&(!best||r.cost<best.cost))best={ok:true,route:r.regions,cost:r.cost,sourceDepotId:d.id||rid};});if(!best)return {ok:false,status:'isolated',route:[],cost:Infinity,sourceDepotId:null};var hops=Math.max(0,best.route.length-1),status=hops<=2?'secure':hops<=4?'stretched':hops<=6?'strained':'interrupted';return {ok:true,status:status,route:best.route,cost:best.cost,sourceDepotId:best.sourceDepotId};}
+  function getSupplyStatus(state,formationId){return findSupplyRoute(state,formationId);}
+  function recalculateSide(state,side){var statuses={},formationUpdates={};Object.keys(state.formations||{}).forEach(function(id){var f=state.formations[id];if(f.side!==side)return;var s=findSupplyRoute(state,id);statuses[id]=s;formationUpdates[id]={status:{supplyStatus:s.status,supplyRoute:s.route,supplySource:s.sourceDepotId,supplyScore:s.ok?Math.max(0,1-Math.min(1,s.cost/10)):0}};});return {side:side,statuses:statuses,patch:{formations:formationUpdates}};}
+  function recalculateAll(state){var b=recalculateSide(state,'blue'),r=recalculateSide(state,'red'),p={formations:{}};Object.assign(p.formations,b.patch.formations,r.patch.formations);return {blue:b,red:r,patch:p};}
+  function markInfrastructureDamage(state,kind,id,status){var plural=kind;if(plural==='road')plural='roads';if(plural==='rail')plural='rails';if(plural==='river')plural='rivers';if(plural==='bridge')plural='bridges';var list=arr(state[plural]),obj=list.find(function(x){return x.id===id;});if(!obj)return null;var patch={};patch[plural]=[{id:id,status:status||'damaged'}];return patch;}
+  global.BorderEpoch.TheaterSupply={buildSupplyGraph:buildSupplyGraph,findSupplyRoute:findSupplyRoute,recalculateSide:recalculateSide,recalculateAll:recalculateAll,getSupplyStatus:getSupplyStatus,markInfrastructureDamage:markInfrastructureDamage};
+})(window);
+
+/* ===== END INLINE MODULE 08-theater-supply.js ===== */
+</script>
+<script>
+/* ===== INLINE MODULE 09-theater-orders.js ===== */
+(function(global){
+  'use strict';global.BorderEpoch=global.BorderEpoch||{};var PF=global.BorderEpoch.TheaterPathfinding,D=global.BorderEpoch.TheaterDeployment,C=global.BorderEpoch.WarContracts;if(!PF||!D)throw new Error('TheaterOrders requires TheaterPathfinding and TheaterDeployment');
+  function clone(v){return typeof structuredClone==='function'?structuredClone(v):JSON.parse(JSON.stringify(v));}
+  function currentOrder(f){var s=f.status||{};return s.currentOrder||{formationId:f.id,side:f.side,type:f.order||'hold',targetRegionId:s.targetRegionId||null,targetSectorId:f.assignedSectorId||null,route:[],groupId:s.groupId||null,issuedPhase:s.issuedPhase!==undefined?s.issuedPhase:0};}
+  function normalize(state,order){var f=state.formations[order.formationId];if(!f)throw new Error('Unknown formation '+order.formationId);var o={formationId:f.id,side:f.side,type:order.type||'hold',targetRegionId:order.targetRegionId||null,targetSectorId:order.targetSectorId||f.assignedSectorId||null,route:Array.isArray(order.route)?clone(order.route):[],groupId:order.groupId||null,issuedPhase:order.issuedPhase!==undefined?order.issuedPhase:state.phase};var chk=C.validateTheaterOrder(o);if(!chk.ok)throw new Error(chk.errors.join('; '));return o;}
+  function issueOrder(state,order){var o=normalize(state,order);return {order:o,patch:{formations:(function(){var x={};x[o.formationId]={order:o.type,status:{currentOrder:o,targetRegionId:o.targetRegionId,groupId:o.groupId,issuedPhase:o.issuedPhase}};return x;})()}};}
+  function enemyAdj(state,regionId,side){var r=state.regions[regionId];return (r.neighbors||[]).some(function(n){var c=state.regions[n]&&state.regions[n].control;return c&&c!==side&&c!=='neutral';});}
+  function chooseRear(state,f,reserve){var candidates=Object.keys(state.regions).filter(function(id){var r=state.regions[id];return r.control===f.side && (!reserve || !enemyAdj(state,id,f.side));}),best=null,bestCost=Infinity;candidates.forEach(function(id){var rt=PF.findRoute(state,f,f.regionId,id,{friendlyOnly:true,avoidEnemy:true});if(rt.ok&&rt.cost<bestCost&&id!==f.regionId){best=id;bestCost=rt.cost;}});return best||f.regionId;}
+  function encircleGroupValid(snapshot,o){if(!o.groupId)return false;var n=0;Object.keys(snapshot.formations).forEach(function(id){var x=currentOrder(snapshot.formations[id]);if(x.type==='encircle'&&x.groupId===o.groupId&&snapshot.formations[id].side===o.side)n++;});return n>=2;}
+  function buildIntent(snapshot,formationId){var f=snapshot.formations[formationId];if(!f)return null;var o=currentOrder(f),type=o.type||f.order||'hold',target=o.targetRegionId, warnings=[];
+    if(type==='withdraw'&&!target)target=chooseRear(snapshot,f,false);if(type==='reserve'&&!target)target=chooseRear(snapshot,f,true);
+    if(type==='hold')return {formationId:f.id,order:type,route:[f.regionId],nextRegionId:f.regionId,objectiveRegionId:f.regionId,stance:'defend',priority:55,group:null,warnings:[]};
+    if(type==='encircle'&&!encircleGroupValid(snapshot,o))warnings.push('encircle requires at least two formations with same groupId');
+    if(!target)return {formationId:f.id,order:type,route:[f.regionId],nextRegionId:f.regionId,objectiveRegionId:null,stance:type==='reserve'?'reserve':'hold',priority:20,group:o.groupId||null,warnings:warnings.concat(['no objective'])};
+    var options={attackMode:['attack','breakthrough','encircle'].indexOf(type)>=0,avoidEnemy:type==='withdraw'||type==='reserve',friendlyOnly:type==='withdraw'||type==='reserve'};
+    var rt=PF.findRoute(snapshot,f,f.regionId,target,options);if(!rt.ok)return {formationId:f.id,order:type,route:[f.regionId],nextRegionId:f.regionId,objectiveRegionId:target,stance:'blocked',priority:10,group:o.groupId||null,warnings:warnings.concat(rt.warnings)};
+    var stance={attack:'attack',breakthrough:'concentrate',encircle:'flank',withdraw:'disengage',reserve:'reserve'}[type]||'move',priority={attack:65,breakthrough:90,encircle:78,withdraw:80,reserve:45}[type]||50;
+    return {formationId:f.id,order:type,route:rt.regions,nextRegionId:PF.getNextRegion(rt),objectiveRegionId:target,stance:stance,priority:priority,group:o.groupId||null,exploitOpportunity:type==='breakthrough',warnings:warnings.concat(rt.warnings)};
+  }
+  function buildAllIntents(snapshot,side){return Object.keys(snapshot.formations).filter(function(id){return snapshot.formations[id].side===side;}).sort().map(function(id){return buildIntent(snapshot,id);}).filter(Boolean);}
+  global.BorderEpoch.TheaterOrders={issueOrder:issueOrder,buildIntent:buildIntent,buildAllIntents:buildAllIntents};
+})(window);
+
+/* ===== END INLINE MODULE 09-theater-orders.js ===== */
+</script>
+<script>
+/* ===== INLINE MODULE 10-theater-ai.js ===== */
+(function(global){
+  'use strict';global.BorderEpoch=global.BorderEpoch||{};var D=global.BorderEpoch.TheaterDeployment,PF=global.BorderEpoch.TheaterPathfinding,O=global.BorderEpoch.TheaterOrders,S=global.BorderEpoch.TheaterSupply;if(!D||!PF||!O||!S)throw new Error('TheaterAI dependencies missing');
+  function rank(seed,s){var x=String(seed)+'|'+s,h=2166136261>>>0;for(var i=0;i<x.length;i++){h^=x.charCodeAt(i);h=Math.imul(h,16777619);}return (h>>>0)/4294967295;}
+  function visibleContacts(intel){var out=[];if(!intel)return out;if(Array.isArray(intel.contacts))intel.contacts.forEach(function(c){if(c&&c.status!=='unknown')out.push(c);});Object.keys(intel.formations||{}).forEach(function(id){var c=intel.formations[id];if(c&&c.status!=='unknown')out.push(Object.assign({formationId:id},c));});return out;}
+  function ownFormations(snapshot,side){return Object.keys(snapshot.formations).map(function(id){return snapshot.formations[id];}).filter(function(f){return f.side===side;});}
+  function objectiveRegions(snapshot,side,intel){var contacts=visibleContacts(intel),ids=[];contacts.forEach(function(c){if(c.regionId&&snapshot.regions[c.regionId])ids.push(c.regionId);});Object.keys(snapshot.regions).forEach(function(id){var r=snapshot.regions[id];if(r.control!==side&&(r.objective||r.importance==='关键'||r.importance==='高'))ids.push(id);});return Array.from(new Set(ids)).sort();}
+  function bestObjective(snapshot,f,ids){var best=null,score=-Infinity;ids.forEach(function(id){var rt=PF.findRoute(snapshot,f,f.regionId,id,{attackMode:true});if(!rt.ok)return;var r=snapshot.regions[id],value=(r.importance==='关键'?4:r.importance==='高'?3:1)+(r.objective?1:0),s=value*3-rt.cost+rank(snapshot.seed,f.id+'|'+id)*.01;if(s>score){score=s;best=id;}});return best;}
+  function planDeployment(snapshot,side,intelView){var p=D.createPlan(snapshot,side),ids=Object.keys(p.sectors);if(!ids.length)return p;var objs=objectiveRegions(snapshot,side,intelView);ids.forEach(function(id,i){p.sectors[id].commitmentShare=objs.indexOf(id)>=0?2:1;});D.normalizeShares(p);return D.autoAssign(snapshot,p);}
+  function planPhase(snapshot,side,intelView){var objectives=objectiveRegions(snapshot,side,intelView),contacts=visibleContacts(intelView),orders=[];ownFormations(snapshot,side).sort(function(a,b){return a.id.localeCompare(b.id);}).forEach(function(f){var supply=S.getSupplyStatus(snapshot,f.id),front=(snapshot.regions[f.regionId].neighbors||[]).some(function(n){return snapshot.regions[n]&&snapshot.regions[n].control!==side;});var type='hold',target=null,groupId=null;
+      if(supply.status==='isolated'||supply.status==='interrupted'){type='withdraw';}
+      else if(!front){type='reserve';}
+      else {target=bestObjective(snapshot,f,objectives);if(target){var rr=rank(snapshot.seed,String(snapshot.phase)+'|'+f.id);type=f.type==='armor'&&rr>.35?'breakthrough':rr>.78?'encircle':'attack';if(type==='encircle')groupId='AI-ENC-'+target;}}
+      orders.push({formationId:f.id,side:side,type:type,targetRegionId:target,targetSectorId:f.assignedSectorId||null,route:[],groupId:groupId,issuedPhase:snapshot.phase});
+    });
+    // Encirclement is legal only as a multi-formation group; downgrade lone groups to attack.
+    var counts={};orders.forEach(function(o){if(o.type==='encircle')counts[o.groupId]=(counts[o.groupId]||0)+1;});orders.forEach(function(o){if(o.type==='encircle'&&counts[o.groupId]<2){o.type='attack';o.groupId=null;}});return orders;
+  }
+  global.BorderEpoch.TheaterAI={planDeployment:planDeployment,planPhase:planPhase};
+})(window);
+
+/* ===== END INLINE MODULE 10-theater-ai.js ===== */
+</script>
+<script>
+/* ===== INLINE MODULE 11-theater-phase.js ===== */
+(function(global){
+  'use strict';global.BorderEpoch=global.BorderEpoch||{};var TS=global.BorderEpoch.TheaterState,O=global.BorderEpoch.TheaterOrders,AI=global.BorderEpoch.TheaterAI,PF=global.BorderEpoch.TheaterPathfinding,S=global.BorderEpoch.TheaterSupply;if(!TS||!O||!AI||!PF||!S)throw new Error('TheaterPhase dependencies missing');
+  function clone(v){return TS.clone(v);}
+  function injectOrders(snapshot,orders){var s=clone(snapshot);if(s.__snapshotHash)delete s.__snapshotHash;(orders||[]).forEach(function(o){var f=s.formations[o.formationId];if(!f)return;f.order=o.type;f.status=f.status||{};f.status.currentOrder=clone(o);f.status.targetRegionId=o.targetRegionId;f.status.groupId=o.groupId;});return s;}
+  function byId(intents){var m={};intents.forEach(function(x){m[x.formationId]=x;});return m;}
+  function contactReason(a,b,ia,ib){if(ia.nextRegionId===ib.nextRegionId&&ia.nextRegionId!==a.regionId)return 'both_enter_same_region';if(ia.nextRegionId===b.regionId&&ib.nextRegionId===a.regionId&&a.regionId!==b.regionId)return 'crossing_contact';if(ia.nextRegionId===b.regionId||ib.nextRegionId===a.regionId)return 'advance_into_enemy_position';return null;}
+  function preview(state,options){options=options||{};var snapshot=TS.snapshot(state),blueSide=options.blueSide||'blue',redSide=options.redSide||'red';var blueIntents=O.buildAllIntents(snapshot,blueSide);var redOrders=AI.planPhase(snapshot,redSide,options.redIntel||snapshot.intel&&snapshot.intel[redSide]||{});var redSnapshot=injectOrders(snapshot,redOrders),redIntents=O.buildAllIntents(redSnapshot,redSide);var bi=byId(blueIntents),ri=byId(redIntents),triggers=[],engaged={};
+    var blues=Object.keys(snapshot.formations).filter(function(id){return snapshot.formations[id].side===blueSide;}),reds=Object.keys(snapshot.formations).filter(function(id){return snapshot.formations[id].side===redSide;});
+    blues.forEach(function(bid){reds.forEach(function(rid){var reason=contactReason(snapshot.formations[bid],snapshot.formations[rid],bi[bid],ri[rid]);if(!reason)return;var region=bi[bid].nextRegionId===ri[rid].nextRegionId?bi[bid].nextRegionId:(bi[bid].nextRegionId===snapshot.formations[rid].regionId?bi[bid].nextRegionId:ri[rid].nextRegionId);var key=region+'|'+reason;var t=triggers.find(function(x){return x._key===key;});if(!t){t={_key:key,sectorId:(snapshot.formations[bid].assignedSectorId||snapshot.formations[rid].assignedSectorId||region),regionId:region,blueFormationIds:[],redFormationIds:[],reason:reason};triggers.push(t);}if(t.blueFormationIds.indexOf(bid)<0)t.blueFormationIds.push(bid);if(t.redFormationIds.indexOf(rid)<0)t.redFormationIds.push(rid);engaged[bid]=engaged[rid]=true;});});
+    triggers.forEach(function(t){delete t._key;t.blueFormationIds.sort();t.redFormationIds.sort();});var patch={phase:(Number(state.phase)||0)+1,formations:{},events:[]};
+    blueIntents.concat(redIntents).forEach(function(i){if(engaged[i.formationId]){patch.formations[i.formationId]={status:{combat:'engaged',lastIntent:clone(i)}};return;}var f=snapshot.formations[i.formationId],next=i.nextRegionId;if(next&&next!==f.regionId){var pos=PF._centroid(snapshot.regions[next]);patch.formations[i.formationId]={regionId:next,position:{x:pos.x,y:pos.y},status:{combat:'moving',lastIntent:clone(i)}};}else patch.formations[i.formationId]={status:{combat:i.order==='hold'?'holding':i.stance,lastIntent:clone(i)}};});
+    // Rebuild projected occupancy from the same snapshot. Unopposed occupation can change control; contested contact is left for detailed battle.
+    var occupancy={};Object.keys(snapshot.formations).forEach(function(id){var f=snapshot.formations[id],rid=(patch.formations[id]&&patch.formations[id].regionId)||f.regionId;(occupancy[rid]=occupancy[rid]||{});occupancy[rid][f.side]=(occupancy[rid][f.side]||0)+1;});Object.keys(occupancy).forEach(function(rid){var sides=Object.keys(occupancy[rid]);if(sides.length>1){patch.regions=patch.regions||{};patch.regions[rid]={control:'contested'};}else if(sides.length===1){var side=sides[0],old=snapshot.regions[rid]&&snapshot.regions[rid].control;if(old&&old!==side&&old!=='neutral'){patch.regions=patch.regions||{};patch.regions[rid]={control:side};}}});
+    triggers.forEach(function(t){patch.events.push({phase:patch.phase,type:'battleTrigger',side:'neutral',text:'Contact at '+t.regionId,trigger:clone(t)});});return {snapshot:snapshot,blueIntents:blueIntents,redOrders:redOrders,redIntents:redIntents,battleTriggers:triggers,patch:patch};
+  }
+  function execute(state,options){var result=preview(state,options);TS.applyPatch(state,result.patch);var supply=S.recalculateAll(state);TS.applyPatch(state,supply.patch);result.supply=supply;return result;}
+  global.BorderEpoch.TheaterPhase={preview:preview,execute:execute};
+})(window);
+
+/* ===== END INLINE MODULE 11-theater-phase.js ===== */
+</script>
+<script>
+/* ===== INLINE MODULE 12-sector-battle-bridge.js ===== */
+(function(global){
+  'use strict';global.BorderEpoch=global.BorderEpoch||{};var A=global.BorderEpoch.SectorTerrainAdapter,D=global.BorderEpoch.TheaterDeployment,C=global.BorderEpoch.WarContracts;if(!A||!D||!C)throw new Error('SectorBattleBridge dependencies missing');
+  function clone(v){return typeof structuredClone==='function'?structuredClone(v):JSON.parse(JSON.stringify(v));}
+  function findSector(state,sel){if(sel&&sel.sector)return sel.sector;if(sel&&sel.identity)return sel;var id=sel&&sel.sectorId||sel&&sel.id;var sectors=state.sectors||state.deployments&&state.deployments.sectors||{};if(id&&sectors[id])return sectors[id];if(sel&&sel.parentRegionId)return{identity:{sectorId:id||sel.parentRegionId,parentRegionId:sel.parentRegionId,parentRegionName:state.regions[sel.parentRegionId]&&state.regions[sel.parentRegionId].name,parentBounds:sel.parentBounds||null},parentBounds:sel.parentBounds||null,geography:state.regions[sel.parentRegionId]&&state.regions[sel.parentRegionId].geography||{},features:sel.features||{},anchors:sel.anchors||[],refinement:sel.refinement||{}};throw new Error('Cannot resolve real sector');}
+  function planRole(state,side,sectorId){var plan=state.deployments&&state.deployments.plans&&state.deployments.plans[side],sec=plan&&plan.sectors&&plan.sectors[sectorId];return sec||null;}
+  function formationPayload(f){return{id:f.id,formationId:f.id,name:f.name,side:f.side,type:f.type,regionId:f.regionId,position:clone(f.position),status:clone(f.status||{}),subunits:clone(f.subunits||[]),order:f.order};}
+  function isSupportType(type){return['artillery','engineer','airDefense','logistics','recon'].indexOf(type)>=0;}
+  function selectedIds(state,side,sectorId,parentRegionId,role,sector){var sec=planRole(state,side,sectorId);if(sec){var key=role==='support'?'supportFormations':'mainFormations';return(sec[key]||[]).slice();}var fromSector=[];(sector&&sector.units||[]).forEach(function(u){var id=u.formationId||u.id,f=state.formations[id];if(!f||f.side!==side)return;var support=isSupportType(f.type);if((role==='support'&&support)||(role!=='support'&&!support))fromSector.push(id);});if(fromSector.length)return Array.from(new Set(fromSector));return Object.keys(state.formations).filter(function(id){var f=state.formations[id],support=isSupportType(f.type);return f.side===side&&f.regionId===parentRegionId&&((role==='support'&&support)||(role!=='support'&&!support));});}
+  function buildBattleRequest(theaterState,sectorSelection){var sector=findSector(theaterState,sectorSelection),sid=sector.identity&&sector.identity.sectorId||sector.id,pid=sector.identity&&sector.identity.parentRegionId||sector.parentRegionId,terrain=A.buildTerrainDataset(sector),blueIds=selectedIds(theaterState,'blue',sid,pid,'main',sector),redIds=selectedIds(theaterState,'red',sid,pid,'main',sector),blueSupportIds=selectedIds(theaterState,'blue',sid,pid,'support',sector),redSupportIds=selectedIds(theaterState,'red',sid,pid,'support',sector),all=blueIds.concat(redIds,blueSupportIds,redSupportIds),parentOrders=[];all.forEach(function(id){var f=theaterState.formations[id];if(f)parentOrders.push(clone(f.status&&f.status.currentOrder||{formationId:id,side:f.side,type:f.order,targetRegionId:f.status&&f.status.targetRegionId||null,targetSectorId:f.assignedSectorId||null,route:[],groupId:f.status&&f.status.groupId||null,issuedPhase:f.status&&f.status.issuedPhase||theaterState.phase}));});var req={battleId:'battle-'+String(theaterState.phase)+'-'+sid,theaterId:theaterState.id,sectorId:sid,parentRegionId:pid,seed:String(theaterState.seed)+'|'+sid+'|'+String(theaterState.phase),terrainDataset:terrain,blueForces:blueIds.map(function(id){return formationPayload(theaterState.formations[id]);}),redForces:redIds.map(function(id){return formationPayload(theaterState.formations[id]);}),blueSupport:blueSupportIds.map(function(id){return formationPayload(theaterState.formations[id]);}),redSupport:redSupportIds.map(function(id){return formationPayload(theaterState.formations[id]);}),parentOrders:parentOrders,boundaryAnchors:clone(sector.anchors||terrain.boundaryAnchors||[])};var chk=C.validateBattleRequest(req);if(!chk.ok)throw new Error(chk.errors.join('; '));return req;}
+  function commitBattleResult(theaterState,battleResult){var chk=C.validateBattleResult(battleResult);if(!chk.ok)throw new Error(chk.errors.join('; '));var patch={formations:{},regions:{},roads:[],rails:[],rivers:[],bridges:[],events:[]};(battleResult.formationUpdates||[]).forEach(function(u){var id=u.formationId||u.id;if(!id||!theaterState.formations[id])return;var p=clone(u.patch||u);delete p.formationId;delete p.id;patch.formations[id]=p;});if(battleResult.controlChange){var r=battleResult.controlChange.regionId||battleResult.parentRegionId;if(r&&theaterState.regions[r])patch.regions[r]={control:battleResult.controlChange.control};}(battleResult.infrastructureDamage||[]).forEach(function(d){var kind=d.kind||d.type,o=clone(d);delete o.kind;delete o.type;o.status=o.status||'damaged';if(kind==='road')patch.roads.push(o);else if(kind==='rail')patch.rails.push(o);else if(kind==='river')patch.rivers.push(o);else if(kind==='bridge')patch.bridges.push(o);});(battleResult.events||[]).forEach(function(e){patch.events.push(clone(e));});patch.events.push({phase:theaterState.phase,type:'battleResult',side:'neutral',battleId:battleResult.battleId,sectorId:battleResult.sectorId,text:'Detailed battle result committed as TheaterState patch'});return patch;}
+  global.BorderEpoch.SectorBattleBridge={buildBattleRequest:buildBattleRequest,commitBattleResult:commitBattleResult};
+})(window);
+
+/* ===== END INLINE MODULE 12-sector-battle-bridge.js ===== */
+</script>
 <script>
 (() => {
 'use strict';
@@ -172,6 +1127,7 @@ const baseUnits=[
 let regions=structuredClone(baseRegions),units=structuredClone(baseUnits);
 for(const u of units){u.progress=0;u.originRegion=u.region;u.status='待命';u.lastPlanKey='';u.route=[];u.readiness=.9;u.supply=.9;u.cohesion=.9;for(const d of u.subordinates||[]){d.readiness=.9;d.supply=.9;d.cohesion=.9;d.status='就绪'}}
 let view={scale:1,ox:0,oy:0},drag=null,selected={kind:'region',id:'R5'},pendingOrder='breakthrough';
+let fitMode=true,lastMapSize={w:0,h:0};
 let sectorSelection=null,activeLocalSector=null,commandContextUnitId='C1',targetPreviewRegionId=null,localBattleState=null;
 const operationalPatches={regionRouteStatus:{},bridges:{},roadBlocks:[],temporaryRoutes:[],sectorHistory:[]};
 const THEATER_ID='eastern-valley-theater';
@@ -185,9 +1141,12 @@ const events=structuredClone(initialEvents);
 const BE=window.BorderEpoch;let theaterState=null,lastPhaseResult=null,activeDeploymentPlan=null;
 const targetSelect=document.getElementById('targetSelect'),actionState=document.getElementById('actionState'),routePreview=document.getElementById('routePreview'),battleAdvance=document.getElementById('battleAdvance'),battleEngineer=document.getElementById('battleEngineer'),battleState=document.getElementById('battleState'),commitTag=document.getElementById('commitTag');
 const toggles={terrain:terrainToggle,infra:infraToggle,control:controlToggle,front:frontToggle,units:unitsToggle,orders:ordersToggle};
-function resize(){const r=map.getBoundingClientRect(),dpr=Math.min(devicePixelRatio||1,2);map.width=Math.round(r.width*dpr);map.height=Math.round(r.height*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);render();}
-addEventListener('resize',resize);
-function fitView(){const r=map.getBoundingClientRect(),pad=32;view.scale=Math.min((r.width-pad*2)/WORLD.w,(r.height-pad*2)/WORLD.h);view.ox=(r.width-WORLD.w*view.scale)/2;view.oy=(r.height-WORLD.h*view.scale)/2;render();}
+function syncCanvasSize(){const r=map.getBoundingClientRect(),dpr=Math.min(devicePixelRatio||1,2);const w=Math.max(1,Math.round(r.width*dpr)),h=Math.max(1,Math.round(r.height*dpr));if(map.width!==w||map.height!==h){map.width=w;map.height=h}ctx.setTransform(dpr,0,0,dpr,0,0);lastMapSize={w:r.width,h:r.height};return r}
+function fitMetrics(){const r=map.getBoundingClientRect(),pad=Math.max(20,Math.min(34,r.width*.04));return{r,pad,scale:Math.max(.1,Math.min((r.width-pad*2)/WORLD.w,(r.height-pad*2)/WORLD.h))}}
+function constrainView(){const {r,scale:fs}=fitMetrics();if(!Number.isFinite(view.scale)||view.scale<fs)view.scale=fs;const worldW=WORLD.w*view.scale,worldH=WORLD.h*view.scale,margin=18;if(worldW<=r.width-margin*2)view.ox=(r.width-worldW)/2;else view.ox=clamp(view.ox,r.width-margin-worldW,margin);if(worldH<=r.height-margin*2)view.oy=(r.height-worldH)/2;else view.oy=clamp(view.oy,r.height-margin-worldH,margin)}
+function fitView(){syncCanvasSize();const {r,scale}=fitMetrics();view.scale=scale;view.ox=(r.width-WORLD.w*scale)/2;view.oy=(r.height-WORLD.h*scale)/2;fitMode=true;render()}
+function resize(){const oldW=lastMapSize.w,oldH=lastMapSize.h;syncCanvasSize();if(fitMode||!oldW||!oldH)fitView();else{constrainView();render()}}
+addEventListener('resize',resize);if(window.visualViewport)visualViewport.addEventListener('resize',resize);
 function sx(x){return view.ox+x*view.scale}function sy(y){return view.oy+y*view.scale}
 function inv(x,y){return{x:(x-view.ox)/view.scale,y:(y-view.oy)/view.scale}}
 function pathPoly(poly){ctx.beginPath();poly.forEach((p,i)=>i?ctx.lineTo(sx(p[0]),sy(p[1])):ctx.moveTo(sx(p[0]),sy(p[1])));ctx.closePath()}
@@ -337,10 +1296,11 @@ else{const target=s.target?regions.find(r=>r.id===s.target)?.name:'—';selectio
 const contested=regions.filter(r=>r.control==='contested').map(r=>r.name).join('、');situation.innerHTML=`<div class="kv"><div class="k">主要焦点</div><div class="v">${contested||'战线稳定'}</div><div class="k">行动阶段</div><div class="v">第 ${phase} 阶段</div><div class="k">蓝方意图</div><div class="v">由当前部队命令实时生成</div><div class="k">关键骨架</div><div class="v">河谷城—铁路—主干公路</div></div>`;
 timeline.innerHTML=events.slice(-8).reverse().map(e=>`<div class="event ${e.side}">${e.text}</div>`).join('');document.querySelectorAll('#orderGrid button').forEach(b=>b.classList.toggle('active',b.dataset.order===pendingOrder));renderFormationList();refreshTargets();const u=selected.kind==='unit'?selection():null;actionState.textContent=u&&u.side==='blue'?`待确认：${orderName(pendingOrder)}${pendingOrder==='hold'?'':` → ${targetSelect.options[targetSelect.selectedIndex]?.textContent||'请选择目标'}`}。确认后地图立即显示意图；推进阶段后才执行。`:'先点击一支我方部队，再选择命令。命令确认后只显示行动意图；点击“推进一个行动阶段”才真正执行。';sectorBridgeInfo.innerHTML=bridgeInfoHTML()}
 function hitUnit(x,y){for(let i=units.length-1;i>=0;i--){const u=units[i],r=unitRect(u);if(Math.abs(x-r.x)<r.w/2+5&&Math.abs(y-r.y)<r.h/2+5)return u}return null}
-map.addEventListener('pointerdown',e=>{map.setPointerCapture(e.pointerId);drag={sx:e.clientX,sy:e.clientY,ox:view.ox,oy:view.oy,moved:false};map.classList.add('dragging')});
-map.addEventListener('pointermove',e=>{if(!drag)return;const dx=e.clientX-drag.sx,dy=e.clientY-drag.sy;if(Math.hypot(dx,dy)>3)drag.moved=true;view.ox=drag.ox+dx;view.oy=drag.oy+dy;render()});
-map.addEventListener('pointerup',e=>{if(!drag)return;const moved=drag.moved;drag=null;map.classList.remove('dragging');if(moved)return;const rect=map.getBoundingClientRect(),mx=e.clientX-rect.left,my=e.clientY-rect.top;const p=inv(mx,my),u=hitUnit(mx,my);if(u){selected={kind:'unit',id:u.id};commandContextUnitId=u.id;pendingOrder=u.order;const r=regions.find(x=>x.id===u.region);sectorSelection=makeSectorSelection({x:u.x,y:u.y},r,missionForRegion(r));render();return}for(let i=regions.length-1;i>=0;i--)if(pointInPoly(p,regions[i].poly)){const r=regions[i],su=selected.kind==='unit'?selection():null;if(su&&su.side==='blue'&&pendingOrder!=='hold'){const route=findRoute(su,su.region,r.id,pendingOrder);if(route.length>1){targetPreviewRegionId=r.id;sectorSelection=makeSectorSelection(p,r,{order:pendingOrder,unit:su,target:r.id});render();toastMsg(`已把${r.name}设为目标，路线已生成`);return}}selected={kind:'region',id:r.id};targetPreviewRegionId=null;sectorSelection=makeSectorSelection(p,r,missionForRegion(r));render();return}});
-map.addEventListener('wheel',e=>{e.preventDefault();const rect=map.getBoundingClientRect(),mx=e.clientX-rect.left,my=e.clientY-rect.top,before=inv(mx,my);const ns=Math.max(.45,Math.min(2.6,view.scale*Math.exp(-e.deltaY*.001)));view.scale=ns;view.ox=mx-before.x*view.scale;view.oy=my-before.y*view.scale;render()},{passive:false});
+map.addEventListener('pointerdown',e=>{if(e.pointerType==='mouse'&&e.button!==0)return;map.setPointerCapture?.(e.pointerId);drag={pointerId:e.pointerId,sx:e.clientX,sy:e.clientY,ox:view.ox,oy:view.oy,moved:false};map.classList.add('dragging')});
+map.addEventListener('pointermove',e=>{if(!drag||drag.pointerId!==e.pointerId)return;const dx=e.clientX-drag.sx,dy=e.clientY-drag.sy;if(Math.hypot(dx,dy)>5)drag.moved=true;const fs=fitMetrics().scale;if(view.scale<=fs*1.015){constrainView();return}view.ox=drag.ox+dx;view.oy=drag.oy+dy;fitMode=false;constrainView();render()});
+map.addEventListener('pointercancel',()=>{drag=null;map.classList.remove('dragging')});
+map.addEventListener('pointerup',e=>{if(!drag||drag.pointerId!==e.pointerId)return;const moved=drag.moved;drag=null;map.classList.remove('dragging');if(moved)return;const rect=map.getBoundingClientRect(),mx=e.clientX-rect.left,my=e.clientY-rect.top;const p=inv(mx,my),u=hitUnit(mx,my);if(u){selected={kind:'unit',id:u.id};commandContextUnitId=u.id;pendingOrder=u.order;const r=regions.find(x=>x.id===u.region);sectorSelection=makeSectorSelection({x:u.x,y:u.y},r,missionForRegion(r));render();return}for(let i=regions.length-1;i>=0;i--)if(pointInPoly(p,regions[i].poly)){const r=regions[i],su=selected.kind==='unit'?selection():null;if(su&&su.side==='blue'&&pendingOrder!=='hold'){const route=findRoute(su,su.region,r.id,pendingOrder);if(route.length>1){targetPreviewRegionId=r.id;sectorSelection=makeSectorSelection(p,r,{order:pendingOrder,unit:su,target:r.id});render();toastMsg(`已把${r.name}设为目标，路线已生成`);return}}selected={kind:'region',id:r.id};targetPreviewRegionId=null;sectorSelection=makeSectorSelection(p,r,missionForRegion(r));render();return}});
+map.addEventListener('wheel',e=>{e.preventDefault();const rect=map.getBoundingClientRect(),mx=e.clientX-rect.left,my=e.clientY-rect.top,before=inv(mx,my),fs=fitMetrics().scale;const ns=Math.max(fs,Math.min(2.6,view.scale*Math.exp(-e.deltaY*.001)));view.scale=ns;view.ox=mx-before.x*view.scale;view.oy=my-before.y*view.scale;fitMode=Math.abs(ns-fs)<.01;constrainView();render()},{passive:false});
 Object.values(toggles).forEach(t=>t.addEventListener('change',render));fitBtn.onclick=fitView;
 document.querySelectorAll('#orderGrid button').forEach(b=>b.onclick=()=>{pendingOrder=b.dataset.order;refreshTargets();updatePanels()});
 targetSelect.addEventListener('change',()=>{targetPreviewRegionId=targetSelect.value||null;const u=selected.kind==='unit'?selection():null;const r=targetPreviewRegionId?regions.find(x=>x.id===targetPreviewRegionId):null;if(u&&u.side==='blue'&&r){sectorSelection=makeSectorSelection(centerRegion(r.id),r,{order:pendingOrder,unit:u,target:r.id})}routePreview.innerHTML=currentRoutePreview();updatePanels()});
@@ -370,9 +1330,9 @@ if(s.tick===1){s.events.push({side:u.side,text:`${u.name}开始把中地形命�
 drawBattle(sec);refreshBattlePanel()}
 function engineerLocalAction(){if(!activeLocalSector||!localBattleState)return;const s=localBattleState,sec=activeLocalSector,damaged=Object.values(s.infraChanges.bridges).find(b=>b.status!=='open');if(damaged){damaged.status='open';const br=sec.refinement.bridges.find(x=>x.id===damaged.id);if(br)br.status='open';s.events.push({side:sec.mission.unit?.side||'neutral',text:'工兵完成桥位抢修，重装备通路重新开放。'})}else{const u=sec.mission.unit,local=sec.units.find(x=>x.id===u?.id)?.local||{x:.3,y:.5},end={x:clamp(local.x+.16,.05,.95),y:clamp(local.y+.08,.05,.95)};s.infraChanges.temporaryRoutes.push({a:localToWorld(local,sec.identity.parentBounds),b:localToWorld(end,sec.identity.parentBounds)});s.events.push({side:u?.side||'neutral',text:'工兵绕开拥堵主路，开辟了一条临时通行线。'})}drawBattle(sec);refreshBattlePanel()}
 function commitSectorResult(sec,state){if(!sec||!state||!theaterState)return false;const pid=sec.identity.parentRegionId,missionId=sec.mission.unit?.id||null,formationUpdates=[];for(const [id,us] of Object.entries(state.unitState||{})){const f=theaterState.formations[id];if(!f)continue;const rr=regionAtWorldPoint(us.world)||regions.find(r=>r.id===f.regionId),old=f.status||{};formationUpdates.push({formationId:id,patch:{regionId:rr?.id||f.regionId,position:structuredClone(us.world),status:{readiness:clamp((old.readiness??.9)+(us.readinessDelta||0),.2,1),supply:clamp((old.supply??.9)+(us.supplyDelta||0),.2,1),cohesion:clamp((old.cohesion??.9)+(us.cohesionDelta||0),.2,1),supplyStatus:state.supplyState==='disrupted'?'interrupted':old.supplyStatus,combat:state.breach==='open'?'breakthrough':'post-battle'}}})}const infra=[];for(const [id,b] of Object.entries(state.infraChanges.bridges||{}))infra.push({kind:'bridge',id,status:b.status||'damaged'});for(const rb of state.infraChanges.roadBlocks||[])infra.push({kind:'road',id:rb.id||`roadblock-${pid}-${state.tick}`,status:'blocked',regionId:pid,local:rb.local||null});for(const tr of state.infraChanges.temporaryRoutes||[])infra.push({kind:'road',id:`temporary-${pid}-${state.tick}-${infra.length}`,status:'temporary',regionId:pid,a:tr.a,b:tr.b});const result={battleId:`battle-${theaterState.phase}-${sec.identity.sectorId}`,sectorId:sec.identity.sectorId,controlChange:state.controlOutcome?{regionId:pid,control:state.controlOutcome}:null,formationUpdates,infrastructureDamage:infra,events:(state.events||[]).map(e=>({side:e.side||'neutral',type:'localBattle',text:e.text}))};const patch=BE.SectorBattleBridge.commitBattleResult(theaterState,result);BE.TheaterState.applyPatch(theaterState,patch);BE.TheaterState.applyPatch(theaterState,BE.TheaterSupply.recalculateAll(theaterState).patch);syncLegacyFromTheaterState();operationalPatches.sectorHistory.push({sectorId:sec.identity.sectorId,phase:theaterState.phase,tick:state.tick,control:state.controlOutcome,breach:state.breach,events:structuredClone(state.events)});BE.TheaterState.appendEvent(theaterState,{side:sec.mission.unit?.side||'neutral',type:'sectorCommit',text:`${sec.identity.parentRegionName}详细战场结果已通过 TheaterState Patch 回写。`});syncLegacyFromTheaterState();return true}
-enterBattle.onclick=()=>{const sel=ensureSectorSelection();activeLocalSector=refineSector(extractSector(sel));activeLocalSector.geography=theaterState?.regions?.[activeLocalSector.identity.parentRegionId]?.geography||{};activeLocalSector._battleRequest=BE.SectorBattleBridge.buildBattleRequest(theaterState,{sector:activeLocalSector});localBattleState=initLocalBattleState(activeLocalSector);battleModal.classList.add('open');drawBattle(activeLocalSector);battleTitle.textContent=`详细战场 · ${activeLocalSector.identity.parentRegionName}`;const a=activeLocalSector.anchors.slice(0,5).map(anchorSummary);const mission=activeLocalSector.mission.unit?`${activeLocalSector.mission.unit.name} · ${orderName(activeLocalSector.mission.order)}`:'区域观察';const subs=activeLocalSector.mission.unit?.subordinates?.map(d=>d.name).join('、')||'无直接展开军';battleInfo.innerHTML=`<div class="kv"><div class="k">空间来源</div><div class="v">中地形当前选区原位裁切</div><div class="k">父区域</div><div class="v">${activeLocalSector.identity.parentRegionName}</div><div class="k">任务继承</div><div class="v">${mission}</div><div class="k">师级展开</div><div class="v">${subs}</div><div class="k">连续骨架</div><div class="v">${a.length?a.join(' · '):'本选区内骨架完整保留'}</div></div><div class="pillrow"><span class="pill">父空间锁定</span><span class="pill">边界锚点</span><span class="pill">永久ID继承</span><span class="pill">返回自动回写</span></div>`;refreshBattlePanel()};
+enterBattle.onclick=()=>{let renderSector=null;try{const sel=ensureSectorSelection();activeLocalSector=refineSector(extractSector(sel));activeLocalSector.geography=theaterState?.regions?.[activeLocalSector.identity.parentRegionId]?.geography||{};localBattleState=initLocalBattleState(activeLocalSector);renderSector=activeLocalSector;battleModal.classList.add('open');battleTitle.textContent=`详细战场 · ${activeLocalSector.identity.parentRegionName}`;const a=activeLocalSector.anchors.slice(0,5).map(anchorSummary);const mission=activeLocalSector.mission.unit?`${activeLocalSector.mission.unit.name} · ${orderName(activeLocalSector.mission.order)}`:'区域观察';const subs=activeLocalSector.mission.unit?.subordinates?.map(d=>d.name).join('、')||'无直接展开军';battleInfo.innerHTML=`<div class="kv"><div class="k">空间来源</div><div class="v">中地形当前选区原位裁切</div><div class="k">父区域</div><div class="v">${activeLocalSector.identity.parentRegionName}</div><div class="k">任务继承</div><div class="v">${mission}</div><div class="k">师级展开</div><div class="v">${subs}</div><div class="k">连续骨架</div><div class="v">${a.length?a.join(' · '):'本选区内骨架完整保留'}</div><div class="k">加载状态</div><div class="v" id="battleLoadState">正在展开真实地形…</div></div><div class="pillrow"><span class="pill">父空间锁定</span><span class="pill">边界锚点</span><span class="pill">永久ID继承</span><span class="pill">返回自动回写</span></div>`;refreshBattlePanel();requestAnimationFrame(()=>requestAnimationFrame(()=>{try{activeLocalSector._battleRequest=BE.SectorBattleBridge.buildBattleRequest(theaterState,{sector:activeLocalSector});drawBattle(activeLocalSector);const req=activeLocalSector._battleRequest,load=document.getElementById('battleLoadState');if(load)load.textContent=`已载入 · 蓝方 ${req.blueForces.length+req.blueSupport.length} / 红方 ${req.redForces.length+req.redSupport.length}`;}catch(err){console.error('Detailed battle open failed',err);const load=document.getElementById('battleLoadState');if(load)load.textContent='载入失败：'+err.message;battleState.innerHTML=`<div class="battleEvent red">详细战场加载错误：${String(err.message||err)}</div>`;toastMsg('详细战场载入失败，错误已显示在面板中');}}));}catch(err){console.error('Sector extraction failed',err);battleModal.classList.add('open');battleTitle.textContent='详细战场 · 无法展开';battleInfo.innerHTML=`<div class="battleEvent red">${String(err.message||err)}</div>`;battleState.innerHTML='';toastMsg('详细战场入口发生错误');}};
 battleAdvance.onclick=simulateLocalBattleTick;battleEngineer.onclick=engineerLocalAction;closeBattle.onclick=()=>{if(activeLocalSector&&localBattleState)commitSectorResult(activeLocalSector,localBattleState);battleModal.classList.remove('open');activeLocalSector=null;localBattleState=null;sectorSelection=null;render();toastMsg('详细战场结果已写回战区层')};battleModal.addEventListener('click',e=>{if(e.target===battleModal)toastMsg('请使用“汇总并返回战区层”，避免丢失局部战斗结果')});
-function drawBattle(sector){const rect=battle.getBoundingClientRect(),dpr=Math.min(devicePixelRatio||1,2);battle.width=Math.max(600,Math.round(rect.width*dpr));battle.height=Math.max(480,Math.round(rect.height*dpr));bctx.setTransform(dpr,0,0,dpr,0,0);const W=rect.width,H=rect.height,pad=26,X=p=>pad+p.x*(W-pad*2),Y=p=>pad+p.y*(H-pad*2);const terrainDataset=BE.SectorTerrainAdapter.buildTerrainDataset(sector);BE.TerrainRenderer.render(battle,terrainDataset,{contours:true,pad});bctx.setTransform(dpr,0,0,dpr,0,0);
+function drawBattle(sector){const rect=battle.getBoundingClientRect(),dpr=Math.min(devicePixelRatio||1,2);battle.width=Math.max(600,Math.round(rect.width*dpr));battle.height=Math.max(480,Math.round(rect.height*dpr));bctx.setTransform(dpr,0,0,dpr,0,0);const W=rect.width,H=rect.height,pad=26,X=p=>pad+p.x*(W-pad*2),Y=p=>pad+p.y*(H-pad*2);const terrainDataset=BE.SectorTerrainAdapter.buildTerrainDataset(sector),touchDevice=(navigator.maxTouchPoints||0)>0,compact=touchDevice||W<900||H<650,resW=compact?220:300,resH=compact?150:200;BE.TerrainRenderer.render(battle,terrainDataset,{contours:true,pad,resW,resH});bctx.setTransform(dpr,0,0,dpr,0,0);
 // 父级控制区：来自中地形真实裁切。
 for(const rr of sector.regions){bctx.beginPath();rr.poly.forEach((p,i)=>i?bctx.lineTo(X(p),Y(p)):bctx.moveTo(X(p),Y(p)));bctx.closePath();bctx.fillStyle=rr.control==='blue'?'rgba(72,111,142,.10)':rr.control==='red'?'rgba(149,91,84,.10)':'rgba(179,151,88,.12)';bctx.fill();bctx.strokeStyle='rgba(71,68,61,.16)';bctx.lineWidth=1;bctx.setLineDash([4,5]);bctx.stroke();bctx.setLineDash([])}
 // 局部加密地貌只作为细节，不改变父级山脊/道路/水系。
@@ -409,7 +1369,7 @@ if(sector.mission.unit&&sector.mission.unit.target){const src=units.find(u=>u.id
 // 边框强调：这是中地形中的裁切窗口。
 bctx.strokeStyle='rgba(55,54,49,.42)';bctx.lineWidth=2;bctx.strokeRect(pad,pad,W-pad*2,H-pad*2);bctx.font='700 11px sans-serif';bctx.fillStyle='rgba(52,51,46,.72)';bctx.textAlign='left';bctx.fillText('PARENT-LOCKED LOCAL SECTOR',pad+8,pad+16)}
 function toastMsg(t){toast.textContent=t;toast.classList.add('show');clearTimeout(toast._t);toast._t=setTimeout(()=>toast.classList.remove('show'),1800)}
-window.BorderEpochSectorBridge={makeSectorSelection,extractSector,refineSector,commitSectorResult,getSelection:()=>sectorSelection,getActiveSector:()=>activeLocalSector,getOperationalPatches:()=>structuredClone(operationalPatches),vehicleMarkers:VEHICLE_MARKERS};window.BorderEpochTheater={getState:()=>BE.TheaterState.snapshot(theaterState),getUnits:()=>structuredClone(units),getRegions:()=>structuredClone(regions),findRoute:(unitId,targetId,order)=>{const u=units.find(x=>x.id===unitId);return u?findRoute(u,u.region,targetId,order||u.order):[]},issueOrder:(unitId,order,target)=>{const u=units.find(x=>x.id===unitId);if(!u)return false;applyIntegratedOrder(u,order,target);render();return true},getLastPhaseResult:()=>BE.TheaterState.clone(lastPhaseResult)};requestAnimationFrame(()=>{theaterState=buildIntegratedTheaterState();syncLegacyFromTheaterState();mountIntegratedDeployment();const rr=regions.find(r=>r.id==='R5');sectorSelection=makeSectorSelection(centerRegion('R5'),rr,missionForRegion(rr));resize();fitView()});
+window.BorderEpochSectorBridge={makeSectorSelection,extractSector,refineSector,commitSectorResult,getSelection:()=>sectorSelection,getActiveSector:()=>activeLocalSector,getOperationalPatches:()=>structuredClone(operationalPatches),vehicleMarkers:VEHICLE_MARKERS};window.BorderEpochTheater={getState:()=>BE.TheaterState.snapshot(theaterState),getUnits:()=>structuredClone(units),getRegions:()=>structuredClone(regions),findRoute:(unitId,targetId,order)=>{const u=units.find(x=>x.id===unitId);return u?findRoute(u,u.region,targetId,order||u.order):[]},issueOrder:(unitId,order,target)=>{const u=units.find(x=>x.id===unitId);if(!u)return false;applyIntegratedOrder(u,order,target);render();return true},getLastPhaseResult:()=>BE.TheaterState.clone(lastPhaseResult)};requestAnimationFrame(()=>{try{theaterState=buildIntegratedTheaterState();syncLegacyFromTheaterState();try{mountIntegratedDeployment()}catch(uiErr){console.error('Deployment UI mount failed',uiErr);deploymentUi.innerHTML=`<div class="note">部署界面载入失败：${String(uiErr.message||uiErr)}</div>`}const rr=regions.find(r=>r.id==='R5');sectorSelection=makeSectorSelection(centerRegion('R5'),rr,missionForRegion(rr));}catch(initErr){console.error('Theater init failed',initErr);toastMsg('战区初始化出现错误：'+String(initErr.message||initErr));}finally{fitView();setTimeout(()=>{if(fitMode)fitView()},120)}});if('ResizeObserver' in window){new ResizeObserver(()=>{if(fitMode)fitView();else resize()}).observe(document.getElementById('mapwrap'))}
 })();
 </script>
 </body></html>
