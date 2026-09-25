@@ -1,307 +1,214 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>战争地形图渲染器 Demo</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Border Epoch · 战区地图视觉原型 V4</title>
 <style>
-:root{--paper:#f5f0e6;--panel:rgba(255,255,255,.82)}
-body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;background:linear-gradient(#ddd7ca,#e9e4da);color:#2d2d2d}
-.wrap{display:grid;grid-template-columns:320px 1fr;gap:16px;padding:16px;height:100vh;box-sizing:border-box}.panel{background:var(--panel);border:1px solid rgba(70,60,50,.18);border-radius:16px;box-shadow:0 8px 28px rgba(0,0,0,.08);overflow:hidden}.side{padding:16px;overflow:auto}.sub{font-size:13px;color:#666;line-height:1.45;margin:0 0 12px}h1{font-size:20px;margin:0 0 10px}label{display:block;font-size:13px;color:#555;margin:10px 0 6px}select,button{width:100%;padding:10px 12px;border-radius:10px;border:1px solid #c9c3b9;background:#fffdf8;font-size:14px;box-sizing:border-box}button{cursor:pointer;background:linear-gradient(#fffef9,#f2ece1)}.toggles{display:grid;grid-template-columns:1fr 1fr;gap:8px 10px;margin-top:8px}.toggles label{display:flex;align-items:center;gap:8px;margin:0;font-size:13px}.chiprow{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 12px}.chip{padding:6px 10px;border-radius:999px;background:#ede7da;font-size:12px;border:1px solid #d3cbbb}.info{font-size:13px;line-height:1.55;color:#444;background:#faf7f1;border:1px solid #e3dbc9;padding:12px;border-radius:12px}.mapPanel{position:relative;display:flex;flex-direction:column;overflow:hidden}.toolbar{display:flex;gap:10px;padding:12px 12px 0 12px;align-items:center;flex-wrap:wrap}.canvasWrap{padding:12px;padding-top:10px;flex:1;min-height:0}canvas{width:100%;height:100%;display:block;background:var(--paper);border-radius:16px;box-shadow:inset 0 0 0 1px rgba(92,84,74,.15),0 10px 28px rgba(0,0,0,.1)}.legend{position:absolute;right:26px;bottom:26px;width:240px;background:rgba(255,250,241,.9);border:1px solid rgba(80,70,60,.16);border-radius:14px;padding:12px;font-size:12px;line-height:1.45;box-shadow:0 6px 20px rgba(0,0,0,.08)}.legend h3{margin:0 0 8px;font-size:13px}.legend .row{display:grid;grid-template-columns:18px 1fr;gap:8px;align-items:center;margin:5px 0}.sw{width:18px;height:8px;border-radius:4px;border:1px solid rgba(0,0,0,.15)}.footerNote{margin-top:10px;font-size:12px;color:#666}.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}@media (max-width:1024px){.wrap{grid-template-columns:1fr;height:auto}.mapPanel{min-height:70vh}}
+:root{
+  --bg:#171a18;--panel:#222622;--panel2:#292d28;--line:#3b4039;--ink:#e7e0d2;--muted:#a79f91;
+  --paper:#d8cfba;--blue:#486f8e;--red:#955b54;--gold:#b39758;--green:#66755d;
+}
+*{box-sizing:border-box}html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;overflow:hidden}
+button,input{font:inherit}.app{height:100%;display:grid;grid-template-rows:54px minmax(0,1fr)}
+.topbar{display:flex;align-items:center;gap:12px;padding:0 15px;border-bottom:1px solid var(--line);background:#1f231f;box-shadow:0 8px 28px rgba(0,0,0,.22);z-index:5}
+.brand{font-weight:800;letter-spacing:.4px}.crumb{font-size:12px;color:var(--muted);display:flex;gap:7px;align-items:center}.crumb .active{color:#fff;background:#394039;border:1px solid #4b534a;padding:5px 8px;border-radius:99px}.grow{flex:1}.badge{font-size:11px;color:#cfc7b8;background:#2b302b;border:1px solid #454b44;padding:5px 8px;border-radius:99px}
+.main{min-height:0;display:grid;grid-template-columns:260px minmax(0,1fr) 300px;gap:8px;padding:8px}.panel{min-height:0;background:var(--panel);border:1px solid #343a34;border-radius:13px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.16)}.scroll{height:100%;overflow:auto;padding:13px}.panel h2{font-size:16px;margin:0 0 5px}.sub{font-size:11px;line-height:1.55;color:var(--muted)}.section{margin-top:13px;padding-top:12px;border-top:1px solid #363c36}.section h3{font-size:11px;letter-spacing:.5px;color:#d0c6b4;margin:0 0 8px;text-transform:uppercase}.card{background:#292e29;border:1px solid #3b413a;border-radius:10px;padding:10px;font-size:11px;line-height:1.55}.kv{display:grid;grid-template-columns:76px 1fr;gap:5px 8px}.k{color:#928b80}.v{font-weight:650;color:#e5ded0}.pillrow{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}.pill{font-size:10px;padding:4px 6px;border:1px solid #454c44;border-radius:99px;color:#c8c0b3;background:#242924}
+.btnrow{display:grid;grid-template-columns:1fr 1fr;gap:6px}.btnrow.one{grid-template-columns:1fr}button{cursor:pointer;border:1px solid #464d45;background:#2e342e;color:#ddd5c7;border-radius:8px;padding:8px 9px;font-size:11px}button:hover{background:#394039}.primary{background:#586257;border-color:#707c6e;color:#fff}.danger{color:#d9a09a}.orderGrid{display:grid;grid-template-columns:1fr 1fr;gap:6px}.orderGrid button.active{background:#59675b;border-color:#8a9b89;color:#fff}
+.mapPanel{display:flex;flex-direction:column;min-width:0;position:relative}.toolbar{height:44px;display:flex;align-items:center;gap:12px;padding:0 10px;border-bottom:1px solid #343a34;background:#242924;flex-wrap:wrap}.toolbar label{font-size:10px;color:#b6aea0;display:flex;gap:5px;align-items:center}.toolbar input{accent-color:#7a8977}.toolsep{height:18px;width:1px;background:#3c423b}.toolbar button{padding:6px 8px}.mapwrap{position:relative;flex:1;min-height:0;background:#101310}.mapwrap canvas{width:100%;height:100%;display:block;cursor:grab}.mapwrap canvas.dragging{cursor:grabbing}.maptitle{position:absolute;left:18px;top:15px;pointer-events:none;color:#2f302d;text-shadow:0 1px rgba(255,255,255,.35)}.maptitle .big{font-family:Georgia,"Times New Roman",serif;font-weight:700;font-size:22px;letter-spacing:1px}.maptitle .small{font-size:10px;letter-spacing:1.4px;margin-top:2px;color:#5f5d55}.compass{position:absolute;right:18px;top:17px;width:54px;height:54px;border:1px solid rgba(46,46,42,.28);border-radius:50%;pointer-events:none;color:#3f403c;display:flex;align-items:center;justify-content:center;font:700 11px Georgia,serif}.compass:before{content:"";position:absolute;width:1px;height:40px;background:#55564f}.compass:after{content:"";position:absolute;height:1px;width:40px;background:#55564f}.compass span{position:absolute;top:4px}.scale{position:absolute;right:18px;bottom:18px;background:rgba(227,219,201,.82);color:#494943;border:1px solid rgba(59,59,54,.23);padding:6px 8px;border-radius:5px;font-size:9px;pointer-events:none}.scale .bar{width:82px;border-top:2px solid #474842;margin-bottom:3px;position:relative}.scale .bar:before,.scale .bar:after{content:"";position:absolute;top:-4px;height:6px;border-left:2px solid #474842}.scale .bar:before{left:0}.scale .bar:after{right:0}
+.legend{position:absolute;left:16px;bottom:16px;background:rgba(235,227,210,.88);color:#3c3d38;border:1px solid rgba(65,65,59,.22);padding:7px 8px;border-radius:7px;font-size:9px;line-height:1.55;pointer-events:none;backdrop-filter:blur(2px)}.leg{display:flex;align-items:center;gap:6px}.sw{width:16px;height:6px}.sw.front{height:0;border-top:3px solid #2f312e}.sw.supply{height:0;border-top:2px dashed #5d6d54}.sw.road{height:0;border-top:3px solid #7c705c}.sw.river{height:0;border-top:3px solid #66839a}.sw.arrow{height:0;border-top:3px solid #9d624e}
+.note{padding:8px 10px;border-left:3px solid #7c8a77;background:#282d28;border-radius:5px;font-size:10px;line-height:1.5;color:#c9c1b3}.timeline{display:flex;flex-direction:column;gap:6px}.event{font-size:10px;line-height:1.45;padding:7px 8px;border-radius:7px;background:#282d28;border-left:3px solid #666}.event.blue{border-color:#5f839f}.event.red{border-color:#9d6961}.event.neutral{border-color:#a8915a}.layersExplain{display:grid;gap:5px}.layerline{display:flex;gap:8px;align-items:center;font-size:10px;color:#bdb5a7}.dot{width:7px;height:7px;border-radius:50%;background:#778373}
+.modal{display:none;position:fixed;inset:0;background:rgba(9,11,9,.72);z-index:20;align-items:center;justify-content:center;padding:22px}.modal.open{display:flex}.modalbox{width:min(1100px,95vw);height:min(760px,90vh);background:#222622;border:1px solid #444b43;border-radius:14px;overflow:hidden;display:grid;grid-template-columns:minmax(0,1fr) 280px;box-shadow:0 26px 70px rgba(0,0,0,.45)}.battlecanvas{min-width:0;background:#d6cdb8}.battlecanvas canvas{display:block;width:100%;height:100%}.modalSide{padding:14px;overflow:auto}.modalSide h2{margin:0 0 5px}.close{width:100%;margin-top:10px}
+.toast{position:fixed;right:18px;top:66px;z-index:40;background:#e9e1d2;color:#282a27;border:1px solid #c8bda8;border-radius:8px;padding:8px 11px;font-size:10px;opacity:0;transform:translateY(-8px);transition:.18s;pointer-events:none}.toast.show{opacity:1;transform:none}
+@media(max-width:1060px){.main{grid-template-columns:230px 1fr}.right{display:none}}
+@media(max-width:760px){html,body{overflow:auto}.app{height:auto;min-height:100vh}.main{grid-template-columns:1fr}.left{max-height:none}.mapPanel{height:74vh}.crumb{display:none}.modalbox{grid-template-columns:1fr}.modalSide{max-height:240px}}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <div class="panel side">
-    <h1>战争地形图渲染器 Demo</h1>
-    <div class="sub">内置 10 组示例数据。渲染逻辑分为 5 层：地形底色 / 自然地貌 / 交通与聚落 / 战术要点 / 战争态势。</div>
-    <label for="scenarioSelect">选择数据组</label>
-    <select id="scenarioSelect"></select>
-    <label>显示层</label>
-    <div class="toggles">
-      <label><input type="checkbox" id="toggleTerrain" checked> 地形底层</label>
-      <label><input type="checkbox" id="toggleContours" checked> 等高线</label>
-      <label><input type="checkbox" id="toggleNature" checked> 河流/森林</label>
-      <label><input type="checkbox" id="toggleHuman" checked> 道路/城市</label>
-      <label><input type="checkbox" id="toggleTactical" checked> 战术要点</label>
-      <label><input type="checkbox" id="toggleWar" checked> 战争态势</label>
-      <label><input type="checkbox" id="toggleGrid" checked> 坐标网格</label>
-      <label><input type="checkbox" id="toggleLabels" checked> 标注</label>
-    </div>
-    <div class="chiprow"><div class="chip">10 组数据</div><div class="chip">单文件离线运行</div><div class="chip">可导出 PNG</div><div class="chip">Canvas 实时渲染</div></div>
-    <button id="rerenderBtn">重新渲染当前地图</button>
-    <div style="height:8px"></div>
-    <button id="exportBtn">导出当前地图 PNG</button>
-    <label>当前数据摘要</label>
-    <div id="infoBox" class="info"></div>
-    <div class="footerNote">说明：这不是 AI 一次性生成的静态图片，而是可重复渲染的程序地图。<br>相同的数据 + 相同 seed，会得到稳定一致的地图结构。<br><span class="mono">示例文件：单 HTML，可直接打开。</span></div>
+<div class="app">
+  <div class="topbar">
+    <div class="brand">Border Epoch · Theater Renderer V4</div>
+    <div class="crumb"><span>世界层</span><b>→</b><span class="active">战区层</span><b>→</b><span>详细战场</span></div>
+    <div class="grow"></div><span class="badge">中尺度：战役级</span><span class="badge">世界回合：当前年度</span>
   </div>
-  <div class="panel mapPanel">
-    <div class="toolbar"><div style="font-size:14px;color:#4c463f">画布大小：<span class="mono">1200 × 800</span></div><div style="font-size:14px;color:#4c463f">风格：<span class="mono">军事地形图 / 作战态势图</span></div></div>
-    <div class="canvasWrap"><canvas id="mapCanvas" width="1200" height="800"></canvas></div>
-    <div class="legend"><h3>图例</h3><div class="row"><div class="sw" style="background:#5ba0cf"></div><div>河流 / 湖泊</div></div><div class="row"><div class="sw" style="background:#5c6d40"></div><div>森林</div></div><div class="row"><div class="sw" style="background:#5a4638"></div><div>公路</div></div><div class="row"><div class="sw" style="background:repeating-linear-gradient(90deg,#333 0 4px,#bbb 4px 8px)"></div><div>铁路</div></div><div class="row"><div class="sw" style="background:#7c7060"></div><div>城市 / 聚落</div></div><div class="row"><div class="sw" style="background:rgba(53,111,180,.35)"></div><div>蓝方控制区</div></div><div class="row"><div class="sw" style="background:rgba(175,72,64,.35)"></div><div>红方控制区</div></div><div class="row"><div class="sw" style="background:#1f1f1f"></div><div>主战线</div></div></div>
+  <div class="main">
+    <aside class="panel left"><div class="scroll">
+      <h2>东部河谷战区</h2>
+      <div class="sub">不是详细战场的缩小版。这里强调战线、交通、部队、补给与方向选择；细山峰、村落、小路留给下一层。</div>
+      <div class="section"><h3>当前选择</h3><div class="card" id="selectionCard"></div></div>
+      <div class="section"><h3>部队命令</h3>
+        <div class="orderGrid" id="orderGrid">
+          <button data-order="hold">固守</button><button data-order="attack">进攻</button>
+          <button data-order="breakthrough">突破</button><button data-order="encircle">包围</button>
+          <button data-order="withdraw">撤退</button><button data-order="reserve">预备队</button>
+        </div>
+        <div class="btnrow one" style="margin-top:7px"><button class="primary" id="applyOrder">把命令画到地图上</button></div>
+      </div>
+      <div class="section"><h3>战区操作</h3>
+        <div class="btnrow"><button id="advance">演示推进</button><button id="reset">重置态势</button></div>
+        <div class="btnrow one" style="margin-top:6px"><button class="primary" id="enterBattle">进入所选区域详细战场</button></div>
+      </div>
+      <div class="section"><h3>这个层级负责什么</h3>
+        <div class="layersExplain">
+          <div class="layerline"><span class="dot"></span>继承世界的河流、铁路、主路、城市</div>
+          <div class="layerline"><span class="dot"></span>按区域数据画粗地貌与控制范围</div>
+          <div class="layerline"><span class="dot"></span>自动画前线、部队、进攻方向、补给</div>
+          <div class="layerline"><span class="dot"></span>点击一个区域，再生成详细战场</div>
+        </div>
+      </div>
+    </div></aside>
+
+    <section class="panel mapPanel">
+      <div class="toolbar">
+        <label><input type="checkbox" id="terrainToggle" checked>粗地貌</label>
+        <label><input type="checkbox" id="infraToggle" checked>河流/交通</label>
+        <label><input type="checkbox" id="controlToggle" checked>控制区</label>
+        <label><input type="checkbox" id="frontToggle" checked>战线</label>
+        <label><input type="checkbox" id="unitsToggle" checked>部队</label>
+        <label><input type="checkbox" id="ordersToggle" checked>行动/补给</label>
+        <div class="toolsep"></div><button id="fitBtn">复位视图</button><span class="grow"></span><span class="badge">滚轮缩放 · 拖动画布</span>
+      </div>
+      <div class="mapwrap" id="mapwrap">
+        <canvas id="map"></canvas>
+        <div class="maptitle"><div class="big">EASTERN VALLEY THEATER</div><div class="small">OPERATIONAL MAP · BORDER EPOCH</div></div>
+        <div class="compass"><span>N</span></div>
+        <div class="legend">
+          <div class="leg"><span class="sw front"></span>接触线</div>
+          <div class="leg"><span class="sw river"></span>主要河流</div>
+          <div class="leg"><span class="sw road"></span>干线交通</div>
+          <div class="leg"><span class="sw supply"></span>补给线</div>
+          <div class="leg"><span class="sw arrow"></span>进攻方向</div>
+        </div>
+        <div class="scale"><div class="bar"></div>约 80 km</div>
+      </div>
+    </section>
+
+    <aside class="panel right"><div class="scroll">
+      <h2>当前局势</h2><div class="sub">最上层信息始终最醒目；底图地貌故意压低对比度。</div>
+      <div class="card" id="situation"></div>
+      <div class="section"><h3>绘图层级</h3><div class="card">
+        <div class="kv"><div class="k">底层</div><div class="v">纸质军图 + 粗地貌</div><div class="k">骨架</div><div class="v">河流 / 铁路 / 公路 / 城市</div><div class="k">战争</div><div class="v">控制区 / 战线 / 部队</div><div class="k">动态</div><div class="v">进攻箭头 / 补给线</div></div>
+      </div></div>
+      <div class="section"><h3>战区时间线</h3><div class="timeline" id="timeline"></div></div>
+      <div class="section"><div class="note">你现在看到的河、铁路和城市都是“跨区域连续对象”。它们不是每个区域自己随机画，因此不会在区域边界断开。</div></div>
+    </div></aside>
   </div>
 </div>
+<div class="modal" id="battleModal"><div class="modalbox">
+  <div class="battlecanvas"><canvas id="battle"></canvas></div>
+  <div class="modalSide"><h2 id="battleTitle">详细战场</h2><div class="sub">这里才会把一个战区区域展开成具体山峰、林间空地、桥、村落和局部道路。</div><div class="card" id="battleInfo"></div><button class="close" id="closeBattle">返回战区层</button></div>
+</div></div>
+<div class="toast" id="toast"></div>
 <script>
-const SCENARIOS = [{"id": "s01", "name": "01 河谷桥头", "seed": 101, "hills": [{"x": 0.18, "y": 0.18, "rx": 0.18, "ry": 0.16, "h": 0.28}, {"x": 0.68, "y": 0.22, "rx": 0.22, "ry": 0.15, "h": 0.18}, {"x": 0.78, "y": 0.72, "rx": 0.16, "ry": 0.18, "h": 0.22}], "depressions": [{"x": 0.48, "y": 0.52, "rx": 0.2, "ry": 0.16, "h": 0.1}], "rivers": [[[0.12, 0.0], [0.2, 0.1], [0.33, 0.22], [0.41, 0.34], [0.46, 0.48], [0.5, 0.6], [0.61, 0.74], [0.7, 0.86], [0.79, 1.0]]], "lakes": [], "forests": [[[0.05, 0.56], [0.17, 0.5], [0.25, 0.6], [0.22, 0.75], [0.08, 0.74]], [[0.71, 0.42], [0.86, 0.41], [0.9, 0.58], [0.77, 0.65], [0.67, 0.54]]], "roads": [{"kind": "primary", "pts": [[0.05, 0.7], [0.18, 0.64], [0.29, 0.58], [0.41, 0.53], [0.51, 0.49], [0.66, 0.45], [0.82, 0.37], [0.97, 0.31]]}, {"kind": "secondary", "pts": [[0.49, 0.49], [0.56, 0.61], [0.62, 0.78], [0.66, 0.95]]}], "rails": [{"pts": [[0.02, 0.33], [0.18, 0.36], [0.35, 0.41], [0.52, 0.47], [0.71, 0.54], [0.94, 0.66]]}], "cities": [{"name": "格林渡口", "poly": [[0.38, 0.44], [0.47, 0.43], [0.51, 0.5], [0.45, 0.58], [0.35, 0.54]]}, {"name": "南桥镇", "poly": [[0.6, 0.74], [0.67, 0.73], [0.7, 0.79], [0.64, 0.83], [0.57, 0.8]]}], "villages": [{"name": "岗哨村", "x": 0.79, "y": 0.35}, {"name": "西林村", "x": 0.21, "y": 0.67}], "fronts": [{"name": "河谷主战线", "pts": [[0.29, 0.3], [0.35, 0.37], [0.4, 0.45], [0.46, 0.51], [0.55, 0.56], [0.61, 0.61], [0.69, 0.67]]}], "controlZones": [{"side": "blue", "poly": [[0, 0], [0.36, 0.18], [0.42, 0.33], [0.48, 0.47], [0.62, 0.58], [0.72, 0.68], [0.76, 1], [0, 1]]}, {"side": "red", "poly": [[0.36, 0.18], [1, 0], [1, 1], [0.76, 1], [0.72, 0.68], [0.62, 0.58], [0.48, 0.47], [0.42, 0.33]]}], "units": [{"side": "blue", "label": "3步师", "x": 0.3, "y": 0.46}, {"side": "blue", "label": "1工旅", "x": 0.44, "y": 0.58}, {"side": "red", "label": "9机旅", "x": 0.58, "y": 0.45}, {"side": "red", "label": "2炮群", "x": 0.72, "y": 0.6}], "pois": [{"type": "bridge", "name": "中央桥", "x": 0.5, "y": 0.49}, {"type": "height", "name": "高地412", "x": 0.18, "y": 0.18}, {"type": "height", "name": "北岭331", "x": 0.68, "y": 0.22}]}, {"id": "s02", "name": "02 中央山脊", "seed": 202, "hills": [{"x": 0.45, "y": 0.18, "rx": 0.12, "ry": 0.32, "h": 0.32}, {"x": 0.55, "y": 0.42, "rx": 0.14, "ry": 0.28, "h": 0.28}, {"x": 0.5, "y": 0.74, "rx": 0.13, "ry": 0.26, "h": 0.31}, {"x": 0.22, "y": 0.5, "rx": 0.14, "ry": 0.18, "h": 0.16}], "depressions": [{"x": 0.83, "y": 0.62, "rx": 0.12, "ry": 0.14, "h": 0.12}], "rivers": [[[0.66, 0.0], [0.7, 0.14], [0.74, 0.28], [0.78, 0.4], [0.82, 0.52], [0.86, 0.69], [0.91, 0.84], [0.95, 1.0]]], "lakes": [[[0.79, 0.58], [0.85, 0.56], [0.88, 0.61], [0.86, 0.67], [0.8, 0.68], [0.75, 0.63]]], "forests": [[[0.02, 0.17], [0.21, 0.14], [0.26, 0.31], [0.1, 0.35]], [[0.06, 0.69], [0.23, 0.62], [0.33, 0.78], [0.18, 0.89], [0.03, 0.81]], [[0.7, 0.19], [0.9, 0.2], [0.96, 0.35], [0.84, 0.44], [0.71, 0.33]]], "roads": [{"kind": "primary", "pts": [[0.05, 0.1], [0.17, 0.18], [0.3, 0.3], [0.39, 0.43], [0.49, 0.55], [0.61, 0.68], [0.75, 0.77], [0.94, 0.88]]}, {"kind": "secondary", "pts": [[0.16, 0.86], [0.25, 0.76], [0.35, 0.64], [0.44, 0.55], [0.53, 0.46], [0.6, 0.32], [0.68, 0.16]]}], "rails": [], "cities": [{"name": "鹰脊城", "poly": [[0.34, 0.49], [0.41, 0.47], [0.47, 0.53], [0.43, 0.61], [0.35, 0.58]]}, {"name": "湖滨站", "poly": [[0.76, 0.71], [0.84, 0.7], [0.87, 0.77], [0.81, 0.82], [0.74, 0.78]]}], "villages": [{"name": "北口哨", "x": 0.35, "y": 0.27}, {"name": "南岭村", "x": 0.57, "y": 0.77}], "fronts": [{"name": "山脊争夺线", "pts": [[0.31, 0.2], [0.39, 0.31], [0.44, 0.43], [0.49, 0.55], [0.55, 0.68], [0.59, 0.81]]}], "controlZones": [{"side": "blue", "poly": [[0, 0], [0.46, 0.0], [0.48, 0.18], [0.5, 0.34], [0.53, 0.49], [0.58, 0.69], [0.66, 1], [0, 1]]}, {"side": "red", "poly": [[0.46, 0], [1, 0], [1, 1], [0.66, 1], [0.58, 0.69], [0.53, 0.49], [0.5, 0.34], [0.48, 0.18]]}], "units": [{"side": "blue", "label": "7山地旅", "x": 0.4, "y": 0.38}, {"side": "blue", "label": "2炮营", "x": 0.29, "y": 0.55}, {"side": "red", "label": "4装甲团", "x": 0.57, "y": 0.46}, {"side": "red", "label": "11步旅", "x": 0.63, "y": 0.71}], "pois": [{"type": "height", "name": "鹰脊558", "x": 0.48, "y": 0.2}, {"type": "height", "name": "南峰503", "x": 0.5, "y": 0.73}, {"type": "pass", "name": "西鞍口", "x": 0.41, "y": 0.47}]}, {"id": "s03", "name": "03 双河平原", "seed": 303, "hills": [{"x": 0.14, "y": 0.2, "rx": 0.16, "ry": 0.14, "h": 0.16}, {"x": 0.88, "y": 0.82, "rx": 0.2, "ry": 0.18, "h": 0.18}], "depressions": [{"x": 0.48, "y": 0.5, "rx": 0.32, "ry": 0.24, "h": 0.08}], "rivers": [[[0.0, 0.26], [0.1, 0.31], [0.22, 0.34], [0.34, 0.35], [0.48, 0.33], [0.62, 0.28], [0.78, 0.22], [1.0, 0.18]], [[0.05, 0.72], [0.16, 0.65], [0.31, 0.57], [0.45, 0.53], [0.57, 0.55], [0.71, 0.63], [0.88, 0.74], [1.0, 0.81]]], "lakes": [], "forests": [[[0.21, 0.05], [0.33, 0.07], [0.38, 0.2], [0.25, 0.23], [0.15, 0.16]], [[0.63, 0.46], [0.82, 0.45], [0.87, 0.6], [0.73, 0.66], [0.59, 0.58]], [[0.08, 0.8], [0.21, 0.74], [0.28, 0.86], [0.15, 0.94], [0.05, 0.9]]], "roads": [{"kind": "primary", "pts": [[0.0, 0.49], [0.15, 0.49], [0.31, 0.49], [0.47, 0.49], [0.64, 0.49], [0.83, 0.5], [1.0, 0.52]]}, {"kind": "secondary", "pts": [[0.28, 0.2], [0.33, 0.33], [0.38, 0.45], [0.43, 0.58], [0.49, 0.74], [0.56, 0.92]]}, {"kind": "secondary", "pts": [[0.69, 0.12], [0.62, 0.28], [0.57, 0.4], [0.52, 0.49], [0.48, 0.58], [0.45, 0.73]]}], "rails": [{"pts": [[0.04, 0.58], [0.19, 0.56], [0.36, 0.54], [0.54, 0.54], [0.75, 0.58], [0.95, 0.64]]}], "cities": [{"name": "中野市", "poly": [[0.41, 0.42], [0.53, 0.42], [0.57, 0.52], [0.49, 0.6], [0.38, 0.56]]}, {"name": "北渡镇", "poly": [[0.62, 0.17], [0.69, 0.17], [0.73, 0.22], [0.69, 0.28], [0.6, 0.25]]}], "villages": [{"name": "东岸村", "x": 0.82, "y": 0.5}, {"name": "西坝", "x": 0.14, "y": 0.5}], "fronts": [{"name": "平原阻击线", "pts": [[0.17, 0.41], [0.27, 0.44], [0.38, 0.48], [0.49, 0.5], [0.61, 0.53], [0.73, 0.56], [0.84, 0.6]]}], "controlZones": [{"side": "blue", "poly": [[0, 0], [0.19, 0.0], [0.18, 0.36], [0.36, 0.45], [0.55, 0.52], [0.74, 0.6], [0.9, 0.68], [0.87, 1], [0, 1]]}, {"side": "red", "poly": [[0.19, 0], [1, 0], [1, 1], [0.87, 1], [0.9, 0.68], [0.74, 0.6], [0.55, 0.52], [0.36, 0.45], [0.18, 0.36]]}], "units": [{"side": "blue", "label": "5机步旅", "x": 0.33, "y": 0.5}, {"side": "blue", "label": "工兵连", "x": 0.48, "y": 0.63}, {"side": "red", "label": "12装旅", "x": 0.64, "y": 0.46}, {"side": "red", "label": "炮兵群", "x": 0.76, "y": 0.59}], "pois": [{"type": "bridge", "name": "东大桥", "x": 0.52, "y": 0.49}, {"type": "bridge", "name": "北渡桥", "x": 0.62, "y": 0.29}, {"type": "junction", "name": "中线公路节点", "x": 0.47, "y": 0.49}]}, {"id": "s04", "name": "04 沿海登陆带", "seed": 404, "hills": [{"x": 0.2, "y": 0.24, "rx": 0.13, "ry": 0.18, "h": 0.18}, {"x": 0.28, "y": 0.74, "rx": 0.14, "ry": 0.22, "h": 0.22}, {"x": 0.58, "y": 0.5, "rx": 0.16, "ry": 0.14, "h": 0.15}], "depressions": [{"x": 0.92, "y": 0.45, "rx": 0.2, "ry": 0.5, "h": 0.25}], "coast": [[[0.82, 0.0], [1, 0], [1, 1], [0.77, 1], [0.8, 0.82], [0.84, 0.67], [0.83, 0.52], [0.88, 0.34], [0.84, 0.16]]], "rivers": [[[0.0, 0.37], [0.13, 0.39], [0.25, 0.42], [0.38, 0.46], [0.52, 0.51], [0.68, 0.55], [0.82, 0.57]]], "lakes": [], "forests": [[[0.07, 0.05], [0.22, 0.05], [0.27, 0.17], [0.16, 0.27], [0.05, 0.2]], [[0.1, 0.59], [0.2, 0.53], [0.31, 0.58], [0.33, 0.72], [0.2, 0.81], [0.09, 0.74]], [[0.5, 0.18], [0.66, 0.19], [0.68, 0.33], [0.56, 0.37], [0.47, 0.29]]], "roads": [{"kind": "primary", "pts": [[0.06, 0.48], [0.2, 0.47], [0.34, 0.47], [0.48, 0.48], [0.61, 0.5], [0.74, 0.55], [0.82, 0.61]]}, {"kind": "secondary", "pts": [[0.24, 0.06], [0.28, 0.22], [0.32, 0.35], [0.39, 0.48], [0.47, 0.61], [0.55, 0.73], [0.63, 0.86]]}], "rails": [{"pts": [[0.11, 0.9], [0.24, 0.78], [0.36, 0.65], [0.51, 0.55], [0.68, 0.49], [0.81, 0.46]]}], "cities": [{"name": "滩头港", "poly": [[0.7, 0.6], [0.8, 0.59], [0.84, 0.66], [0.79, 0.74], [0.7, 0.72], [0.66, 0.66]]}, {"name": "内陆司令部", "poly": [[0.37, 0.45], [0.45, 0.44], [0.49, 0.5], [0.47, 0.58], [0.38, 0.57], [0.34, 0.5]]}], "villages": [{"name": "西岸村", "x": 0.15, "y": 0.48}, {"name": "石岬", "x": 0.81, "y": 0.28}], "fronts": [{"name": "登陆扩张线", "pts": [[0.65, 0.28], [0.61, 0.39], [0.59, 0.48], [0.59, 0.57], [0.62, 0.65], [0.67, 0.75]]}], "controlZones": [{"side": "blue", "poly": [[0.59, 0.18], [0.83, 0.16], [1, 0], [1, 1], [0.72, 0.88], [0.64, 0.76], [0.59, 0.61], [0.57, 0.46], [0.57, 0.3]]}, {"side": "red", "poly": [[0, 0], [0.83, 0], [0.59, 0.18], [0.57, 0.3], [0.57, 0.46], [0.59, 0.61], [0.64, 0.76], [0.72, 0.88], [0, 1]]}], "units": [{"side": "blue", "label": "海军陆战旅", "x": 0.74, "y": 0.54}, {"side": "blue", "label": "两栖装甲营", "x": 0.7, "y": 0.69}, {"side": "red", "label": "海岸守备团", "x": 0.54, "y": 0.51}, {"side": "red", "label": "后备步旅", "x": 0.43, "y": 0.63}], "pois": [{"type": "port", "name": "滩头港码头", "x": 0.8, "y": 0.66}, {"type": "beach", "name": "红沙海滩", "x": 0.87, "y": 0.55}, {"type": "bridge", "name": "河口桥", "x": 0.79, "y": 0.57}]}, {"id": "s05", "name": "05 森林沼泽", "seed": 505, "hills": [{"x": 0.15, "y": 0.15, "rx": 0.1, "ry": 0.1, "h": 0.12}, {"x": 0.79, "y": 0.28, "rx": 0.14, "ry": 0.14, "h": 0.13}, {"x": 0.56, "y": 0.82, "rx": 0.1, "ry": 0.1, "h": 0.12}], "depressions": [{"x": 0.49, "y": 0.5, "rx": 0.3, "ry": 0.28, "h": 0.22}], "rivers": [[[0.0, 0.45], [0.11, 0.46], [0.21, 0.48], [0.31, 0.52], [0.41, 0.55], [0.49, 0.56], [0.61, 0.55], [0.7, 0.5], [0.81, 0.43], [0.93, 0.34], [1.0, 0.3]]], "lakes": [[[0.4, 0.39], [0.52, 0.36], [0.63, 0.41], [0.65, 0.51], [0.58, 0.6], [0.46, 0.62], [0.36, 0.55], [0.34, 0.45]]], "forests": [[[0.02, 0.02], [0.32, 0.03], [0.38, 0.2], [0.3, 0.36], [0.09, 0.31], [0.01, 0.18]], [[0.66, 0.03], [0.96, 0.06], [0.99, 0.26], [0.86, 0.42], [0.67, 0.3]], [[0.04, 0.63], [0.26, 0.55], [0.34, 0.77], [0.28, 0.96], [0.07, 0.94]], [[0.66, 0.65], [0.92, 0.61], [0.97, 0.85], [0.82, 0.96], [0.63, 0.89]]], "roads": [{"kind": "primary", "pts": [[0.07, 0.58], [0.21, 0.58], [0.34, 0.57], [0.49, 0.56], [0.63, 0.53], [0.75, 0.46], [0.9, 0.34]]}, {"kind": "secondary", "pts": [[0.31, 0.13], [0.37, 0.29], [0.43, 0.43], [0.49, 0.56], [0.57, 0.72], [0.64, 0.87]]}], "rails": [], "cities": [{"name": "沼泽哨城", "poly": [[0.6, 0.48], [0.69, 0.47], [0.73, 0.54], [0.67, 0.61], [0.58, 0.58]]}, {"name": "西林补给站", "poly": [[0.24, 0.56], [0.3, 0.56], [0.33, 0.61], [0.29, 0.66], [0.22, 0.64], [0.2, 0.59]]}], "villages": [{"name": "黑松村", "x": 0.19, "y": 0.24}, {"name": "东湾点", "x": 0.8, "y": 0.52}], "fronts": [{"name": "湿地接触线", "pts": [[0.28, 0.42], [0.36, 0.47], [0.45, 0.53], [0.55, 0.56], [0.67, 0.56], [0.77, 0.49]]}], "controlZones": [{"side": "blue", "poly": [[0, 0], [0.31, 0.0], [0.28, 0.38], [0.43, 0.52], [0.56, 0.57], [0.75, 0.55], [0.8, 1], [0, 1]]}, {"side": "red", "poly": [[0.31, 0], [1, 0], [1, 1], [0.8, 1], [0.75, 0.55], [0.56, 0.57], [0.43, 0.52], [0.28, 0.38]]}], "units": [{"side": "blue", "label": "6轻步旅", "x": 0.35, "y": 0.58}, {"side": "blue", "label": "舟桥连", "x": 0.5, "y": 0.64}, {"side": "red", "label": "10边防旅", "x": 0.64, "y": 0.51}, {"side": "red", "label": "迫炮营", "x": 0.78, "y": 0.44}], "pois": [{"type": "swamp", "name": "中央湿地", "x": 0.49, "y": 0.5}, {"type": "bridge", "name": "栈道桥", "x": 0.49, "y": 0.56}, {"type": "ford", "name": "浅滩渡口", "x": 0.7, "y": 0.5}]}, {"id": "s06", "name": "06 铁路枢纽盆地", "seed": 606, "hills": [{"x": 0.18, "y": 0.3, "rx": 0.16, "ry": 0.18, "h": 0.22}, {"x": 0.84, "y": 0.24, "rx": 0.15, "ry": 0.17, "h": 0.24}, {"x": 0.16, "y": 0.82, "rx": 0.15, "ry": 0.16, "h": 0.2}, {"x": 0.82, "y": 0.8, "rx": 0.16, "ry": 0.16, "h": 0.22}], "depressions": [{"x": 0.5, "y": 0.52, "rx": 0.26, "ry": 0.24, "h": 0.16}], "rivers": [[[0.0, 0.54], [0.14, 0.55], [0.27, 0.56], [0.41, 0.56], [0.53, 0.55], [0.67, 0.5], [0.84, 0.43], [1.0, 0.38]]], "lakes": [], "forests": [[[0.34, 0.1], [0.5, 0.08], [0.53, 0.22], [0.4, 0.28], [0.3, 0.19]], [[0.62, 0.64], [0.8, 0.63], [0.84, 0.8], [0.73, 0.88], [0.6, 0.81]]], "roads": [{"kind": "primary", "pts": [[0.04, 0.48], [0.18, 0.49], [0.32, 0.5], [0.49, 0.51], [0.64, 0.49], [0.82, 0.46], [0.96, 0.4]]}, {"kind": "primary", "pts": [[0.49, 0.06], [0.49, 0.2], [0.49, 0.35], [0.49, 0.51], [0.49, 0.67], [0.48, 0.82], [0.47, 0.95]]}], "rails": [{"pts": [[0.02, 0.41], [0.18, 0.44], [0.31, 0.46], [0.49, 0.5], [0.68, 0.47], [0.86, 0.39], [0.98, 0.28]]}, {"pts": [[0.12, 0.9], [0.26, 0.77], [0.37, 0.64], [0.49, 0.5], [0.61, 0.37], [0.76, 0.2], [0.89, 0.08]]}, {"pts": [[0.1, 0.12], [0.21, 0.24], [0.35, 0.35], [0.49, 0.5], [0.63, 0.67], [0.76, 0.84], [0.86, 0.95]]}], "cities": [{"name": "中央编组站", "poly": [[0.4, 0.43], [0.57, 0.43], [0.6, 0.55], [0.5, 0.63], [0.38, 0.57]]}, {"name": "北场镇", "poly": [[0.47, 0.18], [0.55, 0.18], [0.58, 0.24], [0.54, 0.3], [0.46, 0.29]]}], "villages": [{"name": "南坡村", "x": 0.32, "y": 0.77}, {"name": "东矿点", "x": 0.78, "y": 0.56}], "fronts": [{"name": "枢纽争夺线", "pts": [[0.28, 0.3], [0.35, 0.37], [0.43, 0.45], [0.52, 0.53], [0.62, 0.6], [0.72, 0.68]]}], "controlZones": [{"side": "blue", "poly": [[0, 0], [0.33, 0], [0.31, 0.28], [0.4, 0.42], [0.52, 0.55], [0.65, 0.64], [0.73, 1], [0, 1]]}, {"side": "red", "poly": [[0.33, 0], [1, 0], [1, 1], [0.73, 1], [0.65, 0.64], [0.52, 0.55], [0.4, 0.42], [0.31, 0.28]]}], "units": [{"side": "blue", "label": "2装旅", "x": 0.37, "y": 0.51}, {"side": "blue", "label": "铁道工兵", "x": 0.49, "y": 0.67}, {"side": "red", "label": "8机步旅", "x": 0.61, "y": 0.48}, {"side": "red", "label": "防空营", "x": 0.72, "y": 0.61}], "pois": [{"type": "railhub", "name": "中央铁路枢纽", "x": 0.49, "y": 0.5}, {"type": "bridge", "name": "河东桥", "x": 0.66, "y": 0.5}, {"type": "height", "name": "北岭402", "x": 0.18, "y": 0.3}]}, {"id": "s07", "name": "07 峡谷渡口", "seed": 707, "hills": [{"x": 0.28, "y": 0.18, "rx": 0.16, "ry": 0.16, "h": 0.24}, {"x": 0.3, "y": 0.8, "rx": 0.18, "ry": 0.16, "h": 0.26}, {"x": 0.72, "y": 0.2, "rx": 0.17, "ry": 0.16, "h": 0.28}, {"x": 0.72, "y": 0.8, "rx": 0.16, "ry": 0.16, "h": 0.27}], "depressions": [{"x": 0.5, "y": 0.5, "rx": 0.08, "ry": 0.42, "h": 0.18}], "rivers": [[[0.5, 0.0], [0.49, 0.12], [0.49, 0.24], [0.5, 0.37], [0.5, 0.51], [0.51, 0.63], [0.52, 0.77], [0.52, 0.9], [0.53, 1.0]]], "lakes": [], "forests": [[[0.05, 0.37], [0.2, 0.31], [0.27, 0.44], [0.22, 0.58], [0.08, 0.57]], [[0.77, 0.35], [0.93, 0.36], [0.95, 0.56], [0.82, 0.61], [0.74, 0.48]]], "roads": [{"kind": "primary", "pts": [[0.0, 0.53], [0.13, 0.53], [0.27, 0.53], [0.39, 0.52], [0.5, 0.52], [0.61, 0.51], [0.73, 0.51], [0.88, 0.5], [1.0, 0.48]]}, {"kind": "secondary", "pts": [[0.33, 0.08], [0.38, 0.24], [0.43, 0.39], [0.5, 0.52], [0.57, 0.67], [0.63, 0.83]]}], "rails": [], "cities": [{"name": "峡口城", "poly": [[0.43, 0.45], [0.57, 0.45], [0.6, 0.55], [0.51, 0.6], [0.4, 0.56]]}], "villages": [{"name": "西渡村", "x": 0.27, "y": 0.53}, {"name": "东崖哨", "x": 0.72, "y": 0.51}], "fronts": [{"name": "峡谷封锁线", "pts": [[0.34, 0.4], [0.4, 0.45], [0.46, 0.49], [0.53, 0.52], [0.61, 0.55], [0.68, 0.6]]}], "controlZones": [{"side": "blue", "poly": [[0, 0], [0.42, 0], [0.4, 0.38], [0.5, 0.52], [0.61, 0.59], [0.67, 1], [0, 1]]}, {"side": "red", "poly": [[0.42, 0], [1, 0], [1, 1], [0.67, 1], [0.61, 0.59], [0.5, 0.52], [0.4, 0.38]]}], "units": [{"side": "blue", "label": "1山地团", "x": 0.38, "y": 0.52}, {"side": "blue", "label": "反坦克连", "x": 0.29, "y": 0.63}, {"side": "red", "label": "3机步团", "x": 0.61, "y": 0.49}, {"side": "red", "label": "重炮群", "x": 0.74, "y": 0.61}], "pois": [{"type": "bridge", "name": "峡口大桥", "x": 0.5, "y": 0.52}, {"type": "pass", "name": "西坡隘口", "x": 0.39, "y": 0.34}, {"type": "height", "name": "东崖487", "x": 0.72, "y": 0.2}]}, {"id": "s08", "name": "08 高原湖区", "seed": 808, "hills": [{"x": 0.22, "y": 0.22, "rx": 0.18, "ry": 0.18, "h": 0.28}, {"x": 0.78, "y": 0.18, "rx": 0.18, "ry": 0.18, "h": 0.24}, {"x": 0.24, "y": 0.78, "rx": 0.2, "ry": 0.2, "h": 0.22}, {"x": 0.76, "y": 0.8, "rx": 0.18, "ry": 0.18, "h": 0.25}, {"x": 0.5, "y": 0.5, "rx": 0.12, "ry": 0.12, "h": 0.14}], "depressions": [{"x": 0.5, "y": 0.47, "rx": 0.2, "ry": 0.18, "h": 0.16}], "rivers": [[[0.5, 0.65], [0.56, 0.72], [0.64, 0.8], [0.73, 0.89], [0.84, 0.97]]], "lakes": [[[0.4, 0.34], [0.58, 0.32], [0.67, 0.42], [0.64, 0.57], [0.54, 0.63], [0.39, 0.6], [0.31, 0.49], [0.33, 0.4]]], "forests": [[[0.06, 0.46], [0.18, 0.4], [0.27, 0.51], [0.22, 0.66], [0.07, 0.62]], [[0.75, 0.49], [0.91, 0.45], [0.96, 0.6], [0.87, 0.71], [0.74, 0.63]]], "roads": [{"kind": "primary", "pts": [[0.07, 0.53], [0.18, 0.49], [0.29, 0.46], [0.39, 0.44], [0.5, 0.45], [0.61, 0.47], [0.74, 0.52], [0.88, 0.58]]}, {"kind": "secondary", "pts": [[0.5, 0.06], [0.49, 0.18], [0.48, 0.3], [0.46, 0.44], [0.45, 0.57], [0.46, 0.7], [0.49, 0.92]]}], "rails": [], "cities": [{"name": "湖心高原城", "poly": [[0.42, 0.64], [0.54, 0.63], [0.58, 0.71], [0.52, 0.79], [0.4, 0.76], [0.37, 0.69]]}, {"name": "北堤镇", "poly": [[0.57, 0.24], [0.64, 0.24], [0.67, 0.29], [0.63, 0.35], [0.56, 0.34]]}], "villages": [{"name": "西牧点", "x": 0.24, "y": 0.47}, {"name": "东岸寨", "x": 0.74, "y": 0.53}], "fronts": [{"name": "环湖阵地线", "pts": [[0.29, 0.36], [0.36, 0.39], [0.44, 0.43], [0.53, 0.47], [0.63, 0.53], [0.71, 0.6]]}], "controlZones": [{"side": "blue", "poly": [[0, 0], [0.4, 0], [0.37, 0.34], [0.5, 0.46], [0.66, 0.56], [0.79, 0.72], [0.73, 1], [0, 1]]}, {"side": "red", "poly": [[0.4, 0], [1, 0], [1, 1], [0.73, 1], [0.79, 0.72], [0.66, 0.56], [0.5, 0.46], [0.37, 0.34]]}], "units": [{"side": "blue", "label": "高原旅", "x": 0.34, "y": 0.51}, {"side": "blue", "label": "火箭炮营", "x": 0.42, "y": 0.68}, {"side": "red", "label": "机步旅", "x": 0.62, "y": 0.49}, {"side": "red", "label": "守湖团", "x": 0.74, "y": 0.62}], "pois": [{"type": "height", "name": "西峰612", "x": 0.22, "y": 0.22}, {"type": "height", "name": "东峰587", "x": 0.78, "y": 0.18}, {"type": "bridge", "name": "南堤桥", "x": 0.46, "y": 0.58}]}, {"id": "s09", "name": "09 工业河湾", "seed": 909, "hills": [{"x": 0.2, "y": 0.12, "rx": 0.12, "ry": 0.12, "h": 0.12}, {"x": 0.82, "y": 0.18, "rx": 0.14, "ry": 0.14, "h": 0.12}, {"x": 0.88, "y": 0.83, "rx": 0.16, "ry": 0.14, "h": 0.14}], "depressions": [{"x": 0.4, "y": 0.46, "rx": 0.18, "ry": 0.15, "h": 0.08}], "rivers": [[[0.0, 0.28], [0.15, 0.3], [0.28, 0.35], [0.4, 0.43], [0.5, 0.54], [0.56, 0.67], [0.61, 0.81], [0.66, 1.0]]], "lakes": [], "forests": [[[0.04, 0.59], [0.17, 0.54], [0.26, 0.66], [0.19, 0.82], [0.03, 0.76]], [[0.64, 0.09], [0.86, 0.1], [0.91, 0.26], [0.73, 0.31], [0.61, 0.2]]], "roads": [{"kind": "primary", "pts": [[0.04, 0.53], [0.19, 0.5], [0.33, 0.49], [0.47, 0.52], [0.57, 0.6], [0.67, 0.72], [0.79, 0.84], [0.94, 0.95]]}, {"kind": "primary", "pts": [[0.24, 0.08], [0.31, 0.18], [0.36, 0.3], [0.41, 0.43], [0.47, 0.52], [0.56, 0.61], [0.68, 0.69], [0.84, 0.74]]}, {"kind": "secondary", "pts": [[0.52, 0.19], [0.54, 0.31], [0.54, 0.43], [0.55, 0.56], [0.58, 0.69], [0.65, 0.85]]}], "rails": [{"pts": [[0.12, 0.44], [0.23, 0.44], [0.34, 0.45], [0.45, 0.51], [0.55, 0.61], [0.63, 0.73], [0.71, 0.86]]}, {"pts": [[0.36, 0.08], [0.4, 0.21], [0.44, 0.35], [0.48, 0.51], [0.52, 0.67], [0.58, 0.83]]}], "cities": [{"name": "河湾工业区", "poly": [[0.43, 0.46], [0.57, 0.46], [0.61, 0.56], [0.57, 0.68], [0.45, 0.7], [0.37, 0.6], [0.38, 0.5]]}, {"name": "西装配镇", "poly": [[0.26, 0.42], [0.33, 0.42], [0.36, 0.48], [0.33, 0.55], [0.24, 0.53], [0.22, 0.46]]}], "villages": [{"name": "南码头", "x": 0.63, "y": 0.86}, {"name": "北厂口", "x": 0.51, "y": 0.26}], "fronts": [{"name": "工业河湾争夺线", "pts": [[0.3, 0.37], [0.37, 0.42], [0.44, 0.48], [0.52, 0.56], [0.59, 0.65], [0.66, 0.74]]}], "controlZones": [{"side": "blue", "poly": [[0, 0], [0.34, 0], [0.32, 0.33], [0.44, 0.47], [0.55, 0.6], [0.67, 0.76], [0.71, 1], [0, 1]]}, {"side": "red", "poly": [[0.34, 0], [1, 0], [1, 1], [0.71, 1], [0.67, 0.76], [0.55, 0.6], [0.44, 0.47], [0.32, 0.33]]}], "units": [{"side": "blue", "label": "近卫步旅", "x": 0.39, "y": 0.53}, {"side": "blue", "label": "工兵营", "x": 0.5, "y": 0.72}, {"side": "red", "label": "装甲群", "x": 0.58, "y": 0.51}, {"side": "red", "label": "炮兵营", "x": 0.69, "y": 0.69}], "pois": [{"type": "industry", "name": "主钢厂区", "x": 0.54, "y": 0.58}, {"type": "bridge", "name": "工业桥", "x": 0.47, "y": 0.52}, {"type": "railhub", "name": "南货运站", "x": 0.56, "y": 0.67}]}, {"id": "s10", "name": "10 边境丘陵线", "seed": 1001, "hills": [{"x": 0.15, "y": 0.15, "rx": 0.15, "ry": 0.15, "h": 0.18}, {"x": 0.31, "y": 0.36, "rx": 0.12, "ry": 0.14, "h": 0.16}, {"x": 0.48, "y": 0.56, "rx": 0.14, "ry": 0.14, "h": 0.18}, {"x": 0.68, "y": 0.74, "rx": 0.14, "ry": 0.14, "h": 0.21}, {"x": 0.85, "y": 0.86, "rx": 0.14, "ry": 0.14, "h": 0.22}], "depressions": [{"x": 0.71, "y": 0.26, "rx": 0.12, "ry": 0.1, "h": 0.1}], "rivers": [[[0.0, 0.7], [0.12, 0.66], [0.26, 0.62], [0.37, 0.58], [0.49, 0.55], [0.63, 0.54], [0.79, 0.57], [0.95, 0.63], [1.0, 0.66]]], "lakes": [], "forests": [[[0.56, 0.06], [0.72, 0.08], [0.78, 0.2], [0.7, 0.31], [0.54, 0.24]], [[0.11, 0.76], [0.27, 0.72], [0.34, 0.86], [0.22, 0.95], [0.08, 0.89]]], "roads": [{"kind": "primary", "pts": [[0.03, 0.5], [0.14, 0.48], [0.24, 0.46], [0.35, 0.46], [0.48, 0.49], [0.59, 0.54], [0.7, 0.62], [0.8, 0.73], [0.91, 0.85]]}, {"kind": "secondary", "pts": [[0.29, 0.1], [0.32, 0.23], [0.35, 0.35], [0.39, 0.48], [0.44, 0.63], [0.51, 0.78]]}, {"kind": "secondary", "pts": [[0.74, 0.12], [0.69, 0.25], [0.64, 0.38], [0.58, 0.5], [0.51, 0.63], [0.44, 0.76]]}], "rails": [], "cities": [{"name": "边境要塞城", "poly": [[0.44, 0.46], [0.56, 0.46], [0.61, 0.55], [0.57, 0.64], [0.44, 0.64], [0.39, 0.55]]}, {"name": "东南丘镇", "poly": [[0.73, 0.74], [0.8, 0.74], [0.83, 0.8], [0.79, 0.86], [0.71, 0.84]]}], "villages": [{"name": "西谷口", "x": 0.22, "y": 0.46}, {"name": "北界桩", "x": 0.62, "y": 0.24}], "fronts": [{"name": "丘陵接触线", "pts": [[0.22, 0.3], [0.3, 0.37], [0.39, 0.44], [0.49, 0.52], [0.6, 0.61], [0.71, 0.7]]}], "controlZones": [{"side": "blue", "poly": [[0, 0], [0.26, 0], [0.24, 0.25], [0.38, 0.44], [0.52, 0.55], [0.67, 0.68], [0.75, 1], [0, 1]]}, {"side": "red", "poly": [[0.26, 0], [1, 0], [1, 1], [0.75, 1], [0.67, 0.68], [0.52, 0.55], [0.38, 0.44], [0.24, 0.25]]}], "units": [{"side": "blue", "label": "边防1旅", "x": 0.36, "y": 0.5}, {"side": "blue", "label": "侦察营", "x": 0.28, "y": 0.62}, {"side": "red", "label": "机械化旅", "x": 0.61, "y": 0.52}, {"side": "red", "label": "迫炮营", "x": 0.74, "y": 0.7}], "pois": [{"type": "fort", "name": "主堡垒", "x": 0.5, "y": 0.55}, {"type": "height", "name": "南丘421", "x": 0.68, "y": 0.74}, {"type": "bridge", "name": "界河桥", "x": 0.5, "y": 0.55}]}];
-const canvas = document.getElementById('mapCanvas');
-const ctx = canvas.getContext('2d');
-const W = canvas.width, H = canvas.height, MARGIN = 36;
-const mapRect = {x:MARGIN,y:MARGIN,w:W-MARGIN*2,h:H-MARGIN*2};
-const controls = {terrain:toggleTerrain,contours:toggleContours,nature:toggleNature,human:toggleHuman,tactical:toggleTactical,war:toggleWar,grid:toggleGrid,labels:toggleLabels};
-let currentScenario = SCENARIOS[0], elevationCache = null;
-function mapX(x){return mapRect.x+x*mapRect.w} function mapY(y){return mapRect.y+y*mapRect.h}
-function clamp(v,min,max){return Math.max(min,Math.min(max,v))} function lerp(a,b,t){return a+(b-a)*t} function smoothstep(t){return t*t*(3-2*t)}
-function hash2(seed,x,y){const s=Math.sin(x*127.1+y*311.7+seed*17.17)*43758.5453123; return s-Math.floor(s)}
-function valueNoise(seed,x,y){const xi=Math.floor(x), yi=Math.floor(y), xf=x-xi, yf=y-yi; const n00=hash2(seed,xi,yi), n10=hash2(seed,xi+1,yi), n01=hash2(seed,xi,yi+1), n11=hash2(seed,xi+1,yi+1); const u=smoothstep(xf), v=smoothstep(yf); return lerp(lerp(n00,n10,u), lerp(n01,n11,u), v)}
-function fractalNoise(seed,x,y){let total=0,amp=0.6,freq=1,sum=0; for(let i=0;i<4;i++){total+=valueNoise(seed+i*13,x*freq,y*freq)*amp; sum+=amp; amp*=0.5; freq*=2.15} return total/sum}
-function distToPolyline(px,py,pts){let minD=1e9; for(let i=0;i<pts.length-1;i++){const a=pts[i], b=pts[i+1], vx=b[0]-a[0], vy=b[1]-a[1], wx=px-a[0], wy=py-a[1], c1=vx*wx+vy*wy, c2=vx*vx+vy*vy, t=c2===0?0:clamp(c1/c2,0,1), qx=a[0]+t*vx, qy=a[1]+t*vy, dx=px-qx, dy=py-qy, d=Math.sqrt(dx*dx+dy*dy); if(d<minD) minD=d} return minD}
-function pointInPoly(pt,poly){let c=false; const x=pt[0], y=pt[1]; for(let i=0,j=poly.length-1;i<poly.length;j=i++){const xi=poly[i][0], yi=poly[i][1], xj=poly[j][0], yj=poly[j][1]; const intersect=((yi>y)!=(yj>y)) && (x<(xj-xi)*(y-yi)/((yj-yi)||1e-9)+xi); if(intersect) c=!c} return c}
-function sampleHeight(ds,nx,ny){
-  let h=0.34+0.035*(1-ny)+0.025*(0.5-Math.abs(nx-0.5));
-
-  // 山体不再是规则高斯“圆包”。每座山都按 seed 生成不对称山肩、尖峰、次峰和局部鞍部。
-  // 同一组数据每次渲染完全一致，但不同山峰的轮廓与峰顶细节会不同。
-  (ds.hills||[]).forEach((hill,hi)=>{
-    const dx=(nx-hill.x)/hill.rx, dy=(ny-hill.y)/hill.ry;
-    const r=Math.hypot(dx,dy), ang=Math.atan2(dy,dx);
-    const phase=hash2(ds.seed+137,hi*19+3,11)*Math.PI*2;
-
-    // 让山脚轮廓有自然的瓣状起伏，避免完美椭圆。
-    const lobes=1
-      +0.105*Math.sin(3*ang+phase)
-      +0.060*Math.sin(5*ang+phase*1.71)
-      +0.035*Math.sin(7*ang-phase*0.63);
-    const wr=r/clamp(lobes,0.78,1.25);
-
-    // 宽山体 + 尖峰核：尖峰核消除“山顶平台”感。
-    const broad=Math.exp(-2.85*wr*wr);
-    const sharp=Math.exp(-5.7*wr);
-    let mountain=hill.h*(0.74*broad+0.26*sharp);
-
-    // 峰顶局部粗糙度：只作用于山峰上部，不把平原弄得噪声过多。
-    const summitMask=Math.exp(-4.2*wr*wr);
-    const shoulderMask=Math.exp(-1.75*wr*wr)*(1-Math.exp(-5.0*wr*wr));
-    const fine=(fractalNoise(ds.seed+401+hi*97,nx*33,ny*33)-0.5)*2;
-    const mid =(fractalNoise(ds.seed+509+hi*83,nx*16,ny*16)-0.5)*2;
-    mountain += hill.h*(0.115*fine*summitMask + 0.055*mid*shoulderMask);
-
-    // 2~3 个窄次峰，让部分山体出现双峰/偏峰，而不是圆顶。
-    const subCount=2+(hash2(ds.seed+613,hi,5)>0.58?1:0);
-    for(let k=0;k<subCount;k++){
-      const a=hash2(ds.seed+701+hi*31,k,3)*Math.PI*2;
-      const rr=0.10+0.22*hash2(ds.seed+733+hi*37,k,7);
-      const ox=Math.cos(a)*rr, oy=Math.sin(a)*rr;
-      const ddx=dx-ox, ddy=dy-oy;
-      const amp=hill.h*(0.045+0.055*hash2(ds.seed+761+hi*41,k,13));
-      const tight=13+10*hash2(ds.seed+797+hi*43,k,17);
-      mountain += amp*Math.exp(-tight*(ddx*ddx+ddy*ddy));
-    }
-
-    // 一部分山顶带轻微鞍口/凹槽，形成更真实的峰顶结构；幅度控制得很小，不会变火山口。
-    if(hash2(ds.seed+823,hi,23)>0.42){
-      const a=hash2(ds.seed+857,hi,29)*Math.PI*2;
-      const rr=0.08+0.10*hash2(ds.seed+881,hi,31);
-      const ox=Math.cos(a)*rr, oy=Math.sin(a)*rr;
-      const ddx=dx-ox, ddy=dy-oy;
-      mountain -= hill.h*(0.035+0.030*hash2(ds.seed+907,hi,37))*Math.exp(-24*(ddx*ddx+ddy*ddy));
-    }
-
-    h+=mountain;
-  });
-
-  // 洼地也加入轻微不规则边缘，避免规则椭圆凹坑。
-  (ds.depressions||[]).forEach((dep,di)=>{
-    const dx=(nx-dep.x)/dep.rx,dy=(ny-dep.y)/dep.ry;
-    const r=Math.hypot(dx,dy),ang=Math.atan2(dy,dx);
-    const phase=hash2(ds.seed+929,di*17+1,41)*Math.PI*2;
-    const warp=1+0.08*Math.sin(3*ang+phase)+0.04*Math.sin(5*ang-phase*0.8);
-    const wr=r/clamp(warp,0.82,1.20);
-    h-=dep.h*Math.exp(-2.9*wr*wr);
-  });
-
-  (ds.rivers||[]).forEach(r=>{const d=distToPolyline(nx,ny,r); h-=0.052*Math.exp(-(d*d)/(2*0.010*0.010)); h-=0.028*Math.exp(-(d*d)/(2*0.046*0.046));});
-  (ds.coast||[]).forEach(c=>{if(pointInPoly([nx,ny],c)) h=Math.min(h,0.085);});
-  h+=(fractalNoise(ds.seed,nx*6.4,ny*6.4)-0.5)*0.070;
-  h+=(fractalNoise(ds.seed+99,nx*17,ny*17)-0.5)*0.022;
-  return clamp(h,0.02,0.96);
+(() => {
+'use strict';
+const map=document.getElementById('map'),ctx=map.getContext('2d');
+const battle=document.getElementById('battle'),bctx=battle.getContext('2d');
+const terrainToggle=document.getElementById('terrainToggle'),infraToggle=document.getElementById('infraToggle'),controlToggle=document.getElementById('controlToggle'),frontToggle=document.getElementById('frontToggle'),unitsToggle=document.getElementById('unitsToggle'),ordersToggle=document.getElementById('ordersToggle');
+const selectionCard=document.getElementById('selectionCard'),situation=document.getElementById('situation'),timeline=document.getElementById('timeline');
+const fitBtn=document.getElementById('fitBtn'),applyOrder=document.getElementById('applyOrder'),advance=document.getElementById('advance'),reset=document.getElementById('reset'),enterBattle=document.getElementById('enterBattle');
+const battleModal=document.getElementById('battleModal'),battleTitle=document.getElementById('battleTitle'),battleInfo=document.getElementById('battleInfo'),closeBattle=document.getElementById('closeBattle'),toast=document.getElementById('toast');
+const WORLD={w:1000,h:700};
+// 12 个不规则区域共享同一组边界节点，因此前线可从控制权差异自动计算，边界不会裂开。
+const baseRegions=[
+ {id:'R1',name:'北岭',poly:[[40,40],[260,28],[280,180],[55,210]],control:'blue',terrain:'mountain',objective:'山口',importance:'高'},
+ {id:'R4',name:'北河谷',poly:[[260,28],[480,42],[480,220],[280,180]],control:'blue',terrain:'valley',objective:'北部公路节点',importance:'高'},
+ {id:'R7',name:'北高地',poly:[[480,42],[700,35],[710,175],[480,220]],control:'red',terrain:'mountain',objective:'高地阵地',importance:'高'},
+ {id:'R10',name:'东北平原',poly:[[700,35],[940,55],[955,220],[710,175]],control:'red',terrain:'plain',objective:'东部补给区',importance:'中'},
+ {id:'R2',name:'西林',poly:[[55,210],[280,180],[240,420],[35,390]],control:'blue',terrain:'forest',objective:'林区道路',importance:'中'},
+ {id:'R5',name:'河谷城',poly:[[280,180],[480,220],[465,390],[240,420]],control:'contested',terrain:'urban',objective:'河谷城',importance:'关键'},
+ {id:'R8',name:'东部走廊',poly:[[480,220],[710,175],[690,430],[465,390]],control:'red',terrain:'plain',objective:'铁路走廊',importance:'关键'},
+ {id:'R11',name:'东城',poly:[[710,175],[955,220],[920,420],[690,430]],control:'red',terrain:'urban',objective:'东城',importance:'关键'},
+ {id:'R3',name:'西南台地',poly:[[35,390],[240,420],[290,640],[55,650]],control:'blue',terrain:'rough',objective:'后方集结区',importance:'中'},
+ {id:'R6',name:'南河湾',poly:[[240,420],[465,390],[530,655],[290,640]],control:'blue',terrain:'wetland',objective:'南桥',importance:'高'},
+ {id:'R9',name:'南部林地',poly:[[465,390],[690,430],[740,625],[530,655]],control:'red',terrain:'forest',objective:'南部森林',importance:'中'},
+ {id:'R12',name:'东南丘陵',poly:[[690,430],[920,420],[930,635],[740,625]],control:'red',terrain:'rough',objective:'南翼丘陵',importance:'中'}
+];
+const features={
+ rivers:[{id:'river-main',pts:[[105,18],[210,100],[315,188],[404,270],[490,350],[575,425],[677,515],[845,688]],width:8}],
+ ridges:[{pts:[[105,72],[180,90],[250,80],[330,105],[430,90]]},{pts:[[535,72],[610,95],[690,80],[760,105],[850,92]]}],
+ roads:[{kind:'primary',pts:[[80,520],[210,465],[338,392],[470,330],[603,290],[760,275],[925,250]]},{kind:'primary',pts:[[170,100],[290,190],[410,285],[510,400],[615,520],[735,625]]},{kind:'secondary',pts:[[315,600],[420,520],[520,455],[660,405],[805,360]]}],
+ rails:[{pts:[[80,575],[218,500],[338,420],[470,350],[620,315],[800,330],[940,375]]}],
+ cities:[{id:'C1',name:'河谷城',x:420,y:330,size:18},{id:'C2',name:'北关',x:308,y:175,size:10},{id:'C3',name:'东城',x:790,y:345,size:16},{id:'C4',name:'南桥镇',x:470,y:505,size:9}],
+ depots:[{id:'D1',name:'西部补给总站',x:105,y:555,side:'blue'},{id:'D2',name:'东部军需站',x:905,y:318,side:'red'}]
+};
+const baseUnits=[
+ {id:'U1',name:'第1装甲师',abbr:'1 ARM',side:'blue',type:'armor',x:292,y:348,region:'R5',order:'breakthrough',target:'R8'},
+ {id:'U2',name:'第4步兵师',abbr:'4 INF',side:'blue',type:'infantry',x:230,y:155,region:'R4',order:'hold',target:null},
+ {id:'U3',name:'第7轻步兵师',abbr:'7 LGT',side:'blue',type:'light',x:258,y:480,region:'R6',order:'attack',target:'R9'},
+ {id:'U4',name:'第2机械化师',abbr:'2 MEC',side:'red',type:'mechanized',x:620,y:300,region:'R8',order:'hold',target:null},
+ {id:'U5',name:'第5步兵师',abbr:'5 INF',side:'red',type:'infantry',x:635,y:145,region:'R7',order:'hold',target:null},
+ {id:'U6',name:'第3装甲师',abbr:'3 ARM',side:'red',type:'armor',x:770,y:395,region:'R11',order:'reserve',target:null}
+];
+let regions=structuredClone(baseRegions),units=structuredClone(baseUnits);
+let view={scale:1,ox:0,oy:0},drag=null,selected={kind:'region',id:'R5'},pendingOrder='breakthrough';
+let phase=0;
+const events=[{side:'neutral',text:'河谷城进入持续争夺，双方主力沿铁路与主干公路展开。'},{side:'blue',text:'蓝方第1装甲师正在向东部走廊形成突破准备。'},{side:'red',text:'红方机械化部队依托铁路走廊组织纵深防御。'}];
+const toggles={terrain:terrainToggle,infra:infraToggle,control:controlToggle,front:frontToggle,units:unitsToggle,orders:ordersToggle};
+function resize(){const r=map.getBoundingClientRect(),dpr=Math.min(devicePixelRatio||1,2);map.width=Math.round(r.width*dpr);map.height=Math.round(r.height*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);render();}
+addEventListener('resize',resize);
+function fitView(){const r=map.getBoundingClientRect(),pad=32;view.scale=Math.min((r.width-pad*2)/WORLD.w,(r.height-pad*2)/WORLD.h);view.ox=(r.width-WORLD.w*view.scale)/2;view.oy=(r.height-WORLD.h*view.scale)/2;render();}
+function sx(x){return view.ox+x*view.scale}function sy(y){return view.oy+y*view.scale}
+function inv(x,y){return{x:(x-view.ox)/view.scale,y:(y-view.oy)/view.scale}}
+function pathPoly(poly){ctx.beginPath();poly.forEach((p,i)=>i?ctx.lineTo(sx(p[0]),sy(p[1])):ctx.moveTo(sx(p[0]),sy(p[1])));ctx.closePath()}
+function linePath(pts){ctx.beginPath();pts.forEach((p,i)=>i?ctx.lineTo(sx(p[0]),sy(p[1])):ctx.moveTo(sx(p[0]),sy(p[1])))}
+function pointInPoly(p,poly){let c=false;for(let i=0,j=poly.length-1;i<poly.length;j=i++){const a=poly[i],b=poly[j];if(((a[1]>p.y)!=(b[1]>p.y))&&(p.x<(b[0]-a[0])*(p.y-a[1])/((b[1]-a[1])||1e-9)+a[0]))c=!c}return c}
+function hash(a,b,c=0){let x=Math.sin(a*12.9898+b*78.233+c*37.719)*43758.5453;return x-Math.floor(x)}
+function paper(){const r=map.getBoundingClientRect();ctx.fillStyle='#d8cfba';ctx.fillRect(0,0,r.width,r.height);const g=ctx.createLinearGradient(0,0,r.width,r.height);g.addColorStop(0,'rgba(255,252,240,.18)');g.addColorStop(.55,'rgba(112,98,73,.04)');g.addColorStop(1,'rgba(78,69,54,.12)');ctx.fillStyle=g;ctx.fillRect(0,0,r.width,r.height);ctx.globalAlpha=.08;for(let i=0;i<1200;i++){const x=hash(i,2)*r.width,y=hash(i,3)*r.height,s=.5+hash(i,4)*1.2;ctx.fillStyle=hash(i,5)>.5?'#5e594f':'#fff';ctx.fillRect(x,y,s,s)}ctx.globalAlpha=1}
+function regionFill(r){if(!toggles.control.checked)return 'rgba(238,231,214,.25)';if(r.control==='blue')return 'rgba(72,111,142,.17)';if(r.control==='red')return 'rgba(149,91,84,.17)';return 'rgba(179,151,88,.20)'}
+function drawRegions(){for(const r of regions){pathPoly(r.poly);ctx.fillStyle=regionFill(r);ctx.fill();ctx.strokeStyle='rgba(75,72,65,.22)';ctx.lineWidth=1;ctx.setLineDash([4,5]);ctx.stroke();ctx.setLineDash([]);if(selected.kind==='region'&&selected.id===r.id){pathPoly(r.poly);ctx.strokeStyle='rgba(44,45,42,.85)';ctx.lineWidth=3;ctx.stroke()}}
 }
-function terrainColor(t){
-  // 纸质军事地图的分层设色：低地偏灰绿，高地逐步转为黄褐/灰褐。
-  // t 是“显示高程”而不是原始高程；每张地图会自适应拉开 5%~95% 高程差。
-  const stops=[
-    [0.00,[218,222,197]],
-    [0.14,[203,211,174]],
-    [0.28,[188,200,151]],
-    [0.42,[178,187,132]],
-    [0.56,[176,170,116]],
-    [0.70,[174,151,101]],
-    [0.82,[160,129,88]],
-    [0.92,[145,111,82]],
-    [1.00,[128,96,75]]
-  ];
-  for(let i=0;i<stops.length-1;i++){
-    if(t<=stops[i+1][0]){
-      const a=stops[i],b=stops[i+1],u=clamp((t-a[0])/(b[0]-a[0]),0,1);
-      return [lerp(a[1][0],b[1][0],u),lerp(a[1][1],b[1][1],u),lerp(a[1][2],b[1][2],u)];
-    }
-  }
-  return stops[stops.length-1][1];
+function clipRegion(r,fn){ctx.save();pathPoly(r.poly);ctx.clip();fn();ctx.restore()}
+function drawTerrain(){if(!toggles.terrain.checked)return;for(const r of regions){clipRegion(r,()=>{const box=r.poly.reduce((a,p)=>({minx:Math.min(a.minx,p[0]),maxx:Math.max(a.maxx,p[0]),miny:Math.min(a.miny,p[1]),maxy:Math.max(a.maxy,p[1])}),{minx:1e9,maxx:-1e9,miny:1e9,maxy:-1e9});if(r.terrain==='mountain'||r.terrain==='rough'){const n=r.terrain==='mountain'?18:9;for(let i=0;i<n;i++){const x=box.minx+hash(i,r.id.charCodeAt(1))* (box.maxx-box.minx),y=box.miny+hash(i+30,r.id.charCodeAt(1))* (box.maxy-box.miny);ctx.strokeStyle=r.terrain==='mountain'?'rgba(87,79,61,.27)':'rgba(96,87,68,.18)';ctx.lineWidth=1.1;ctx.beginPath();ctx.moveTo(sx(x-16),sy(y+8));ctx.lineTo(sx(x),sy(y-10));ctx.lineTo(sx(x+16),sy(y+8));ctx.stroke();if(r.terrain==='mountain'){ctx.beginPath();ctx.moveTo(sx(x-10),sy(y+2));ctx.lineTo(sx(x),sy(y-4));ctx.lineTo(sx(x+11),sy(y+3));ctx.stroke()}}}
+if(r.terrain==='forest'){for(let i=0;i<70;i++){const x=box.minx+hash(i,71+r.id.charCodeAt(1))*(box.maxx-box.minx),y=box.miny+hash(i,91+r.id.charCodeAt(1))*(box.maxy-box.miny);ctx.fillStyle='rgba(73,91,67,.22)';ctx.beginPath();ctx.arc(sx(x),sy(y),Math.max(1.3,2.1*view.scale),0,Math.PI*2);ctx.fill()}}
+if(r.terrain==='wetland'){ctx.strokeStyle='rgba(95,118,119,.20)';ctx.lineWidth=1;for(let i=0;i<12;i++){const yy=box.miny+15+i*12;ctx.beginPath();ctx.moveTo(sx(box.minx+20),sy(yy));ctx.lineTo(sx(box.maxx-20),sy(yy+hash(i,9)*6));ctx.stroke()}}
+if(r.terrain==='urban'){ctx.fillStyle='rgba(91,84,72,.11)';for(let i=0;i<22;i++){const x=box.minx+hash(i,21)*(box.maxx-box.minx),y=box.miny+hash(i,22)*(box.maxy-box.miny);ctx.fillRect(sx(x),sy(y),4*view.scale,3*view.scale)}}});}}
+function drawRidges(){if(!toggles.terrain.checked)return;for(const ridge of features.ridges){ctx.strokeStyle='rgba(84,75,58,.35)';ctx.lineWidth=5*view.scale;ctx.lineCap='round';linePath(ridge.pts);ctx.stroke();ctx.strokeStyle='rgba(244,237,220,.35)';ctx.lineWidth=1.2*view.scale;linePath(ridge.pts);ctx.stroke()}}
+function drawInfra(){if(!toggles.infra.checked)return;for(const river of features.rivers){ctx.strokeStyle='rgba(72,105,128,.72)';ctx.lineWidth=river.width*view.scale;ctx.lineCap='round';ctx.lineJoin='round';linePath(river.pts);ctx.stroke();ctx.strokeStyle='rgba(206,221,224,.45)';ctx.lineWidth=Math.max(1,river.width*.28*view.scale);linePath(river.pts);ctx.stroke()}
+for(const road of features.roads){ctx.strokeStyle=road.kind==='primary'?'rgba(111,94,69,.82)':'rgba(126,111,87,.60)';ctx.lineWidth=(road.kind==='primary'?4:2.2)*view.scale;ctx.lineCap='round';linePath(road.pts);ctx.stroke();if(road.kind==='primary'){ctx.strokeStyle='rgba(224,211,184,.45)';ctx.lineWidth=1*view.scale;linePath(road.pts);ctx.stroke()}}
+for(const rail of features.rails){ctx.strokeStyle='rgba(74,70,61,.74)';ctx.lineWidth=2*view.scale;linePath(rail.pts);ctx.stroke();ctx.setLineDash([7*view.scale,6*view.scale]);ctx.strokeStyle='rgba(238,229,208,.75)';ctx.lineWidth=.9*view.scale;linePath(rail.pts);ctx.stroke();ctx.setLineDash([])}
+for(const c of features.cities){const x=sx(c.x),y=sy(c.y),s=c.size*view.scale;ctx.fillStyle='rgba(68,65,57,.82)';ctx.fillRect(x-s*.55,y-s*.45,s,s*.9);ctx.fillStyle='rgba(215,205,182,.55)';ctx.fillRect(x-s*.15,y-s*.12,s*.3,s*.24);ctx.font=`${Math.max(9,11*view.scale)}px sans-serif`;ctx.fillStyle='rgba(55,55,50,.86)';ctx.fillText(c.name,x+s*.75,y+3)}
+for(const d of features.depots){const x=sx(d.x),y=sy(d.y);ctx.save();ctx.translate(x,y);ctx.rotate(Math.PI/4);ctx.fillStyle=d.side==='blue'?'rgba(64,96,122,.85)':'rgba(132,75,69,.85)';ctx.fillRect(-7*view.scale,-7*view.scale,14*view.scale,14*view.scale);ctx.restore();ctx.font=`${Math.max(8,10*view.scale)}px sans-serif`;ctx.fillStyle='#45443e';ctx.fillText(d.name,x+10*view.scale,y+2)} }
+function edges(poly){return poly.map((a,i)=>[a,poly[(i+1)%poly.length]])}
+function samePoint(a,b){return Math.hypot(a[0]-b[0],a[1]-b[1])<1}
+function sharedEdge(a,b){for(const e1 of edges(a.poly))for(const e2 of edges(b.poly))if((samePoint(e1[0],e2[0])&&samePoint(e1[1],e2[1]))||(samePoint(e1[0],e2[1])&&samePoint(e1[1],e2[0])))return e1;return null}
+function drawFront(){if(!toggles.front.checked)return;for(let i=0;i<regions.length;i++)for(let j=i+1;j<regions.length;j++){const a=regions[i],b=regions[j],e=sharedEdge(a,b);if(!e)continue;if(a.control!==b.control&&(a.control!=='contested'||b.control!=='contested')){const [p,q]=e;ctx.strokeStyle='rgba(42,44,41,.88)';ctx.lineWidth=5*view.scale;ctx.lineCap='round';ctx.setLineDash([12*view.scale,6*view.scale]);ctx.beginPath();ctx.moveTo(sx(p[0]),sy(p[1]));ctx.lineTo(sx(q[0]),sy(q[1]));ctx.stroke();ctx.setLineDash([]);}}
 }
-function buildElevation(ds){
-  const resW=360,resH=240, grid=Array.from({length:resH},()=>new Float32Array(resW));
-  const vals=[];
-  for(let j=0;j<resH;j++){
-    for(let i=0;i<resW;i++){
-      const h=sampleHeight(ds,i/(resW-1),j/(resH-1));
-      grid[j][i]=h; vals.push(h);
-    }
-  }
-  vals.sort((a,b)=>a-b);
-  const q=q=>vals[Math.max(0,Math.min(vals.length-1,Math.floor(q*(vals.length-1))))];
-  const p005=q(0.005),p03=q(0.03),p08=q(0.08),p50=q(0.50),p92=q(0.92),p97=q(0.97),p995=q(0.995);
-  // 不再在 p92 就硬截到最高色阶；旧版宽阔“平顶”主要就是这里产生的。
-  // 现在把 0.5%~99.5% 高程连续映射，只有极少量真正最高点才到顶色。
-  const spanWide=Math.max(0.12,p995-p005);
-  const displayGrid=Array.from({length:resH},()=>new Float32Array(resW));
-  for(let j=0;j<resH;j++){
-    for(let i=0;i<resW;i++){
-      const h=grid[j][i];
-      let local=clamp((h-p005)/spanWide,0,1);
-      // 轻微 S 曲线：加强中高地层次，但保留峰顶连续梯度。
-      local=smoothstep(local);
-      const absolute=clamp((h-0.12)/0.78,0,1);
-      let t=clamp(local*0.84+absolute*0.16,0,1);
-      t=clamp(0.5+(t-0.5)*1.10,0,1);
-      displayGrid[j][i]=t;
-    }
-  }
-  return {grid,displayGrid,resW,resH,stats:{p005,p03,p08,p50,p92,p97,p995,span:spanWide}};
-}
-function drawTerrain(ds){
-  elevationCache=buildElevation(ds);
-  const {grid,displayGrid,resW,resH}=elevationCache;
-  const off=document.createElement('canvas'); off.width=resW; off.height=resH;
-  const octx=off.getContext('2d'); const img=octx.createImageData(resW,resH);
-  const at=(arr,x,y)=>arr[clamp(y,0,resH-1)|0][clamp(x,0,resW-1)|0];
-  const light=[-0.60,-0.52,0.61]; const llen=Math.hypot(light[0],light[1],light[2]); light[0]/=llen;light[1]/=llen;light[2]/=llen;
-  for(let j=0;j<resH;j++){
-    for(let i=0;i<resW;i++){
-      const raw=grid[j][i], t=displayGrid[j][i];
-      // 用“显示高程”计算坡面，视觉纵深比真实数值更明显，但不改原始地理数据。
-      const dx=(at(displayGrid,i+1,j)-at(displayGrid,i-1,j))*22.0;
-      const dy=(at(displayGrid,i,j+1)-at(displayGrid,i,j-1))*22.0;
-      let nx=-dx,ny=-dy,nz=1.0; const nl=Math.hypot(nx,ny,nz); nx/=nl;ny/=nl;nz/=nl;
-      const lambert=clamp(nx*light[0]+ny*light[1]+nz*light[2],-0.55,1.0);
-
-      // 多尺度地形遮蔽：谷地压暗、山脊提亮，形成“凹进去/凸出来”的感觉。
-      let near=0,far=0,nc=0,fc=0;
-      for(const r of [3,6,10]){
-        near+=at(displayGrid,i+r,j)+at(displayGrid,i-r,j)+at(displayGrid,i,j+r)+at(displayGrid,i,j-r)+at(displayGrid,i+r,j+r)+at(displayGrid,i-r,j-r)+at(displayGrid,i+r,j-r)+at(displayGrid,i-r,j+r);nc+=8;
-      }
-      for(const r of [16,24]){
-        far+=at(displayGrid,i+r,j)+at(displayGrid,i-r,j)+at(displayGrid,i,j+r)+at(displayGrid,i,j-r)+at(displayGrid,i+r,j+r)+at(displayGrid,i-r,j-r)+at(displayGrid,i+r,j-r)+at(displayGrid,i-r,j+r);fc+=8;
-      }
-      const avgNear=near/nc,avgFar=far/fc;
-      const valley=clamp((avgNear-t)*2.5+(avgFar-t)*1.4,0,0.55);
-      const ridge=clamp((t-avgNear)*2.8+(t-avgFar)*1.1,0,0.40);
-      const slope=clamp(Math.hypot(dx,dy),0,1.4);
-
-      // 强化纸质浮雕：坡向是主层，谷地阴影是次层，高地本身还会被分层设色。
-      let shade=0.78 + lambert*0.43 - valley*0.72 + ridge*0.25 - slope*0.035;
-      shade=clamp(shade,0.38,1.22);
-      const c=terrainColor(t);
-      const warmHigh=clamp((t-0.55)*0.12,0,0.07);
-      const coolLow=clamp((0.35-t)*0.10,0,0.05);
-      const idx=(j*resW+i)*4;
-      img.data[idx]=clamp(c[0]*shade + warmHigh*65 - coolLow*20,0,255);
-      img.data[idx+1]=clamp(c[1]*shade + warmHigh*30 - coolLow*6,0,255);
-      img.data[idx+2]=clamp(c[2]*shade + coolLow*28,0,255);
-      img.data[idx+3]=255;
-    }
-  }
-  octx.putImageData(img,0,0);
-  ctx.imageSmoothingEnabled=true;
-  ctx.drawImage(off,mapRect.x,mapRect.y,mapRect.w,mapRect.h);
-
-  // 低频纸张纤维 + 很轻的旧地图颗粒；全部由 seed 决定，重复渲染不跳动。
-  ctx.save();
-  ctx.globalCompositeOperation='multiply';
-  for(let y=mapRect.y;y<mapRect.y+mapRect.h;y+=3){
-    const a=0.008+0.006*hash2(ds.seed,0,y|0);
-    ctx.fillStyle=`rgba(91,76,57,${a})`;
-    ctx.fillRect(mapRect.x,y,mapRect.w,1);
-  }
-  for(let k=0;k<900;k++){
-    const rx=hash2(ds.seed+311,k,17), ry=hash2(ds.seed+719,k,29), a=0.006+0.010*hash2(ds.seed+991,k,43);
-    ctx.fillStyle=`rgba(77,65,50,${a})`;
-    ctx.fillRect(mapRect.x+rx*mapRect.w,mapRect.y+ry*mapRect.h,0.8,0.8);
-  }
-  ctx.restore();
-
-  // 高程带边界非常轻地压一层，让“高/低层”即使不显示等高线也能被眼睛分辨。
-  ctx.save();
-  ctx.globalCompositeOperation='multiply';
-  const bands=[0.20,0.36,0.52,0.68,0.84];
-  const bandOff=document.createElement('canvas');bandOff.width=resW;bandOff.height=resH;const bctx=bandOff.getContext('2d');
-  const bimg=bctx.createImageData(resW,resH);
-  for(let j=1;j<resH-1;j++){
-    for(let i=1;i<resW-1;i++){
-      const t=displayGrid[j][i]; let edge=0;
-      for(const b of bands){
-        const d=Math.abs(t-b); if(d<0.012) edge=Math.max(edge,1-d/0.012);
-      }
-      if(edge>0){const idx=(j*resW+i)*4;bimg.data[idx]=72;bimg.data[idx+1]=64;bimg.data[idx+2]=54;bimg.data[idx+3]=Math.round(18*edge);}
-    }
-  }
-  bctx.putImageData(bimg,0,0);ctx.drawImage(bandOff,mapRect.x,mapRect.y,mapRect.w,mapRect.h);ctx.restore();
-}
-function drawSmoothPoly(points,close=true){if(!points.length) return; ctx.beginPath(); ctx.moveTo(mapX(points[0][0]),mapY(points[0][1])); for(let i=1;i<points.length;i++){const p0=points[i-1], p1=points[i], mx=(mapX(p0[0])+mapX(p1[0]))/2, my=(mapY(p0[1])+mapY(p1[1]))/2; ctx.quadraticCurveTo(mapX(p0[0]),mapY(p0[1]),mx,my)} const last=points[points.length-1]; ctx.lineTo(mapX(last[0]),mapY(last[1])); if(close) ctx.closePath()}
-function drawPolyline(points){ctx.beginPath(); ctx.moveTo(mapX(points[0][0]),mapY(points[0][1])); for(let i=1;i<points.length;i++) ctx.lineTo(mapX(points[i][0]),mapY(points[i][1]))}
-function drawIsolines(ds){
-  const ec=elevationCache||buildElevation(ds),grid=ec.displayGrid||ec.grid,resW=ec.resW,resH=ec.resH;
-  // 使用每张地图的“显示高程”自适应等高线，避免平原或高原出现几乎没有等高线的情况。
-  const levels=[]; for(let k=1;k<=11;k++) levels.push(k/12);
-  const interp=(a,b,tA,tB,level)=>{const tt=(level-a)/((b-a)||1e-9);return [lerp(tA[0],tB[0],tt),lerp(tA[1],tB[1],tt)];};
-  ctx.save();
-  levels.forEach((level,li)=>{
-    const major=(li%3===2);
-    ctx.strokeStyle=major?'rgba(66,58,49,0.50)':'rgba(72,65,56,0.26)';
-    ctx.lineWidth=major?1.35:0.66;
-    for(let j=0;j<resH-1;j++) for(let i=0;i<resW-1;i++){
-      const v0=grid[j][i],v1=grid[j][i+1],v2=grid[j+1][i+1],v3=grid[j+1][i],mask=(v0>level?1:0)|(v1>level?2:0)|(v2>level?4:0)|(v3>level?8:0);if(mask===0||mask===15)continue;
-      const x=i/(resW-1),y=j/(resH-1),sx=1/(resW-1),sy=1/(resH-1);
-      const pTop=interp(v0,v1,[x,y],[x+sx,y],level),pRight=interp(v1,v2,[x+sx,y],[x+sx,y+sy],level),pBottom=interp(v3,v2,[x,y+sy],[x+sx,y+sy],level),pLeft=interp(v0,v3,[x,y],[x,y+sy],level);
-      const segs={1:[[pLeft,pTop]],2:[[pTop,pRight]],3:[[pLeft,pRight]],4:[[pRight,pBottom]],5:[[pLeft,pBottom],[pTop,pRight]],6:[[pTop,pBottom]],7:[[pLeft,pBottom]],8:[[pBottom,pLeft]],9:[[pTop,pBottom]],10:[[pTop,pLeft],[pRight,pBottom]],11:[[pRight,pBottom]],12:[[pLeft,pRight]],13:[[pTop,pRight]],14:[[pLeft,pTop]]}[mask]||[];
-      segs.forEach(seg=>{ctx.beginPath();ctx.moveTo(mapX(seg[0][0]),mapY(seg[0][1]));ctx.lineTo(mapX(seg[1][0]),mapY(seg[1][1]));ctx.stroke();});
-    }
-  });
-  ctx.restore();
-}
-function drawNature(ds){
-  (ds.coast||[]).forEach(coast=>{ctx.save();ctx.fillStyle='rgba(126,157,171,0.90)';drawSmoothPoly(coast,true);ctx.fill();ctx.strokeStyle='rgba(225,222,196,0.65)';ctx.lineWidth=1.3;ctx.stroke();ctx.restore();});
-  (ds.lakes||[]).forEach(lake=>{ctx.save();ctx.fillStyle='rgba(120,154,174,0.90)';ctx.strokeStyle='rgba(69,105,124,0.65)';ctx.lineWidth=1.6;drawSmoothPoly(lake,true);ctx.fill();ctx.stroke();ctx.restore();});
-  (ds.rivers||[]).forEach(river=>{ctx.save();ctx.lineCap='round';ctx.lineJoin='round';ctx.strokeStyle='rgba(48,58,55,0.22)';ctx.lineWidth=10;drawPolyline(river);ctx.stroke();ctx.strokeStyle='rgba(89,131,151,0.98)';ctx.lineWidth=5.2;drawPolyline(river);ctx.stroke();ctx.strokeStyle='rgba(199,218,221,0.60)';ctx.lineWidth=1.1;drawPolyline(river);ctx.stroke();ctx.restore();});
-  (ds.forests||[]).forEach((forest,fi)=>{ctx.save();drawSmoothPoly(forest,true);ctx.fillStyle='rgba(67,83,58,0.18)';ctx.fill();ctx.clip();const minX=Math.min(...forest.map(p=>p[0])),maxX=Math.max(...forest.map(p=>p[0])),minY=Math.min(...forest.map(p=>p[1])),maxY=Math.max(...forest.map(p=>p[1]));for(let k=0;k<430;k++){const nx=minX+(maxX-minX)*hash2(ds.seed+fi*37,k,11),ny=minY+(maxY-minY)*hash2(ds.seed+fi*53,k,29);if(!pointInPoly([nx,ny],forest))continue;const x=mapX(nx),y=mapY(ny),r=1.7+hash2(ds.seed+fi*17,k,71)*3.2;ctx.fillStyle=`rgba(48,67,45,${0.11+0.10*hash2(ds.seed,k,91)})`;ctx.beginPath();ctx.arc(x+1.2,y+1.5,r,0,Math.PI*2);ctx.fill();ctx.fillStyle=`rgba(139,151,112,${0.06+0.06*hash2(ds.seed,k,101)})`;ctx.beginPath();ctx.arc(x-1.0,y-1.2,r*0.72,0,Math.PI*2);ctx.fill();}ctx.restore();ctx.save();drawSmoothPoly(forest,true);ctx.strokeStyle='rgba(54,71,47,0.34)';ctx.lineWidth=1.0;ctx.stroke();ctx.restore();});
-}
-function drawHuman(ds){
-  (ds.roads||[]).forEach(road=>{ctx.save();ctx.lineCap='round';ctx.lineJoin='round';ctx.strokeStyle=road.kind==='primary'?'rgba(78,68,58,0.88)':'rgba(103,92,78,0.76)';ctx.lineWidth=road.kind==='primary'?3.4:2.3;drawPolyline(road.pts);ctx.stroke();ctx.strokeStyle='rgba(225,216,195,0.44)';ctx.lineWidth=road.kind==='primary'?0.8:0.55;drawPolyline(road.pts);ctx.stroke();ctx.restore();});
-  (ds.rails||[]).forEach(rail=>{ctx.save();ctx.strokeStyle='rgba(48,48,46,0.82)';ctx.lineWidth=1.8;drawPolyline(rail.pts);ctx.stroke();ctx.strokeStyle='rgba(238,233,222,0.75)';ctx.lineWidth=0.65;ctx.setLineDash([1,10]);drawPolyline(rail.pts);ctx.stroke();ctx.restore();});
-  (ds.cities||[]).forEach((city,ci)=>{ctx.save();drawSmoothPoly(city.poly,true);ctx.fillStyle='rgba(132,126,114,0.34)';ctx.fill();ctx.strokeStyle='rgba(80,76,69,0.48)';ctx.lineWidth=0.9;ctx.stroke();ctx.clip();const minX=Math.min(...city.poly.map(p=>p[0])),maxX=Math.max(...city.poly.map(p=>p[0])),minY=Math.min(...city.poly.map(p=>p[1])),maxY=Math.max(...city.poly.map(p=>p[1]));for(let k=0;k<150;k++){const nx=minX+(maxX-minX)*hash2(ds.seed+ci*29,k,19),ny=minY+(maxY-minY)*hash2(ds.seed+ci*31,k,43);if(!pointInPoly([nx,ny],city.poly))continue;const x=mapX(nx),y=mapY(ny),bw=3+hash2(ds.seed,k,61)*8,bh=2+hash2(ds.seed,k,73)*6;ctx.fillStyle=`rgba(92,88,81,${0.17+0.13*hash2(ds.seed,k,89)})`;ctx.fillRect(x,y,bw,bh);ctx.fillStyle='rgba(232,225,210,0.20)';ctx.fillRect(x,y,bw,1);}ctx.restore();});
-  (ds.villages||[]).forEach(v=>{const x=mapX(v.x),y=mapY(v.y);ctx.save();ctx.fillStyle='rgba(81,75,67,0.9)';ctx.beginPath();ctx.arc(x,y,3.4,0,Math.PI*2);ctx.fill();ctx.strokeStyle='rgba(244,239,226,0.7)';ctx.lineWidth=0.8;ctx.stroke();ctx.restore();});
-}
-function drawTactical(ds){(ds.pois||[]).forEach(poi=>{const x=mapX(poi.x), y=mapY(poi.y); ctx.save(); ctx.strokeStyle='#222'; ctx.fillStyle='#f8f3e7'; ctx.lineWidth=1.3; if(poi.type==='bridge'){ctx.strokeStyle='#1f1f1f'; ctx.lineWidth=1.8; ctx.beginPath(); ctx.moveTo(x-10,y); ctx.lineTo(x+10,y); ctx.stroke(); ctx.beginPath(); ctx.moveTo(x-6,y-5); ctx.quadraticCurveTo(x,y-10,x+6,y-5); ctx.stroke(); ctx.beginPath(); ctx.moveTo(x-6,y+5); ctx.quadraticCurveTo(x,y+10,x+6,y+5); ctx.stroke()} else if(poi.type==='height'){ctx.beginPath(); ctx.moveTo(x,y-8); ctx.lineTo(x-8,y+6); ctx.lineTo(x+8,y+6); ctx.closePath(); ctx.fill(); ctx.stroke()} else if(poi.type==='pass'){ctx.beginPath(); ctx.rect(x-7,y-5,14,10); ctx.stroke(); ctx.beginPath(); ctx.moveTo(x-10,y); ctx.lineTo(x+10,y); ctx.stroke()} else {ctx.beginPath(); ctx.arc(x,y,6,0,Math.PI*2); ctx.fill(); ctx.stroke(); if(poi.type==='fort'){ctx.beginPath(); ctx.rect(x-8,y-8,16,16); ctx.stroke()} if(poi.type==='railhub'){ctx.beginPath(); ctx.moveTo(x-10,y); ctx.lineTo(x+10,y); ctx.moveTo(x,y-10); ctx.lineTo(x,y+10); ctx.stroke()} if(poi.type==='industry'){ctx.beginPath(); ctx.moveTo(x-8,y+6); ctx.lineTo(x-8,y-3); ctx.lineTo(x-3,y-7); ctx.lineTo(x+3,y-2); ctx.lineTo(x+3,y+6); ctx.closePath(); ctx.stroke()} if(poi.type==='port'){ctx.beginPath(); ctx.moveTo(x-7,y+7); ctx.lineTo(x+7,y+7); ctx.moveTo(x,y-8); ctx.lineTo(x,y+7); ctx.stroke()}} if(controls.labels.checked){ctx.fillStyle='#201f1d'; ctx.font='12px sans-serif'; ctx.fillText(poi.name,x+10,y-6)} ctx.restore()})}
-function drawWar(ds){
-  (ds.controlZones||[]).forEach(zone=>{const rgb=zone.side==='blue'?'60,103,142':'145,76,66';ctx.save();drawSmoothPoly(zone.poly,true);ctx.fillStyle=`rgba(${rgb},0.018)`;ctx.fill();ctx.strokeStyle=`rgba(${rgb},0.045)`;ctx.lineWidth=18;ctx.stroke();ctx.strokeStyle=`rgba(${rgb},0.15)`;ctx.lineWidth=3;ctx.stroke();ctx.restore();});
-  (ds.fronts||[]).forEach(front=>{ctx.save();ctx.strokeStyle='rgba(31,31,29,0.90)';ctx.lineWidth=3.0;ctx.setLineDash([9,8]);drawPolyline(front.pts);ctx.stroke();ctx.setLineDash([]);if(controls.labels.checked){const m=front.pts[Math.floor(front.pts.length/2)];ctx.fillStyle='rgba(31,31,29,0.88)';ctx.font='600 12px sans-serif';ctx.fillText(front.name,mapX(m[0])+10,mapY(m[1])-10);}ctx.restore();});
-  (ds.units||[]).forEach(unit=>{const x=mapX(unit.x),y=mapY(unit.y),w=56,h=23;ctx.save();ctx.fillStyle=unit.side==='blue'?'rgba(56,94,132,0.94)':'rgba(145,76,67,0.94)';ctx.strokeStyle='rgba(244,240,230,0.86)';ctx.lineWidth=1.0;ctx.beginPath();ctx.roundRect(x-w/2,y-h/2,w,h,5);ctx.fill();ctx.stroke();ctx.fillStyle='#f8f5ec';ctx.font='600 11.5px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(unit.label,x,y+0.3);ctx.restore();});
-}
-function drawGrid(){ctx.save(); ctx.strokeStyle='rgba(78,70,60,0.18)'; ctx.lineWidth=1; ctx.font='11px ui-monospace, monospace'; ctx.fillStyle='rgba(60,54,48,0.62)'; const cols=10, rows=8; for(let i=0;i<=cols;i++){const x=mapRect.x+mapRect.w*i/cols; ctx.beginPath(); ctx.moveTo(x,mapRect.y); ctx.lineTo(x,mapRect.y+mapRect.h); ctx.stroke(); if(i<cols) ctx.fillText(String.fromCharCode(65+i),x+6,mapRect.y+14)} for(let j=0;j<=rows;j++){const y=mapRect.y+mapRect.h*j/rows; ctx.beginPath(); ctx.moveTo(mapRect.x,y); ctx.lineTo(mapRect.x+mapRect.w,y); ctx.stroke(); if(j<rows) ctx.fillText(String(j+1),mapRect.x+6,y+14)} ctx.restore()}
-function drawFrameTitle(ds){ctx.save(); ctx.strokeStyle='rgba(88,80,71,0.55)'; ctx.lineWidth=2; ctx.strokeRect(mapRect.x,mapRect.y,mapRect.w,mapRect.h); ctx.fillStyle='rgba(36,34,31,0.92)'; ctx.font='bold 20px sans-serif'; ctx.fillText(`战争地形图 · ${ds.name}`,mapRect.x+10,24); ctx.font='12px ui-monospace, monospace'; ctx.fillStyle='rgba(68,61,54,0.8)'; ctx.fillText(`seed=${ds.seed} · 五层渲染：terrain / nature / human / tactical / war`,mapRect.x+10,H-10); ctx.textAlign='right'; ctx.fillText('比例尺（示意）1 : 150,000',mapRect.x+mapRect.w-10,24); ctx.textAlign='left'; ctx.restore()}
-function updateInfo(ds){infoBox.innerHTML=`<b>${ds.name}</b><br>seed：<span class="mono">${ds.seed}</span><br>河流：${(ds.rivers||[]).length} 条；森林区：${(ds.forests||[]).length} 片；道路：${(ds.roads||[]).length} 条；铁路：${(ds.rails||[]).length} 条<br>城市/镇区：${(ds.cities||[]).length} 个；村点：${(ds.villages||[]).length} 个；战术要点：${(ds.pois||[]).length} 个；单位：${(ds.units||[]).length} 个<br>主战线：${(ds.fronts||[]).map(f=>f.name).join('，') || '无'}`}
-function drawLabels(ds){ctx.save(); ctx.fillStyle='rgba(36,33,30,0.93)'; ctx.strokeStyle='rgba(248,245,238,0.86)'; ctx.lineWidth=3; function label(txt,x,y,size=13,weight='600'){ctx.font=`${weight} ${size}px sans-serif`; ctx.strokeText(txt,x,y); ctx.fillText(txt,x,y)} (ds.cities||[]).forEach(city=>{const cx=city.poly.reduce((s,p)=>s+p[0],0)/city.poly.length, cy=city.poly.reduce((s,p)=>s+p[1],0)/city.poly.length; label(city.name,mapX(cx)+8,mapY(cy)-8,14,'700')}); (ds.villages||[]).forEach(v=>label(v.name,mapX(v.x)+7,mapY(v.y)-7,12,'500')); ctx.restore()}
-function render(ds){currentScenario=ds; ctx.clearRect(0,0,W,H); ctx.fillStyle='#f3eee2'; ctx.fillRect(0,0,W,H); for(let i=0;i<1300;i++){const x=Math.random()*W, y=Math.random()*H, a=Math.random()*0.025; ctx.fillStyle=`rgba(70,52,38,${a})`; ctx.fillRect(x,y,1,1)} if(controls.terrain.checked) drawTerrain(ds); else elevationCache=buildElevation(ds); if(controls.contours.checked) drawIsolines(ds); if(controls.nature.checked) drawNature(ds); if(controls.human.checked) drawHuman(ds); if(controls.grid.checked) drawGrid(); if(controls.tactical.checked) drawTactical(ds); if(controls.war.checked) drawWar(ds); if(controls.labels.checked) drawLabels(ds); drawFrameTitle(ds); updateInfo(ds)}
-SCENARIOS.forEach((s,idx)=>{const op=document.createElement('option'); op.value=idx; op.textContent=`${s.id.toUpperCase()} · ${s.name}`; scenarioSelect.appendChild(op)}); scenarioSelect.addEventListener('change',e=>render(SCENARIOS[+e.target.value])); Object.values(controls).forEach(el=>el.addEventListener('change',()=>render(currentScenario))); rerenderBtn.addEventListener('click',()=>render(currentScenario)); exportBtn.addEventListener('click',()=>{const a=document.createElement('a'); a.href=canvas.toDataURL('image/png'); a.download=`war_terrain_${currentScenario.id}.png`; a.click()}); render(currentScenario);
+function unitRect(u){const x=sx(u.x),y=sy(u.y),w=68*view.scale,h=32*view.scale;return{x,y,w,h}}
+function drawUnit(u){const {x,y,w,h}=unitRect(u),blue=u.side==='blue';ctx.save();ctx.shadowColor='rgba(0,0,0,.22)';ctx.shadowBlur=6*view.scale;ctx.shadowOffsetY=2*view.scale;ctx.fillStyle=blue?'rgba(230,237,239,.96)':'rgba(240,229,225,.96)';ctx.strokeStyle=blue?'#3e6b8c':'#8a514b';ctx.lineWidth=2.3*view.scale;ctx.fillRect(x-w/2,y-h/2,w,h);ctx.strokeRect(x-w/2,y-h/2,w,h);ctx.shadowColor='transparent';ctx.strokeStyle=blue?'#3e6b8c':'#8a514b';ctx.lineWidth=1.4*view.scale;if(u.type==='armor'){ctx.beginPath();ctx.ellipse(x,y,11*view.scale,6*view.scale,0,0,Math.PI*2);ctx.stroke()}else if(u.type==='mechanized'){ctx.beginPath();ctx.ellipse(x,y,11*view.scale,6*view.scale,0,0,Math.PI*2);ctx.stroke();ctx.beginPath();ctx.moveTo(x-9*view.scale,y-7*view.scale);ctx.lineTo(x+9*view.scale,y+7*view.scale);ctx.moveTo(x+9*view.scale,y-7*view.scale);ctx.lineTo(x-9*view.scale,y+7*view.scale);ctx.stroke()}else{ctx.beginPath();ctx.moveTo(x-10*view.scale,y-8*view.scale);ctx.lineTo(x+10*view.scale,y+8*view.scale);ctx.moveTo(x+10*view.scale,y-8*view.scale);ctx.lineTo(x-10*view.scale,y+8*view.scale);ctx.stroke()}
+ctx.font=`700 ${Math.max(7,8.5*view.scale)}px sans-serif`;ctx.textAlign='center';ctx.textBaseline='top';ctx.fillStyle=blue?'#315977':'#75433f';ctx.fillText(u.abbr,x,y+h/2+3*view.scale);if(selected.kind==='unit'&&selected.id===u.id){ctx.strokeStyle='#262824';ctx.lineWidth=2.2*view.scale;ctx.strokeRect(x-w/2-4*view.scale,y-h/2-4*view.scale,w+8*view.scale,h+8*view.scale)}ctx.restore()}
+function centerRegion(id){const r=regions.find(x=>x.id===id);let x=0,y=0;for(const p of r.poly){x+=p[0];y+=p[1]}return{x:x/r.poly.length,y:y/r.poly.length}}
+function bezierArrow(x1,y1,x2,y2,side){const a={x:sx(x1),y:sy(y1)},b={x:sx(x2),y:sy(y2)},mx=(a.x+b.x)/2,my=(a.y+b.y)/2-48*view.scale;ctx.strokeStyle=side==='blue'?'rgba(64,100,128,.88)':'rgba(142,78,70,.88)';ctx.fillStyle=ctx.strokeStyle;ctx.lineWidth=5*view.scale;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.quadraticCurveTo(mx,my,b.x,b.y);ctx.stroke();const ang=Math.atan2(b.y-my,b.x-mx);const len=15*view.scale;ctx.beginPath();ctx.moveTo(b.x,b.y);ctx.lineTo(b.x-len*Math.cos(ang-.52),b.y-len*Math.sin(ang-.52));ctx.lineTo(b.x-len*Math.cos(ang+.52),b.y-len*Math.sin(ang+.52));ctx.closePath();ctx.fill()}
+function drawOrders(){if(!toggles.orders.checked)return;for(const u of units){if(['attack','breakthrough','encircle'].includes(u.order)&&u.target){const t=centerRegion(u.target);bezierArrow(u.x,u.y,t.x,t.y,u.side)}}
+const blue=features.depots[0],red=features.depots[1];const bu=units.filter(u=>u.side==='blue'),ru=units.filter(u=>u.side==='red');ctx.lineWidth=2*view.scale;ctx.setLineDash([8*view.scale,6*view.scale]);for(const u of bu){ctx.strokeStyle='rgba(79,103,75,.70)';ctx.beginPath();ctx.moveTo(sx(blue.x),sy(blue.y));ctx.lineTo(sx(u.x),sy(u.y));ctx.stroke()}for(const u of ru){ctx.strokeStyle='rgba(114,89,76,.58)';ctx.beginPath();ctx.moveTo(sx(red.x),sy(red.y));ctx.lineTo(sx(u.x),sy(u.y));ctx.stroke()}ctx.setLineDash([])}
+function drawLabels(){for(const r of regions){const c=centerRegion(r.id);ctx.font=`600 ${Math.max(8,10*view.scale)}px Georgia,serif`;ctx.textAlign='center';ctx.fillStyle='rgba(63,62,57,.44)';ctx.fillText(r.name.toUpperCase(),sx(c.x),sy(c.y))}ctx.textAlign='start'}
+function render(){paper();drawRegions();drawTerrain();drawRidges();drawLabels();drawInfra();drawFront();drawOrders();if(toggles.units.checked)units.forEach(drawUnit);updatePanels()}
+function selection(){return selected.kind==='unit'?units.find(x=>x.id===selected.id):regions.find(x=>x.id===selected.id)}
+function updatePanels(){const s=selection();if(selected.kind==='region'){selectionCard.innerHTML=`<b>${s.name}</b><div class="kv" style="margin-top:7px"><div class="k">控制</div><div class="v">${s.control==='blue'?'蓝方':s.control==='red'?'红方':'争夺中'}</div><div class="k">粗地貌</div><div class="v">${terrainName(s.terrain)}</div><div class="k">关键目标</div><div class="v">${s.objective}</div><div class="k">战区意义</div><div class="v">${s.importance}</div></div><div class="pillrow"><span class="pill">点击“进入详细战场”展开</span></div>`}
+else{selectionCard.innerHTML=`<b>${s.name}</b><div class="kv" style="margin-top:7px"><div class="k">兵种</div><div class="v">${typeName(s.type)}</div><div class="k">当前命令</div><div class="v">${orderName(s.order)}</div><div class="k">所在区域</div><div class="v">${regions.find(r=>r.id===s.region)?.name||'—'}</div></div><div class="pillrow"><span class="pill">${s.side==='blue'?'我方':'敌方'}</span></div>`}
+const contested=regions.filter(r=>r.control==='contested').map(r=>r.name).join('、');situation.innerHTML=`<div class="kv"><div class="k">主要焦点</div><div class="v">${contested||'战线稳定'}</div><div class="k">蓝方意图</div><div class="v">中路突破，南翼牵制</div><div class="k">红方意图</div><div class="v">依托走廊纵深防御</div><div class="k">关键骨架</div><div class="v">河谷城—铁路—主干公路</div></div>`;
+timeline.innerHTML=events.slice(-7).reverse().map(e=>`<div class="event ${e.side}">${e.text}</div>`).join('');document.querySelectorAll('#orderGrid button').forEach(b=>b.classList.toggle('active',b.dataset.order===pendingOrder))}
+function terrainName(t){return({mountain:'山地',forest:'森林',rough:'丘陵/破碎地',valley:'河谷',urban:'城市化区域',wetland:'湿地河湾',plain:'开阔平原'})[t]||t}
+function typeName(t){return({armor:'装甲师',mechanized:'机械化师',infantry:'步兵师',light:'轻步兵师'})[t]||t}
+function orderName(o){return({hold:'固守',attack:'进攻',breakthrough:'突破',encircle:'包围',withdraw:'撤退',reserve:'预备队'})[o]||o}
+function hitUnit(x,y){for(let i=units.length-1;i>=0;i--){const u=units[i],r=unitRect(u);if(Math.abs(x-r.x)<r.w/2+5&&Math.abs(y-r.y)<r.h/2+5)return u}return null}
+map.addEventListener('pointerdown',e=>{map.setPointerCapture(e.pointerId);drag={sx:e.clientX,sy:e.clientY,ox:view.ox,oy:view.oy,moved:false};map.classList.add('dragging')});
+map.addEventListener('pointermove',e=>{if(!drag)return;const dx=e.clientX-drag.sx,dy=e.clientY-drag.sy;if(Math.hypot(dx,dy)>3)drag.moved=true;view.ox=drag.ox+dx;view.oy=drag.oy+dy;render()});
+map.addEventListener('pointerup',e=>{if(!drag)return;const moved=drag.moved;drag=null;map.classList.remove('dragging');if(moved)return;const rect=map.getBoundingClientRect(),mx=e.clientX-rect.left,my=e.clientY-rect.top;const u=hitUnit(mx,my);if(u){selected={kind:'unit',id:u.id};pendingOrder=u.order;render();return}const p=inv(mx,my);for(let i=regions.length-1;i>=0;i--)if(pointInPoly(p,regions[i].poly)){selected={kind:'region',id:regions[i].id};render();return}});
+map.addEventListener('wheel',e=>{e.preventDefault();const rect=map.getBoundingClientRect(),mx=e.clientX-rect.left,my=e.clientY-rect.top,before=inv(mx,my);const ns=Math.max(.45,Math.min(2.6,view.scale*Math.exp(-e.deltaY*.001)));view.scale=ns;view.ox=mx-before.x*view.scale;view.oy=my-before.y*view.scale;render()},{passive:false});
+Object.values(toggles).forEach(t=>t.addEventListener('change',render));fitBtn.onclick=fitView;
+document.querySelectorAll('#orderGrid button').forEach(b=>b.onclick=()=>{pendingOrder=b.dataset.order;updatePanels()});
+applyOrder.onclick=()=>{if(selected.kind!=='unit'){toastMsg('先点地图上的一支部队');return}const u=selection();if(u.side!=='blue'){toastMsg('演示中只能给蓝方部队下令');return}u.order=pendingOrder;if(['attack','breakthrough','encircle'].includes(u.order)){u.target=u.id==='U3'?'R9':'R8'}else u.target=null;events.push({side:'blue',text:`${u.name}接到“${orderName(u.order)}”命令，地图已显示新的行动意图。`});render()};
+advance.onclick=()=>{phase++;if(phase%2===1){const r=regions.find(x=>x.id==='R8');r.control='contested';units.find(x=>x.id==='U1').x=385;units.find(x=>x.id==='U1').y=320;events.push({side:'neutral',text:'蓝方装甲前锋进入东部走廊，接触线向铁路节点附近弯曲。'})}else{const r=regions.find(x=>x.id==='R5');r.control='blue';units.find(x=>x.id==='U1').region='R8';units.find(x=>x.id==='U1').x=455;units.find(x=>x.id==='U1').y=315;events.push({side:'blue',text:'河谷城控制权稳定，蓝方开始把突破方向转向东部走廊。'})}render()};
+reset.onclick=()=>{regions=structuredClone(baseRegions);units=structuredClone(baseUnits);phase=0;selected={kind:'region',id:'R5'};pendingOrder='breakthrough';events.splice(3);fitView();toastMsg('已恢复初始战区态势')};
+function selectedRegion(){if(selected.kind==='region')return regions.find(r=>r.id===selected.id);const u=units.find(x=>x.id===selected.id);return regions.find(r=>r.id===u.region)}
+enterBattle.onclick=()=>{const r=selectedRegion();drawBattle(r);battleTitle.textContent=`详细战场 · ${r.name}`;battleInfo.innerHTML=`<div class="kv"><div class="k">来自战区层</div><div class="v">${r.name}</div><div class="k">继承地貌</div><div class="v">${terrainName(r.terrain)}</div><div class="k">固定目标</div><div class="v">${r.objective}</div><div class="k">继承骨架</div><div class="v">河流/主路/城市按世界数据继续</div></div><div class="pillrow"><span class="pill">这里才生成细山峰</span><span class="pill">局部道路</span><span class="pill">桥与村落</span></div>`;battleModal.classList.add('open')};
+closeBattle.onclick=()=>battleModal.classList.remove('open');battleModal.addEventListener('click',e=>{if(e.target===battleModal)battleModal.classList.remove('open')});
+function drawBattle(r){const rect=battle.getBoundingClientRect(),dpr=Math.min(devicePixelRatio||1,2);battle.width=Math.max(600,Math.round(rect.width*dpr));battle.height=Math.max(480,Math.round(rect.height*dpr));bctx.setTransform(dpr,0,0,dpr,0,0);const W=rect.width,H=rect.height;bctx.fillStyle='#d9d0bb';bctx.fillRect(0,0,W,H);const seed=r.id.charCodeAt(1)*37;for(let i=0;i<18;i++){const x=50+hash(i,seed)* (W-100),y=50+hash(i+44,seed)*(H-100),rad=28+hash(i+77,seed)*70;const g=bctx.createRadialGradient(x-rad*.2,y-rad*.25,3,x,y,rad);g.addColorStop(0,'rgba(102,91,69,.34)');g.addColorStop(.6,'rgba(139,127,101,.17)');g.addColorStop(1,'rgba(160,149,126,0)');bctx.fillStyle=g;bctx.beginPath();bctx.arc(x,y,rad,0,Math.PI*2);bctx.fill()}
+if(r.terrain==='forest'||r.terrain==='mountain'){for(let i=0;i<140;i++){const x=hash(i,seed+5)*W,y=hash(i,seed+7)*H;bctx.fillStyle='rgba(66,86,62,.25)';bctx.beginPath();bctx.arc(x,y,2+hash(i,9)*3,0,Math.PI*2);bctx.fill()}}
+bctx.strokeStyle='rgba(70,108,132,.78)';bctx.lineWidth=10;bctx.beginPath();bctx.moveTo(-20,H*.18);bctx.bezierCurveTo(W*.28,H*.28,W*.42,H*.62,W*.64,H*.55);bctx.bezierCurveTo(W*.78,H*.5,W*.88,H*.72,W+20,H*.66);bctx.stroke();bctx.strokeStyle='rgba(119,99,70,.85)';bctx.lineWidth=5;bctx.beginPath();bctx.moveTo(0,H*.72);bctx.bezierCurveTo(W*.3,H*.63,W*.55,H*.38,W,H*.33);bctx.stroke();bctx.fillStyle='rgba(64,61,53,.78)';for(let i=0;i<24;i++){const x=W*.58+(i%6)*15,y=H*.35+Math.floor(i/6)*13;bctx.fillRect(x,y,10,8)}bctx.fillStyle='rgba(44,45,41,.82)';bctx.font='700 16px sans-serif';bctx.fillText(r.objective,W*.58,H*.33-10)}
+function toastMsg(t){toast.textContent=t;toast.classList.add('show');clearTimeout(toast._t);toast._t=setTimeout(()=>toast.classList.remove('show'),1500)}
+requestAnimationFrame(()=>{resize();fitView()});
+})();
 </script>
-</body>
-</html>
+</body></html>
