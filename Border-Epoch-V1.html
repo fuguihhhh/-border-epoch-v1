@@ -1394,6 +1394,36 @@ if(r.terrain==='forest'){for(let i=0;i<70;i++){const x=box.minx+hash(i,71+r.id.c
 if(r.terrain==='wetland'){ctx.strokeStyle='rgba(95,118,119,.20)';ctx.lineWidth=1;for(let i=0;i<12;i++){const yy=box.miny+15+i*12;ctx.beginPath();ctx.moveTo(sx(box.minx+20),sy(yy));ctx.lineTo(sx(box.maxx-20),sy(yy+hash(i,9)*6));ctx.stroke()}}
 if(r.terrain==='urban'){ctx.fillStyle='rgba(91,84,72,.11)';for(let i=0;i<22;i++){const x=box.minx+hash(i,21)*(box.maxx-box.minx),y=box.miny+hash(i,22)*(box.maxy-box.miny);ctx.fillRect(sx(x),sy(y),4*view.scale,3*view.scale)}}});}}
 function drawRidges(){if(!toggles.terrain.checked)return;for(const ridge of features.ridges){ctx.strokeStyle='rgba(84,75,58,.35)';ctx.lineWidth=5*view.scale;ctx.lineCap='round';linePath(ridge.pts);ctx.stroke();ctx.strokeStyle='rgba(244,237,220,.35)';ctx.lineWidth=1.2*view.scale;linePath(ridge.pts);ctx.stroke()}}
+// Region labels are a separate map layer. This function was accidentally removed in the previous build;
+// render() still called it, so a ReferenceError stopped every later layer (infrastructure/front/units/orders/sector box).
+function drawLabels(){
+  ctx.save();
+  ctx.textAlign='center';
+  ctx.textBaseline='middle';
+  for(const r of regions){
+    const c=centerRegion(r.id);
+    const x=sx(c.x),y=sy(c.y);
+    const nameSize=Math.max(9,11*view.scale);
+    const objectiveSize=Math.max(7.5,8.5*view.scale);
+    ctx.font=`700 ${nameSize}px sans-serif`;
+    const label=r.name||r.id;
+    const w=ctx.measureText(label).width+12*view.scale;
+    const h=Math.max(17,18*view.scale);
+    ctx.fillStyle='rgba(226,218,199,.70)';
+    ctx.strokeStyle='rgba(80,76,67,.18)';
+    ctx.lineWidth=Math.max(.7,.8*view.scale);
+    ctx.fillRect(x-w/2,y-h/2,w,h);
+    ctx.strokeRect(x-w/2,y-h/2,w,h);
+    ctx.fillStyle='rgba(53,53,48,.82)';
+    ctx.fillText(label,x,y+.5);
+    if(r.objective && view.scale>=.48){
+      ctx.font=`500 ${objectiveSize}px sans-serif`;
+      ctx.fillStyle='rgba(77,73,65,.60)';
+      ctx.fillText(r.objective,x,y+h/2+8*view.scale);
+    }
+  }
+  ctx.restore();
+}
 function drawInfra(){if(!toggles.infra.checked)return;for(const river of features.rivers){ctx.strokeStyle='rgba(72,105,128,.72)';ctx.lineWidth=river.width*view.scale;ctx.lineCap='round';ctx.lineJoin='round';linePath(river.pts);ctx.stroke();ctx.strokeStyle='rgba(206,221,224,.45)';ctx.lineWidth=Math.max(1,river.width*.28*view.scale);linePath(river.pts);ctx.stroke()}
 for(const road of features.roads){ctx.strokeStyle=road.kind==='primary'?'rgba(111,94,69,.82)':'rgba(126,111,87,.60)';ctx.lineWidth=(road.kind==='primary'?4:2.2)*view.scale;ctx.lineCap='round';linePath(road.pts);ctx.stroke();if(road.kind==='primary'){ctx.strokeStyle='rgba(224,211,184,.45)';ctx.lineWidth=1*view.scale;linePath(road.pts);ctx.stroke()}}
 for(const rail of features.rails){ctx.strokeStyle='rgba(74,70,61,.74)';ctx.lineWidth=2*view.scale;linePath(rail.pts);ctx.stroke();ctx.setLineDash([7*view.scale,6*view.scale]);ctx.strokeStyle='rgba(238,229,208,.75)';ctx.lineWidth=.9*view.scale;linePath(rail.pts);ctx.stroke();ctx.setLineDash([])}
@@ -1433,7 +1463,30 @@ function drawOrders(){if(!toggles.orders.checked)return;for(const u of units){co
     drawOperationalStateMarker(u,o,sx(t.x),sy(t.y));
     if(u._resumeOrderUntil&&performance.now()<u._resumeOrderUntil){const p=unitDisplayPoint(u),pulse=.5+.5*Math.sin(performance.now()/180);ctx.save();ctx.strokeStyle=`rgba(73,112,77,${.45+.35*pulse})`;ctx.lineWidth=3;ctx.beginPath();ctx.arc(p.x,p.y,34+6*pulse,0,Math.PI*2);ctx.stroke();ctx.font=`800 ${Math.max(9,10*view.scale)}px sans-serif`;ctx.fillStyle='rgba(56,91,61,.95)';ctx.textAlign='center';ctx.fillText('恢复原任务',p.x,p.y-43);ctx.restore();requestAnimationFrame(()=>render());}
   }}
-function render(){paper();drawRegions();drawTerrain();drawRidges();drawLabels();drawInfra();drawFront();drawOrders();if(toggles.units.checked)units.forEach(drawUnit);drawSectorSelection();updatePanels()}
+const renderLayerErrors=new Set();
+function renderLayer(name,fn){
+  try{fn()}
+  catch(err){
+    console.error(`[Theater render] ${name} failed`,err);
+    if(!renderLayerErrors.has(name)){
+      renderLayerErrors.add(name);
+      if(typeof toastMsg==='function')toastMsg(`地图图层“${name}”渲染失败，其余图层继续显示`);
+    }
+  }
+}
+function render(){
+  paper();
+  renderLayer('控制区',drawRegions);
+  renderLayer('粗地貌',drawTerrain);
+  renderLayer('山脊',drawRidges);
+  renderLayer('区域标注',drawLabels);
+  renderLayer('河流/交通',drawInfra);
+  renderLayer('战线',drawFront);
+  renderLayer('行动命令',drawOrders);
+  if(toggles.units.checked)renderLayer('部队',()=>units.forEach(drawUnit));
+  renderLayer('详细战场选区',drawSectorSelection);
+  renderLayer('侧栏信息',updatePanels);
+}
 function selection(){return selected.kind==='unit'?units.find(x=>x.id===selected.id):regions.find(x=>x.id===selected.id)}
 function terrainName(t){return({mountain:'山地',forest:'森林',rough:'丘陵/破碎地',valley:'河谷',urban:'城市化区域',wetland:'湿地河湾',plain:'开阔平原'})[t]||t}
 function typeName(t){return({armor:'装甲军',mechanized:'机械化军',motorized:'摩托化军',infantry:'步兵军',light:'轻步兵军'})[t]||t}
